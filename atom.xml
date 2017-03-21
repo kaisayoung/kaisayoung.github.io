@@ -17,8 +17,8 @@
   
   <entry>
     <title>RxSwift &amp; RxCocoa 入门教程</title>
-    <link href="http://yoursite.com/2017-03-21-Getting-Started-With-RxSwift-and-RxCocoa%E3%80%90%E8%AF%91%E3%80%91.html"/>
-    <id>http://yoursite.com/2017-03-21-Getting-Started-With-RxSwift-and-RxCocoa【译】.html</id>
+    <link href="http://yoursite.com/undefined/%E7%BF%BB%E8%AF%91/2017-03-21-Getting-Started-With-RxSwift-and-RxCocoa%E3%80%90%E8%AF%91%E3%80%91.html"/>
+    <id>http://yoursite.com/undefined/翻译/2017-03-21-Getting-Started-With-RxSwift-and-RxCocoa【译】.html</id>
     <published>2017-03-20T16:06:39.000Z</published>
     <updated>2017-03-21T16:49:33.000Z</updated>
     
@@ -1576,70 +1576,6 @@ photo.isVisible = YES;
   </entry>
   
   <entry>
-    <title>First Blood</title>
-    <link href="http://yoursite.com/undefined/%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/2016-09-01-first%20blood.html"/>
-    <id>http://yoursite.com/undefined/安装配置/2016-09-01-first blood.html</id>
-    <published>2016-09-01T03:48:38.000Z</published>
-    <updated>2016-09-01T03:48:38.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>机缘巧合，前几天学习了应用CocoaPods建立私有仓库并向<a href="https://yozoe.github.io/" target="_blank" rel="external">王大胖子</a>吹嘘之，然后他问他怎么样才能看到呢，于是此博客应运而生。应用<a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>搭建博客之后，选择了视觉最为简单的<a href="https://github.com/iissnan/hexo-theme-next/" target="_blank" rel="external">Next</a>主题，世界瞬间干净了许多。<br>首先记录一下搭建的过程吧，虽然Hexo已经有了详细的文档。</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h2 id="背景环境"><a href="#背景环境" class="headerlink" title="背景环境"></a>背景环境</h2><p><a href="https://nodejs.org/en/" target="_blank" rel="external">Node.js</a></p>
-<p>Git</p>
-<p>Github账户</p>
-<h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><p>cd一个文件夹，作为博客根目录</p>
-<p>安装：</p>
-<p>sudo npm install -g hexo</p>
-<p>初始化：</p>
-<p>hexo init</p>
-<p>生成静态页面：</p>
-<p>hexo generate</p>
-<p>启动本地服务：</p>
-<p>hexo server</p>
-<p>然后浏览器输入<a href="http://localhost:4000" target="_blank" rel="external">http://localhost:4000</a>就可以本地调试了!</p>
-<h2 id="配置Github"><a href="#配置Github" class="headerlink" title="配置Github"></a>配置Github</h2><p>默认已经有了账户，建立一个仓库，名称必须为【your_user_name.github.io】</p>
-<p>进入博客根目录找到_config.yml文件，翻到最下面，改成类似这样：</p>
-<pre><code>deploy:
- type: git
- repository: https://github.com/kaisayoung/kaisayoung.github.io
- branch: master
-</code></pre><p>关联：</p>
-<p>npm install hexo-deployer-git –save</p>
-<p>部署：</p>
-<p>hexo deploy</p>
-<p>此时就可以打开你的博客了！</p>
-<p><a href="https://kaisayoung.github.io/" target="_blank" rel="external">https://kaisayoung.github.io/</a></p>
-<p>其他一些诸如换头像，改名字，选语言，增加评论，站内搜索，统计阅读量等功能Next主题都有详细的<a href="http://theme-next.iissnan.com/" target="_blank" rel="external">使用说明</a>，忍不住想给点个赞。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最常用的几个命令</p>
-<p>创建新文章：</p>
-<p>hexo new “New Post”</p>
-<p>启动本地服务：</p>
-<p>hexo server</p>
-<p>此时可以本地先体验测试一下</p>
-<p>生成静态页面：</p>
-<p>hexo generate</p>
-<p>部署到远端：</p>
-<p>hexo deploy</p>
-<p>生成静态页面前还可以清除一下缓存：</p>
-<p>hexo clean</p>
-<p>这样就算是正式生效了</p>
-<hr>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;机缘巧合，前几天学习了应用CocoaPods建立私有仓库并向&lt;a href=&quot;https://yozoe.github.io/&quot;&gt;王大胖子&lt;/a&gt;吹嘘之，然后他问他怎么样才能看到呢，于是此博客应运而生。应用&lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;搭建博客之后，选择了视觉最为简单的&lt;a href=&quot;https://github.com/iissnan/hexo-theme-next/&quot;&gt;Next&lt;/a&gt;主题，世界瞬间干净了许多。&lt;br&gt;首先记录一下搭建的过程吧，虽然Hexo已经有了详细的文档。&lt;/p&gt;
-&lt;h2 id=&quot;&quot;&gt;&lt;a href=&quot;#&quot; class=&quot;headerlink&quot; title=&quot;&quot;&gt;&lt;/a&gt;
-    
-    </summary>
-    
-      <category term="安装配置" scheme="http://yoursite.com/categories/%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/"/>
-    
-    
-      <category term="博客" scheme="http://yoursite.com/tags/%E5%8D%9A%E5%AE%A2/"/>
-    
-  </entry>
-  
-  <entry>
     <title>文件下载工具类</title>
     <link href="http://yoursite.com/undefined/iOS/2016-08-25-%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7%E7%B1%BB.html"/>
     <id>http://yoursite.com/undefined/iOS/2016-08-25-文件下载工具类.html</id>
@@ -1913,6 +1849,70 @@ end
     
     
       <category term="私有库" scheme="http://yoursite.com/tags/%E7%A7%81%E6%9C%89%E5%BA%93/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>First Blood</title>
+    <link href="http://yoursite.com/undefined/%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/2016-08-21-first%20blood.html"/>
+    <id>http://yoursite.com/undefined/安装配置/2016-08-21-first blood.html</id>
+    <published>2016-08-21T05:13:12.000Z</published>
+    <updated>2017-03-21T17:36:38.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>机缘巧合，前几天学习了应用CocoaPods建立私有仓库并向<a href="https://yozoe.github.io/" target="_blank" rel="external">王大胖子</a>吹嘘之，然后他问他怎么样才能看到呢，于是此博客应运而生。应用<a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>搭建博客之后，选择了视觉最为简单的<a href="https://github.com/iissnan/hexo-theme-next/" target="_blank" rel="external">Next</a>主题，世界瞬间干净了许多。<br>首先记录一下搭建的过程吧，虽然Hexo已经有了详细的文档。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><h2 id="背景环境"><a href="#背景环境" class="headerlink" title="背景环境"></a>背景环境</h2><p><a href="https://nodejs.org/en/" target="_blank" rel="external">Node.js</a></p>
+<p>Git</p>
+<p>Github账户</p>
+<h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><p>cd一个文件夹，作为博客根目录</p>
+<p>安装：</p>
+<p>sudo npm install -g hexo</p>
+<p>初始化：</p>
+<p>hexo init</p>
+<p>生成静态页面：</p>
+<p>hexo generate</p>
+<p>启动本地服务：</p>
+<p>hexo server</p>
+<p>然后浏览器输入<a href="http://localhost:4000" target="_blank" rel="external">http://localhost:4000</a>就可以本地调试了!</p>
+<h2 id="配置Github"><a href="#配置Github" class="headerlink" title="配置Github"></a>配置Github</h2><p>默认已经有了账户，建立一个仓库，名称必须为【your_user_name.github.io】</p>
+<p>进入博客根目录找到_config.yml文件，翻到最下面，改成类似这样：</p>
+<pre><code>deploy:
+ type: git
+ repository: https://github.com/kaisayoung/kaisayoung.github.io
+ branch: master
+</code></pre><p>关联：</p>
+<p>npm install hexo-deployer-git –save</p>
+<p>部署：</p>
+<p>hexo deploy</p>
+<p>此时就可以打开你的博客了！</p>
+<p><a href="https://kaisayoung.github.io/" target="_blank" rel="external">https://kaisayoung.github.io/</a></p>
+<p>其他一些诸如换头像，改名字，选语言，增加评论，站内搜索，统计阅读量等功能Next主题都有详细的<a href="http://theme-next.iissnan.com/" target="_blank" rel="external">使用说明</a>，忍不住想给点个赞。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最常用的几个命令</p>
+<p>创建新文章：</p>
+<p>hexo new “New Post”</p>
+<p>启动本地服务：</p>
+<p>hexo server</p>
+<p>此时可以本地先体验测试一下</p>
+<p>生成静态页面：</p>
+<p>hexo generate</p>
+<p>部署到远端：</p>
+<p>hexo deploy</p>
+<p>生成静态页面前还可以清除一下缓存：</p>
+<p>hexo clean</p>
+<p>这样就算是正式生效了</p>
+<hr>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;机缘巧合，前几天学习了应用CocoaPods建立私有仓库并向&lt;a href=&quot;https://yozoe.github.io/&quot;&gt;王大胖子&lt;/a&gt;吹嘘之，然后他问他怎么样才能看到呢，于是此博客应运而生。应用&lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;搭建博客之后，选择了视觉最为简单的&lt;a href=&quot;https://github.com/iissnan/hexo-theme-next/&quot;&gt;Next&lt;/a&gt;主题，世界瞬间干净了许多。&lt;br&gt;首先记录一下搭建的过程吧，虽然Hexo已经有了详细的文档。&lt;/p&gt;
+&lt;h2 id=&quot;&quot;&gt;&lt;a href=&quot;#&quot; class=&quot;headerlink&quot; title=&quot;&quot;&gt;&lt;/a&gt;
+    
+    </summary>
+    
+      <category term="安装配置" scheme="http://yoursite.com/categories/%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/"/>
+    
+    
+      <category term="博客" scheme="http://yoursite.com/tags/%E5%8D%9A%E5%AE%A2/"/>
     
   </entry>
   
