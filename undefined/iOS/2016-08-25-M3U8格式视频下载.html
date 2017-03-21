@@ -1,0 +1,789 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="M3U8," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="现在看来，这是之前做过的最有意思的一个功能。😁
+M3U8是一种流媒体，现多用于视频播放。当把m3u8格式视频对应的url下载下来用文本打开会发现其实只是一段字符串，包含了很多视频小片段的地址，那么怎么样把整个视频下载下来用于本地播放呢？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="M3U8格式视频下载">
+<meta property="og:url" content="http://yoursite.com/undefined/iOS/2016-08-25-M3U8格式视频下载.html">
+<meta property="og:site_name" content="一直在路上">
+<meta property="og:description" content="现在看来，这是之前做过的最有意思的一个功能。😁
+M3U8是一种流媒体，现多用于视频播放。当把m3u8格式视频对应的url下载下来用文本打开会发现其实只是一段字符串，包含了很多视频小片段的地址，那么怎么样把整个视频下载下来用于本地播放呢？">
+<meta property="og:updated_time" content="2016-09-01T03:46:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="M3U8格式视频下载">
+<meta name="twitter:description" content="现在看来，这是之前做过的最有意思的一个功能。😁
+M3U8是一种流媒体，现多用于视频播放。当把m3u8格式视频对应的url下载下来用文本打开会发现其实只是一段字符串，包含了很多视频小片段的地址，那么怎么样把整个视频下载下来用于本地播放呢？">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6321865863578256000,
+      author: '主编大人'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/undefined/iOS/2016-08-25-M3U8格式视频下载.html"/>
+
+  <title> M3U8格式视频下载 | 一直在路上 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d9a1587ce4c6042894f106ae7486a3ce";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一直在路上</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                M3U8格式视频下载
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-25T16:48:30+08:00" content="2016-08-25">
+              2016-08-25
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index">
+                    <span itemprop="name">iOS</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/undefined/iOS/2016-08-25-M3U8格式视频下载.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="undefined/iOS/2016-08-25-M3U8格式视频下载.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/undefined/iOS/2016-08-25-M3U8格式视频下载.html" class="leancloud_visitors" data-flag-title="M3U8格式视频下载">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>现在看来，这是之前做过的最有意思的一个功能。😁</p>
+<p>M3U8是一种流媒体，现多用于视频播放。当把m3u8格式视频对应的url下载下来用文本打开会发现其实只是一段字符串，包含了很多视频小片段的地址，那么怎么样把整个视频下载下来用于本地播放呢？<br><a id="more"></a></p>
+<h3 id="m3u8文件"><a href="#m3u8文件" class="headerlink" title="m3u8文件"></a>m3u8文件</h3><p>首先，m3u8文件展开后的字符串类似这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">#EXTM3U</div><div class="line">#EXT-X-TARGETDURATION:30</div><div class="line">#EXT-X-VERSION:2</div><div class="line">#EXT-X-DISCONTINUITY</div><div class="line">#EXTINF:10,</div><div class="line">http://f.youku.com/player/getMpegtsPath/st/flv/fileid/03000201004F4BC6AFD0C202E26EEEB41666A0-C93C-D6C9-9FFA-33424A776707/ipad0_0.ts?KM=14eb49fe4969126c6&amp;start=0&amp;end=10&amp;ts=10&amp;html5=1&amp;seg_no=0&amp;seg_time=0</div><div class="line">#EXTINF:20,</div><div class="line">http://f.youku.com/player/getMpegtsPath/st/flv/fileid/03000201004F4BC6AFD0C202E26EEEB41666A0-C93C-D6C9-9FFA-33424A776707/ipad0_1.ts?KM=14eb49fe4969126c6&amp;start=10&amp;end=30&amp;ts=20&amp;html5=1&amp;seg_no=1&amp;seg_time=0</div><div class="line">#EXTINF:20,</div><div class="line">http://f.youku.com/player/getMpegtsPath/st/flv/fileid/03000201004F4BC6AFD0C202E26EEEB41666A0-C93C-D6C9-9FFA-33424A776707/ipad0_2.ts?KM=14eb49fe4969126c6&amp;start=30&amp;end=50&amp;ts=20&amp;html5=1&amp;seg_no=2&amp;seg_time=0</div><div class="line">#EXTINF:20,</div><div class="line">http://f.youku.com/player/getMpegtsPath/st/flv/fileid/03000201004F4BC6AFD0C202E26EEEB41666A0-C93C-D6C9-9FFA-33424A776707/ipad0_3.ts?KM=14eb49fe4969126c6&amp;start=50&amp;end=70&amp;ts=20&amp;html5=1&amp;seg_no=3&amp;seg_time=0</div><div class="line">#EXTINF:24,</div><div class="line">http://f.youku.com/player/getMpegtsPath/st/flv/fileid/03000201004F4BC6AFD0C202E26EEEB41666A0-C93C-D6C9-9FFA-33424A776707/ipad0_4.ts?KM=14eb49fe4969126c6&amp;start=70&amp;end=98&amp;ts=24&amp;html5=1&amp;seg_no=4&amp;seg_time=0</div><div class="line">#EXT-X-ENDLIST</div></pre></td></tr></table></figure>
+<p>在每一行#EXTINF:下面的网址就是一个个ts文件的地址，实际去下载的应该是这些视频小片段。而在#EXTINF:后面的数字代表的是这个ts文件所包含视频的时长。</p>
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>第一步要解析这个m3u8的url，将其中所有ts文件的下载地址记录下来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">NSString *data = [NSString stringWithContentsOfURL:url usedEncoding:&amp;encoding error:&amp;error];</div><div class="line">NSMutableArray *segments = [NSMutableArray array];</div><div class="line">NSRange segmentRange = [remainData rangeOfString:@&quot;#EXTINF:&quot;];</div><div class="line">NSInteger segmentIndex = 0;</div><div class="line">NSInteger totalSeconds = 0;</div><div class="line">while (segmentRange.location != NSNotFound) &#123;</div><div class="line">    SCM3U8SegmentInfo *segment = [[SCM3U8SegmentInfo alloc] init];</div><div class="line">    //读取片段时长</div><div class="line">    NSRange commaRange = [remainData rangeOfString:@&quot;,&quot;];</div><div class="line">    NSString *value = [remainData substringWithRange:NSMakeRange(segmentRange.location + [@&quot;#EXTINF:&quot; length], commaRange.location -(segmentRange.location + [@&quot;#EXTINF:&quot; length]))];</div><div class="line">    segment.duration = [value intValue];</div><div class="line">    totalSeconds+=segment.duration;</div><div class="line">    remainData = [remainData substringFromIndex:commaRange.location];</div><div class="line">    //读取片段url</div><div class="line">    NSRange linkRangeBegin = [remainData rangeOfString:@&quot;http&quot;];</div><div class="line">    NSRange linkRangeEnd = [remainData rangeOfString:@&quot;#&quot;];</div><div class="line">    NSString *linkurl = [remainData substringWithRange:NSMakeRange(linkRangeBegin.location, linkRangeEnd.location - linkRangeBegin.location)];</div><div class="line">    segment.url = linkurl;</div><div class="line">    segment.index = segmentIndex;</div><div class="line">    //</div><div class="line">    segmentIndex++;</div><div class="line">    [segments addObject:segment];</div><div class="line">    remainData = [remainData substringFromIndex:linkRangeEnd.location];</div><div class="line">    segmentRange = [remainData rangeOfString:@&quot;#EXTINF:&quot;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p>得到了这些视频文件的真实地址后，就可以去下载了。下载方法有很多，可以用第三方库ASIHTTPRequest，AFNetworking；或者直接用原生的NSURLConnection，NSURLSession都可以。注意因为一个视频包含很多个小的ts文件，所以为了便于管理，建议1 是将这些文件按索引号分别命名为id0.ts,id1.ts,id2.ts等，2 是按顺序去下载这些小片段，且同一时间只下载一个，当一个下载完成后，再去下载下一个。注意这里其实每一个ts小片段本身都是不支持断点续传的😳。</p>
+<h3 id="拼接"><a href="#拼接" class="headerlink" title="拼接"></a>拼接</h3><p>当所有这些ts文件下载完成后，需要在本地将它们拼接成一个新的m3u8文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">NSString *pathPrefix = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) objectAtIndex:0];</div><div class="line">NSString *saveTo = [[pathPrefix stringByAppendingPathComponent:kPathDownload] stringByAppendingPathComponent:self.vid];</div><div class="line">NSString *fullPath = [saveTo stringByAppendingPathComponent:@&quot;movie.m3u8&quot;];</div><div class="line">//创建文件头部</div><div class="line">NSString* head = @&quot;#EXTM3U\n#EXT-X-TARGETDURATION:30\n#EXT-X-VERSION:2\n#EXT-X-DISCONTINUITY\n&quot;;</div><div class="line">NSString* segmentPrefix = [NSString stringWithFormat:@&quot;http://127.0.0.1:54321/%@/&quot;,self.vid];</div><div class="line">NSInteger count = [self.segmentList.segments count];</div><div class="line">//填充片段数据</div><div class="line">for(int i = 0;i&lt;count;i++)&#123;</div><div class="line">    NSString *filename = [NSString stringWithFormat:@&quot;id%d.ts&quot;,i];</div><div class="line">    SCM3U8SegmentInfo *segInfo = [self.segmentList getSegmentWithIndex:i];</div><div class="line">    NSString *length = [NSString stringWithFormat:@&quot;#EXTINF:%ld,\n&quot;,(long)segInfo.duration];</div><div class="line">    NSString *url = [segmentPrefix stringByAppendingString:filename];</div><div class="line">    head = [NSString stringWithFormat:@&quot;%@%@%@\n&quot;,head,length,url];</div><div class="line">&#125;</div><div class="line">//创建尾部</div><div class="line">NSString* end = @&quot;#EXT-X-ENDLIST&quot;;</div><div class="line">head = [head stringByAppendingString:end];</div><div class="line">NSMutableData *writer = [[NSMutableData alloc] init];</div><div class="line">[writer appendData:[head dataUsingEncoding:NSUTF8StringEncoding]];</div><div class="line">[writer writeToFile:fullPath atomically:YES];</div></pre></td></tr></table></figure>
+<p>其中127.0.0.1是随便写的，只要和播放时调用的一致即可。拼成后本地的m3u8文件用文本打开类似如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">#EXTM3U</div><div class="line">#EXT-X-TARGETDURATION:30</div><div class="line">#EXT-X-VERSION:2</div><div class="line">#EXT-X-DISCONTINUITY</div><div class="line">#EXTINF:6,</div><div class="line">http://127.0.0.1:54321/TTT/id0.ts</div><div class="line">#EXTINF:6,</div><div class="line">http://127.0.0.1:54321/TTT/id1.ts</div><div class="line">#EXTINF:6,</div><div class="line">http://127.0.0.1:54321/TTT/id2.ts</div><div class="line">#EXTINF:6,</div><div class="line">http://127.0.0.1:54321/TTT/id3.ts</div><div class="line">#EXTINF:6,</div><div class="line">http://127.0.0.1:54321/TTT/id4.ts</div><div class="line">#EXTINF:6,</div><div class="line">http://127.0.0.1:54321/TTT/id5.ts</div><div class="line">#EXTINF:6,</div><div class="line">http://127.0.0.1:54321/TTT/id6.ts</div><div class="line">#EXTINF:6,</div><div class="line">http://127.0.0.1:54321/TTT/id7.ts</div><div class="line">#EXTINF:6,</div><div class="line">http://127.0.0.1:54321/TTT/id8.ts</div><div class="line">#EXT-X-ENDLIST</div></pre></td></tr></table></figure>
+<h3 id="本地播放"><a href="#本地播放" class="headerlink" title="本地播放"></a>本地播放</h3><p>由于m3u8只支持http协议的远程播放，所以必须在应用程序里搭建一个服务器。好消息是早就有开源库CocoaHTTPServer做到了这一点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">- (void)setHttpServer &#123;</div><div class="line">    _httpServer = [[HTTPServer alloc] init];</div><div class="line">    [_httpServer setType:@&quot;_http._tcp.&quot;];</div><div class="line">    [_httpServer setPort:54321];</div><div class="line">    NSString *pathPrefix = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES) objectAtIndex:0];</div><div class="line">    NSString *webPath = [pathPrefix stringByAppendingPathComponent:kPathDownload];</div><div class="line">    NSLog(@&quot;Setting document root: %@&quot;, webPath);</div><div class="line">    [_httpServer setDocumentRoot:webPath];</div><div class="line">    NSError *error;</div><div class="line">    if(![_httpServer start:&amp;error]) &#123;</div><div class="line">        NSLog(@&quot;Error starting HTTP Server: %@&quot;, error);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最后，将类似127.0.0.1:54321/%@/movie.m3u8这样的地址传给系统播放器就可以实现本地播放了。</p>
+<p>完整版Demo请猛戳<a href="https://github.com/kaisayoung/M3U8VideoDownloadDemo.git" target="_blank" rel="external">这里</a>。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/M3U8/" rel="tag">#M3U8</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/undefined/iOS/2016-08-25-M3U8简介.html" rel="next" title="M3U8简介">
+                <i class="fa fa-chevron-left"></i> M3U8简介
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/undefined/iOS/2016-08-25-文件下载工具类.html" rel="prev" title="文件下载工具类">
+                文件下载工具类 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="undefined/iOS/2016-08-25-M3U8格式视频下载.html"
+           data-title="M3U8格式视频下载" data-url="http://yoursite.com/undefined/iOS/2016-08-25-M3U8格式视频下载.html">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Kaisa" />
+          <p class="site-author-name" itemprop="name">Kaisa</p>
+          <p class="site-description motion-element" itemprop="description">心若不老，仍是少年</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">14</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/kaisayoung" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#m3u8文件"><span class="nav-number">1.</span> <span class="nav-text">m3u8文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析"><span class="nav-number">2.</span> <span class="nav-text">解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下载"><span class="nav-number">3.</span> <span class="nav-text">下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拼接"><span class="nav-number">4.</span> <span class="nav-text">拼接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本地播放"><span class="nav-number">5.</span> <span class="nav-text">本地播放</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kaisa</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"kaisayoung"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("nRzHUuGqxgGGukmsOOWW1Tzi-gzGzoHsz", "5KkfnJ5UlP0Yw8JFVRqgm2th");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

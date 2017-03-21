@@ -1,0 +1,1239 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="一直在路上" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="title: ‘AsyncDisplayKit教程: 达到60FPS的滚动帧率’date: 2016-09-15 21:17:27categories: 翻译
+tags: AsyncDisplayKit天增岁月人增肉，今天是中秋。本文由René Cacheaux于14年发表于raywenderlich，原文可查看AsyncDisplayKit Tutorial: Achieving 60 FPS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一直在路上">
+<meta property="og:url" content="http://yoursite.com/undefined/uncategorized/2016-09-16-AsyncDisplayKit-Tutorial-Achieving-60-FPS-scrolling【译】.html">
+<meta property="og:site_name" content="一直在路上">
+<meta property="og:description" content="title: ‘AsyncDisplayKit教程: 达到60FPS的滚动帧率’date: 2016-09-15 21:17:27categories: 翻译
+tags: AsyncDisplayKit天增岁月人增肉，今天是中秋。本文由René Cacheaux于14年发表于raywenderlich，原文可查看AsyncDisplayKit Tutorial: Achieving 60 FPS">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/11/iOS-Simulator-Screen-Shot-7-Nov-2014-21.10.03.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0002.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0001.jpg">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0003.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0006.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0006.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/11/asyncscroll.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0009.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0009.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0009.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0015.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0017.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0018.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0019.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0019.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0023.png">
+<meta property="og:updated_time" content="2016-10-12T03:55:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一直在路上">
+<meta name="twitter:description" content="title: ‘AsyncDisplayKit教程: 达到60FPS的滚动帧率’date: 2016-09-15 21:17:27categories: 翻译
+tags: AsyncDisplayKit天增岁月人增肉，今天是中秋。本文由René Cacheaux于14年发表于raywenderlich，原文可查看AsyncDisplayKit Tutorial: Achieving 60 FPS">
+<meta name="twitter:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/11/iOS-Simulator-Screen-Shot-7-Nov-2014-21.10.03.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6321865863578256000,
+      author: '主编大人'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/undefined/uncategorized/2016-09-16-AsyncDisplayKit-Tutorial-Achieving-60-FPS-scrolling【译】.html"/>
+
+  <title>  | 一直在路上 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d9a1587ce4c6042894f106ae7486a3ce";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一直在路上</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-16T21:17:27+08:00" content="2016-09-16">
+              2016-09-16
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/undefined/uncategorized/2016-09-16-AsyncDisplayKit-Tutorial-Achieving-60-FPS-scrolling【译】.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="undefined/uncategorized/2016-09-16-AsyncDisplayKit-Tutorial-Achieving-60-FPS-scrolling【译】.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/undefined/uncategorized/2016-09-16-AsyncDisplayKit-Tutorial-Achieving-60-FPS-scrolling【译】.html" class="leancloud_visitors" data-flag-title="">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <hr>
+<p>title: ‘AsyncDisplayKit教程: 达到60FPS的滚动帧率’<br>date: 2016-09-15 21:17:27<br>categories: 翻译</p>
+<h2 id="tags-AsyncDisplayKit"><a href="#tags-AsyncDisplayKit" class="headerlink" title="tags: AsyncDisplayKit"></a>tags: AsyncDisplayKit</h2><p>天增岁月人增肉，今天是中秋。<br>本文由René Cacheaux于14年发表于<a href="https://www.raywenderlich.com" target="_blank" rel="external">raywenderlich</a>，原文可查看<a href="https://www.raywenderlich.com/86365/asyncdisplaykit-tutorial-achieving-60-fps-scrolling" target="_blank" rel="external">AsyncDisplayKit Tutorial: Achieving 60 FPS scrolling</a>。<br>Facebook的<a href="https://www.facebook.com/paper" target="_blank" rel="external">Paper</a>团队创造了另一个非常棒的库：<a href="https://github.com/facebook/AsyncDisplayKit" target="_blank" rel="external">AsyncDisplayKit</a>。这个库允许你将图片解码，布局，渲染等操作放到后台线程，这样不会阻塞用户交互，从而使用户界面响应超级灵敏。本教程就是专门介绍它的，好好学学吧。<br><a id="more"></a><br>举个例子，对于非常复杂的界面你可以应用AsyncDisplayKit库来构建丝般顺滑，每秒60帧的滑动体验，而通过UIKit来优化不足以战胜这样的挑战。</p>
+<p>在本篇教程中，你将应用AsyncDisplayKit到一个主要是有UICollectionView滑动问题的工程中来显著提高它的性能。你将学到怎样将AsyncDisplayKit应用到现存项目中。</p>
+<pre><code>注意：在正式开始本篇教程之前，你应该已经很熟悉Swift，Core Animation，Core Graphics，GCD，NSOperation，Block。
+</code></pre><p>你可以在本网站上学习<a href="https://www.raywenderlich.com/115253/swift-2-tutorial-a-quick-start" target="_blank" rel="external">Swift</a> <a href="https://www.raywenderlich.com/115279/swift-2-tutorial-part-2-a-simple-ios-app" target="_blank" rel="external">2</a> <a href="https://www.raywenderlich.com/115300/swift-2-tutorial-part-3-tuples-protocols-delegates-and-table-views" target="_blank" rel="external">教程</a>。如果你想复习一下或者是深入研究这些话题，建议查看官方文档：<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CoreAnimation_guide/Introduction/Introduction.html" target="_blank" rel="external">Core　Animation Programming Guide</a>，<a href="https://developer.apple.com/library/mac/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/Introduction/Introduction.html" target="_blank" rel="external">Quartz 2D Programming Guide</a>。ＷＷＤＣ２０１２中有一篇<a href="https://developer.apple.com/videos/wwdc/2012/#238" target="_blank" rel="external">iOS App Performance: Graphics and Animations</a>是另一个我强烈推荐的优秀的学习资源，你可以多看几遍相信每次都会有新收获的。</p>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p>在开始之前，先看一眼AsyncDisplayKit的<a href="https://code.facebook.com/posts/721586784561674/introducing-asyncdisplaykit-for-smooth-and-responsive-apps-on-ios/" target="_blank" rel="external">官方介绍</a>。这会让你有一个大概了解这个库是什么，解决了神马问题。</p>
+<p>准备好了的话，首先下载<a href="http://www.raywenderlich.com/wp-content/uploads/2015/04/Layers-Start.zip" target="_blank" rel="external">初始化工程</a>。（译者说明：作者是应用Xcode6.3和iOS8.3SDK编译的工程，如果你用更新的Xcode版本，可能会报错，对应修改一下Swift源码即可。）</p>
+<pre><code>注意：写这篇教程的时候AsyncDisplayKit还只是1.0版本，且已经加入到工程中。
+</code></pre><p>这个app通过UICollectionView来展示不同的热带雨林动物。每一张信息卡片包含一个热带雨林动物的图片，名字和描述，卡片的背景是模糊化了的照片。还有一个渐变是为了保证文字更加清晰可见。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/11/iOS-Simulator-Screen-Shot-7-Nov-2014-21.10.03.png" alt=""> </p>
+<p>打开工程，按照以下指引你将会看到应用AsyncDisplayKit所带来的最激动人心的益处。</p>
+<ul>
+<li>最好在真机上运行这个app，因为在模拟器上很难看出来性能的提高。</li>
+<li>这个app虽然是通用各个设备上的，但是最好还是跑在iPad上。</li>
+<li>最后，为了更容易感受到这个库带来的变化，在一些比较老的设备上运行这个app，比如说第三代iPad。</li>
+</ul>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0002.png" alt=""> </p>
+<p>滑动这个collection view，注意那可怜的帧率。在第三代iPad上，差不多也就是15-20FPS。很明显，collection view掉了很多帧，在本篇教程的最后，滑动时会极度接近60FPS。</p>
+<pre><code>注意：你看到的所有图片都是在本地的，而没有通过网络获取的。
+</code></pre><h2 id="测量反应灵敏度"><a href="#测量反应灵敏度" class="headerlink" title="测量反应灵敏度"></a>测量反应灵敏度</h2><p>在应用AsyncDisplayKit到一个已存的工程中之前，你应该通过Instruments来测量一下UI的表现。这样修改了之后才好有个对比。</p>
+<p>最重要的是，你想要发现你的应用是CPU受限还是GPU受限。也就是说，到底是CPU还是GPU阻碍了你的app运行在一个高帧率上。这些信息能告诉你AsyncDisplayKit的哪些特性可以用来优化你的app。</p>
+<p>经过测量你会发现滑动性能是CPU受限的。你能猜出到底是什么原因导致掉帧么？<br>就是因为对背景图片进行模糊化处理阻塞了主线程从而导致掉帧的。</p>
+<h2 id="准备应用AsyncDisplayKit"><a href="#准备应用AsyncDisplayKit" class="headerlink" title="准备应用AsyncDisplayKit"></a>准备应用AsyncDisplayKit</h2><p>应用AsyncDisplayKit到一个工程中归根结底就是用node层级结构代替原有的view层级结构或layer树。展示node就是AsyncDisplayKit库的关键。它们位于view之上，而且是线程安全的，也就是说原来只能在主线程做的事情现在有一部分可以不在主线程做了。这样使得主线程有更多的精力能应对其他的操作比如说处理触摸事件或者处理collection view的滚动。</p>
+<p>也就是所第一步应该是移除原有的view层级结构。</p>
+<p><strong>移除view层级结构</strong></p>
+<p>打开RainforestCardCell.swift文件，在awakeFromNib()方法中删除所有 addSubview(…)，变成这样：</p>
+<pre><code>override func awakeFromNib() {
+      super.awakeFromNib()
+      contentView.layer.borderColor = UIColor(hue: 0, saturation: 0, brightness: 0.85, alpha: 0.2).CGColor
+      contentView.layer.borderWidth = 1
+}
+</code></pre><p>然后修改layoutSubviews()方法：</p>
+<pre><code>override func layoutSubviews() {
+      super.layoutSubviews()
+}
+</code></pre><p>修改configureCellDisplayWithCardInfo(cardInfo:)方法：</p>
+<pre><code>func configureCellDisplayWithCardInfo(cardInfo: RainforestCardInfo) {
+      //MARK: Image Size Section
+      let image = UIImage(named: cardInfo.imageName)!
+      featureImageSizeOptional = image.size
+}
+</code></pre><p>接着将cell其它属性删除掉，只留下一个：</p>
+<pre><code>class RainforestCardCell: UICollectionViewCell {
+      var featureImageSizeOptional: CGSize?
+      ...
+}
+</code></pre><p>最后，编译运行一下，你会看到神马都没有了：</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0001.jpg" alt=""> </p>
+<p>现在，cell都空了，再滚动真的是超级流畅。你的目标就是用node代替view来添加内容 而仍然保持这样的流畅度。</p>
+<p>最好用Instruments的 Core Animation来检测每一步修改之后的app，这样能直观的感受到修改对帧率带来的影响。</p>
+<p><strong>增加一个占位内容</strong></p>
+<p>在RainforestCardCell中添加一个CALayer类型的变量命名为placeholerlayer。</p>
+<pre><code>class RainforestCardCell: UICollectionViewCell {
+      var featureImageSizeOptional: CGSize?
+      var placeholderLayer: CALayer!
+      ...
+}
+</code></pre><p>之所以需要一个占位层是因为展示内容需要异步进行一些处理，而那是需要一点时间的，如果不加用户首先会看到一堆空的cell，显然不是那么令人愉悦。</p>
+<p>在awakeFromNib()和layoutSubviews()方法中，分别修改成下面的样子：</p>
+<pre><code>override func awakeFromNib() {
+      super.awakeFromNib()
+      placeholderLayer = CALayer()
+      placeholderLayer.contents = UIImage(named: &quot;cardPlaceholder&quot;)!.CGImage
+      placeholderLayer.contentsGravity = kCAGravityCenter
+      placeholderLayer.contentsScale = UIScreen.mainScreen().scale
+      placeholderLayer.backgroundColor = UIColor(hue: 0, saturation: 0, brightness: 0.85, alpha: 1).CGColor
+      contentView.layer.addSublayer(placeholderLayer)
+    }
+
+override func layoutSubviews() {
+      super.layoutSubviews()
+      placeholderLayer?.frame = bounds
+}
+</code></pre><p>再编译运行一下，看看是不是舒服多了<br><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0003.png" alt=""><br>没有UIView做支持的CALayer当改变frame时默认是有隐式动画的。为了修复，可做出如下修改：<br>    override func layoutSubviews() {<br>          super.layoutSubviews()<br>          CATransaction.begin()<br>          CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)<br>          placeholderLayer?.frame = bounds<br>          CATransaction.commit()<br>    }</p>
+<p>编译运行一下看看是不是解决了这个问题。现在占位层不再有动画了。</p>
+<h2 id="你的第一个Node"><a href="#你的第一个Node" class="headerlink" title="你的第一个Node"></a>你的第一个Node</h2><p>重构app的第一步就是在每个cell中增加一个背景图片node。在这一小节中，你将学到：</p>
+<ul>
+<li>创建，布局，将一个图像node添加到cell上</li>
+<li>用node和他们的layer处理cell的重用</li>
+<li>模糊图像node</li>
+</ul>
+<p>首先打开Layers-Bridging-Header.h导入头文件</p>
+<pre><code>#import &lt;AsyncDisplayKit/AsyncDisplayKit.h&gt;
+</code></pre><p>这样使得AsyncDisplayKit的类在所有swift文件中都可用了。</p>
+<p>编译一下确保一切正常。</p>
+<p><strong>Collection View相关</strong></p>
+<p>现在来看一下collectionview相关组件。</p>
+<ul>
+<li>View Controller：RainforestViewController类仅仅是得到内容数组然后实现UICollectionView必要的datasource方法，无需花太多时间观看。</li>
+<li>Data Source：你将要花费大部分时间在cell类上面，也就是RainforestCardCell。controller通过调用configureCellDisplayWithCardInfo(cardInfo:)方法将人带雨林卡片信息传给cell。然后cell用这些信息配置自身。</li>
+<li>Cell：在configureCellDisplayWithCardInfo(cardInfo:)方法中，cell创建，配置，布局，添加node到自身之上。也就是说每当controller从队列中取出一个cell，这个cell就会创建并添加到自身上一个新的node层级结构。</li>
+</ul>
+<p>如果你使用view代替node，出于性能原因的考虑这就不是最好的策略。因为你可以异步的创建，配置，布局node，甚至可以异步绘制node，从而性能会提升很多。难点在于当cell准备重用时如何取消正在异步进行的活动然后移除旧的node。<br>注意：本教程中添加node到cell的这个策略还算OK，这对于精通AsyncDisplayKit来说是个好的开端。然而，在实际开发中，你最好使用ASRangeController来缓存你的node，这样你就不用每当cell重用时都重建它的node层级结构。ASRangeController超出了本教程的范围，可以看看ASRangeController.h文件中的注释了解更多。<br>还有一点：1.1版的AsyncDisplayKit包含有ASCollectionView类。使用 ASCollectionView会让本app中的整个collection view都由node来处理。而在本教程中，每个cell都会包含一个node层级结构。如上面所解释的，这样可以，但如果使用整个collection view都应用node将会更好。屌爆的ASCollectionView!<br>好了，不BB了，开始写代码了。<br><strong>添加背景图像Node</strong><br>现在你要经历用node配置cell了，一步一步来就好。<br>打开RainforestCardCell.swift文件，修改configureCellDisplayWithCardInfo(cardInfo:)方法为：<br>    func configureCellDisplayWithCardInfo(cardInfo: RainforestCardInfo) {<br>          //MARK: Image Size Section<br>          let image = UIImage(named: cardInfo.imageName)!<br>          featureImageSizeOptional = image.size</p>
+<pre><code>      //MARK: Node Creation Section
+      let backgroundImageNode = ASImageNode()
+      backgroundImageNode.image = image
+      backgroundImageNode.contentMode = .ScaleAspectFill
+}
+</code></pre><p>这样就创建并配置了一个ASImageNode类型的常量，名字是backgroundImageNode。<br>    注意：确保//MARK: 注释部分也包含了，这样更容易跟随本教程。</p>
+<p>AsyncDisplayKit库有好几种node类型，比如说ASImageNode，当你需要显示图片时可以用它。它基本相当于 UIImageView，除了ASImageNode默认是异步地解码图片。<br>在 configureCellDisplayWithCardInfo(cardInfo:)方法的最后添加如下一行：</p>
+<pre><code>backgroundImageNode.layerBacked = true
+</code></pre><p>这样保证backgroundImageNode是一个由layer做支持（layer-backed）的node。</p>
+<p>Node由UIView或者是CALayer的实例做支持都可以。当需要能够处理事件（比如说触摸事件）时，你就需要一个UIView做支持的node。反之，如果仅仅是用于展示内容，用layer做支持的node就可以－它会更加轻量级，因此又能获得小小的性能提升。</p>
+<p>因为本教程中的app不需要处理事件，所以你将所有的node都设置为由layer做支持的就好。在上面的代码中，由于backgroundImageNode是由layer做支持的，AsyncDisplayKit会为雨林动物图像的内容创建一个 CALayer。<br>在configureCellDisplayWithCardInfo(cardInfo:)方法的最下面添加如下代码：<br>    //MARK: Node Layout Section<br>    backgroundImageNode.frame = FrameCalculator.frameForContainer(featureImageSize: image.size)</p>
+<p>这里使用FrameCalculator为backgroundImageNode布局。<br>FrameCalculator是一个帮助类，通过返回每个node的frame包含了cell的布局。注意所有内容都是手动布局的，而没有使用Auto Layout做约束。如果你需要构建自适应布局或者本地化驱动的布局，那就要小心了，因为不能给node添加约束。<br>接下来，添加代码到configureCellDisplayWithCardInfo(cardInfo:)方法底部：<br>    //MARK: Node Layer and Wrap Up Section<br>    self.contentView.layer.addSublayer(backgroundImageNode.layer)</p>
+<p>这就将backgroundImageNode的layer添加到cell的contentView的layer上了。<br>注意，AsyncDisplayKit会为backgroundImageNode创建一个layer。然而，你必须要将这个node放到一个 layer tree中才能在屏幕上显示。这个node将会被异步绘制，所以直到绘制完成，它的内容都不会显示，即使它的layer已经在一个layer树中。<br>从技术角度来说，layer一直都存在。但渲染图像是异步进行的。layer开始时并没有内容（例如是透明的）。一旦渲染完成，layer的contents就会更新为包含图像内容。<br>此时此刻，cell的contentView的layer会包含两个子层：占位层和node的layer。在node完成绘制前，只有占位图会显示。<br>注意到configureCellDisplayWithCardInfo(cardInfo:)方法每当cell从队列中被取出时都会被调用。每次cell被回收，cell的contentView的layer都会增加一个新的子层。先不要担心，很快会解决这个问题。<br>回到RainforestCardCell.swift的开头，添加一个ASImageNode类型的变量：<br>    class RainforestCardCell: UICollectionViewCell {<br>          var featureImageSizeOptional: CGSize?<br>          var placeholderLayer: CALayer!<br>          var backgroundImageNode: ASImageNode? ///&lt; ADD THIS LINE<br>          …<br>    }</p>
+<p>之所以需要这个属性是因为必须要将backgroundImageNode的引用保留住，否则ARC会自动将其释放，也就不会有东西显示了。node虽然保留了它们自己的layer的引用，但是反过来layer并没有保留它们从属的node的引用——因此即使node的layer已经在一个layer tree中，你依然需要保留node。<br>在configureCellDisplayWithCardInfo(cardInfo:)方法底部的Node Layer and Wrap Up Section的最后，修改如下：<br>    self.backgroundImageNode = backgroundImageNode<br>以下是configureCellDisplayWithCardInfo(cardInfo:)方法的完整版：<br>    func configureCellDisplayWithCardInfo(cardInfo: RainforestCardInfo) {<br>          //MARK: Image Size Section<br>          let image = UIImage(named: cardInfo.imageName)!<br>          featureImageSizeOptional = image.size</p>
+<pre><code>      //MARK: Node Creation Section
+      let backgroundImageNode = ASImageNode()
+      backgroundImageNode.image = image
+      backgroundImageNode.contentMode = .ScaleAspectFill
+      backgroundImageNode.layerBacked = true
+
+      //MARK: Node Layout Section
+      backgroundImageNode.frame = FrameCalculator.frameForContainer(featureImageSize: image.size)
+
+      //MARK: Node Layer and Wrap Up Section
+      self.contentView.layer.addSublayer(backgroundImageNode.layer)
+      self.backgroundImageNode = backgroundImageNode
+}
+</code></pre><p>编译并运行，观察AsyncDisplayKit是如何异步地使用图像设置layer的contents的。这使得你能够当CPU在后台绘制layer的内容的同时流畅的滑动界面。<br><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0006.png" alt=""><br>如果你是运行在旧设备上，注意图像是如何出现的——这是爆米花特效，但不总是受欢迎！本教程的最后一节会去掉这个不令人愉快的弹出效果，替换成让图像非常友好地淡入，非常酷。<br>如之前所讨论的，每当cell被重用时新的node就会被创建。这并不很理想因为这意味着每当cell被重用时就会增加一个layer。<br>如果你想看看子层堆积太多的结果，那就多上下滑动几次，然后加个断点打印cell的contentView的layer的sublayers属性。你应该会看到很多layer，这并不好。<br><strong>处理cell的重用</strong><br>还是在cell类中，添加一个叫做contentLayer的CALayer类型的变量。注意是可选类型：<br>    class RainforestCardCell: UICollectionViewCell {<br>          var featureImageSizeOptional: CGSize?<br>          var placeholderLayer: CALayer!<br>          var backgroundImageNode: ASImageNode?<br>          var contentLayer: CALayer? ///&lt; ADD THIS LINE<br>          …<br>    }<br>你将使用这个属性移除cell的contentView的layer tree中旧的node layer。虽然你也可以简单的通过访问node的layer属性来获得，但上面的写法更清晰。<br>在configureCellDisplayWithCardInfo(cardInfo:)方法最后添加代码:<br>    self.contentLayer = backgroundImageNode.layer<br>然后，修改prepareForReuse()方法：<br>    override func prepareForReuse() {<br>          super.prepareForReuse()<br>          backgroundImageNode?.preventOrCancelDisplay = true<br>    }<br>因为AsyncDisplayKit能够异步地绘制node，所以你能够阻止未开始的绘制也能够取消任何在进行中的绘制。无论是你需要阻止还是取消绘制，将preventOrCancelDisplay属性设置为true即可。在本例中，你要在cell被重用前取消任何正在进行的绘制活动。<br>接下来，添加如下代码到prepareForReuse()尾部：<br>    contentLayer?.removeFromSuperlayer()</p>
+<p>这就将contentLayer从其父layer（也就是contentView的layer）中移除了。</p>
+<p>每当一个cell被回收，上面代码就移除了旧的node的layer，因而解决了堆积问题。因此在任何时间，最多只有两个子layer：占位层和 node的layer。</p>
+<p>继续添加如下代码：</p>
+<pre><code>contentLayer = nil
+backgroundImageNode = nil
+</code></pre><p>这确保cell释放它们的引用，这样ARC才好做清理工作。<br>编译并运行。这次，不会再有layer堆积的问题，且所有不必要的绘制都会被取消。<br><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0006.png" alt=""></p>
+<p>终于该加点儿模糊效果了，宝贝，是模糊呀。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/11/asyncscroll.png" alt=""></p>
+<p><strong>模糊图像</strong></p>
+<p>要模糊图像，需要添加一个额外的步骤到图像node显示过程中。<br>还是在cell的configureCellDisplayWithCardInfo(cardInfo:)方法中，在设置backgroundImageNode.layerBacked的后面，添加如下代码：</p>
+<pre><code>backgroundImageNode.imageModificationBlock = { input in
+      if input == nil {
+        return input
+      }
+      if let blurredImage = input.applyBlurWithRadius(
+        30,
+        tintColor: UIColor(white: 0.5, alpha: 0.3),
+        saturationDeltaFactor: 1.8,
+        maskImage: nil, 
+        didCancel:{ return false }) {
+          return blurredImage
+      } else {
+        return image
+      }
+}
+</code></pre><p>ASImageNode的imageModificationBlock给了你一个在显示之前去处理底层的图像的机会。这是非常实用的功能。<br>在上面的代码里，你使用imageModificationBlock来为cell的背景图像应用模糊效果。关键点在于图像node将会在后台绘制它的内容并执行这个闭包，而主线程依然顺滑流畅。这个闭包接受原始的UIImage并返回一个经过处理的UIImage。<br>上面的代码使用了UIImage的模糊category，它由Apple在WWDC2013 提供，使用了Accelerate framework在CPU上模糊图像。因为模糊会消耗很多时间和内存，这个版本的category被修改为包含了取消机制。这个模糊方法会定期调用didCancel闭包来决定是否应该要停止模糊。<br>暂时，上面的代码给didCancel简单地返回false，稍后会修改。</p>
+<p>注意：还记得第一次运行app时collection view那可怜的滑动效果吗？就是应为模糊方法阻塞了主线程。通过使用AsyncDisplayKit将模糊放入后台，能显著提高collection view的滑动性能。简直天壤之别。</p>
+<p>编译并运行，观察模糊效果：</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0009.png" alt=""></p>
+<p>感受下此时滑动collection view有多流畅。<br>当collection view从队列中取出一个cell时，一个模糊操作将在后台线程开始。当用户快速滑动时，collection view会重用每个cell很多次，同时会开始许多模糊操作。我们的目标是在cell准备被重用时取消正在进行中的模糊操作。<br>你已经在prepareForReuse()里取消了node的绘制，但一旦控制权被移交给处理图像修改的闭包，你还需要响应node的preventOrCancelDisplay信号。</p>
+<p><strong>取消模糊</strong></p>
+<p>为了取消进行中的模糊操作，你需要实现模糊方法的didCancel闭包。<br>添加一个捕捉列表到imageModificationBlock以捕捉一个backgroundImageNode的弱引用：<br>    backgroundImageNode.imageModificationBlock = { [weak backgroundImageNode] input in<br>       …<br>    }</p>
+<p>用弱引用是为了避免循环引用。修改imageModificationBlock如下：</p>
+<pre><code>backgroundImageNode.imageModificationBlock = { [weak backgroundImageNode] input in
+      if input == nil {
+        return input
+      }
+      // ADD FROM HERE...
+      let didCancelBlur: () -&gt; Bool = {
+           var isCancelled = true
+         // 1
+         if let strongBackgroundImageNode = backgroundImageNode {
+              // 2
+              let isCancelledClosure = {
+                isCancelled = strongBackgroundImageNode.preventOrCancelDisplay
+              }
+               // 3
+               if NSThread.isMainThread() {
+                isCancelledClosure()
+               } else {
+                dispatch_sync(dispatch_get_main_queue(), isCancelledClosure)
+               }
+        }
+        return isCancelled
+      }
+      // ...TO HERE
+      ...
+}
+</code></pre><p>稍微解释一下：</p>
+<ol>
+<li>获得一个对backgroundImageNode的强引用。如果此处代码执行时backgroundImageNode已经为空，那么isCancelled将保持为true，然后模糊操作将会被取消。如果没有node需要显示时，自然没有必要继续进行模糊操作。</li>
+<li>之所以会将取消检查包在闭包里是因为一旦node创建了它的layer或view，以后就只能在主线程访问node的属性。由于你需要访问preventOrCancelDisplay，所以必须在主线程中检查。</li>
+<li>最后，确保isCancelledClosure是在主线程被调用，在didCancelBlur闭包返回之前设置好isCancelled。 </li>
+</ol>
+<p>在调用applyBlurWithRadius(…)方法处，修改传递给didCancel的参数：</p>
+<pre><code>if let blurredImage = input.applyBlurWithRadius(
+      30,
+      tintColor: UIColor(white: 0.5, alpha: 0.3),
+      saturationDeltaFactor: 1.8,
+      maskImage: nil,
+      didCancel: didCancelBlur) {
+      ...
+}
+</code></pre><p>编译并运行，你可能没有注意到有多大差别，但现在任何在cell离开屏幕时还未完成的模糊都会被取消了。这就意味着设备比之前做得更少了。你可能观察到轻微的性能提升，特别是在较慢的设备如第三代iPad上运行时。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0009.png" alt=""></p>
+<p>当然了，若没有东西在前面，也就谈不上什么背景。你的卡片需要内容。通过下面四个小节，你将学会：</p>
+<ul>
+<li><p>创建一个会将所有的子node绘制到一个单独的CALayer里的容器node；</p>
+</li>
+<li><p>构建一个node层级结构；</p>
+</li>
+<li><p>创建一个自定义的ASDisplayNode子类；</p>
+</li>
+<li><p>在后台构建并布局node层级结构。</p>
+</li>
+</ul>
+<p>所有这些做完后，你就会得到一个看起来和应用AsyncDisplayKit之前一样的app，然而却有着黄油般顺滑的滑动体验。</p>
+<h2 id="Rasterized容器Node"><a href="#Rasterized容器Node" class="headerlink" title="Rasterized容器Node"></a>Rasterized容器Node</h2><p>截止目前，你一直在操作cell内的一个单独的node。接下来，你将创建一个容器node，它会包含所有的卡片内容。</p>
+<p><strong>增加容器Node</strong>  </p>
+<p>在configureCellDisplayWithCardInfo(cardInfo:)方法中，在Node Layout Section之前backgroundImageNode.imageModificationBlock之后，增加如下代码：</p>
+<pre><code>//MARK: Container Node Creation Section
+let containerNode = ASDisplayNode()
+containerNode.layerBacked = true
+containerNode.shouldRasterizeDescendants = true
+containerNode.borderColor = UIColor(hue: 0, saturation: 0, brightness: 0.85, alpha: 0.2).CGColor
+containerNode.borderWidth = 1
+</code></pre><p>这就创建并配置了一个叫做containerNode的ASDisplayNode常量。注意这个容器的shouldRasterizeDescendants属性，这是一个关于node如何工作的暗示以及一个使它们工作得更好地机会。<br>正如单词 “descendants（子孙）” 所暗示的，你可以创建AsyncDisplayKit Node的层级结构或树，就如你可以创建Core Animation Layer的层级结构一样。举个例子，如果你有一个都是由Layer支持的node的层级结构，那么AsyncDisplayKit将会为每个node创建一个单独的CALayer，layer层级结构会映射node层次结构。<br>这听起来很熟悉：它类似于当你使用普通的UIKit时，layer层级结构会映射view层次结构。然而，这个layer的栈有一些不同的结果：</p>
+<ul>
+<li>首先，因为是异步渲染，你会看到layer逐个显示。当AsyncDisplayKit绘制完成一个layer，它会立刻制作layer的显示内容。所以如果你有一个layer的绘制比其他 layer耗时更长，那么它将会在它们之后显示。用户会看到零碎的layer组件，这个过程通常是不可见的，因为Core Animation会在显示任何东西之前的runloop中重绘所有必须的 layer。</li>
+<li>第二，layer太多了以后可能会引起性能问题。每个CALayer都需要一块内存来存储它的像素位图和内容。同样，Core Animation必须通过XPC将每个layer发给渲染服务器。最后，渲染服务器可能需要重绘一些layer以复合它们，例如当混合layer时。通常来说，更多的layer意味着Core Animation更多的工作。所以限制layer的使用数量有许多好处。</li>
+</ul>
+<p>为了解决这个问题，AsyncDisplayKit有一个方便的特性：它允许你绘制一个node层级结构到一个单独的layer容器中。这就是shouldRasterizeDescendants所做的。当你设置了这个，那么在完成所有的Subnode的绘制之前，ASDisplayNode将不会设置layer的contents。<br>所以在之前的步骤里，设置容器node的shouldRasterizeDescendants为true有两个好处：</p>
+<ul>
+<li>它确保卡片一次显示所有的node，就如同旧的同步绘制；</li>
+<li>而且它通过光栅化layer栈到一个单独的layer并最小化未来的合成消耗而提高了效率。</li>
+</ul>
+<p>唯一的缺点是，由于你将所有的layer放入一个位图，你就不能在之后单独给某一个node加动画了。</p>
+<p>要了解更多，请看shouldRasterizeDescendants在头文件 ASDisplayNode.h里的注释。</p>
+<p>接下来，在Container Node Creation Section之后，修改代码：<br>    //MARK: Node Hierarchy Section<br>    containerNode.addSubnode(backgroundImageNode)</p>
+<p>注意：添加node的顺序很重要，就如同subview和sublayer。最先添加的node会在之后添加的后面显示。</p>
+<p>修改Node Layout Section的第一行：</p>
+<pre><code>//MARK: Node Layout Section
+containerNode.frame = FrameCalculator.frameForContainer(featureImageSize: image.size)
+</code></pre><p>最后，用FrameCalculator布局backgroundImageNode：</p>
+<pre><code>backgroundImageNode.frame = FrameCalculator.frameForBackgroundImage(containerBounds: containerNode.bounds)
+</code></pre><p>这样就设置backgroundImageNode充满整个containerNode。</p>
+<p>你几乎完成了新的node层级结构，但因为现在容器node是容器了所以首先你需要正确地设置layer的层级结构。</p>
+<p><strong>管理容器Node的层</strong></p>
+<p>在Node Layer and Wrap Up Section部分，修改如下：</p>
+<pre><code>// Replace the following line...
+// self.contentView.layer.addSublayer(backgroundImageNode.layer)
+// ...with this line:
+self.contentView.layer.addSublayer(containerNode.layer)
+</code></pre><p>删除下面backgroundImageNode属性的引用：</p>
+<pre><code>self.backgroundImageNode = backgroundImageNode
+</code></pre><p>因为现在cell仅仅需要保留一个容器node的引用，所以修改如下：</p>
+<pre><code>// Replace the following line...
+// self.contentLayer = backgroundImageNode.layer
+// ...with this line:
+self.contentLayer = containerNode.layer    
+</code></pre><p>增加一个可选的ASDisplayNode类型变量命名为containerNode：</p>
+<pre><code>class RainforestCardCell: UICollectionViewCell {
+   var featureImageSizeOptional: CGSize?
+   var placeholderLayer: CALayer!
+   var backgroundImageNode: ASImageNode?
+   var contentLayer: CALayer?
+   var containerNode: ASDisplayNode? ///&lt; ADD THIS LINE
+   ...
+}
+</code></pre><p>记住你需要保留你自己的node，否则它们会立即被释放。</p>
+<p>回到configureCellDisplayWithCardInfo(cardInfo:)方法，在Node Layer and Wrap Up Section的最后，做一个赋值：</p>
+<pre><code>self.containerNode = containerNode
+</code></pre><p>编译并运行，模糊的图像将会再此显示！但还有最后一件事要去改变，因为现在有了新的node层级结构。回忆之前cell重用时你控制图像node停止显示。现在你需要让整个 node层级结构都停止显示。</p>
+<p><strong>用新的Node层级结构处理cell重用</strong></p>
+<p>在prepareForReuse()方法中，修改如下：</p>
+<pre><code>override func prepareForReuse() {
+      super.prepareForReuse()
+
+      // Replace this line...
+      // backgroundImageNode?.preventOrCancelDisplay = true
+      // ...with this line:
+      containerNode?.recursiveSetPreventOrCancelDisplay(true)
+
+      contentLayer?.removeFromSuperlayer()
+      ...
+}
+</code></pre><p>当你需要取消一整个node层次结构的绘制时用recursiveSetPreventOrCancelDisplay()，这个方法将会给当前node以及它所有的子node设置preventOrCancelDisplay值。</p>
+<p>接下来，继续修改：</p>
+<pre><code>override func prepareForReuse() {
+      ...
+      contentLayer = nil
+
+      // Replace this line...
+      // backgroundImageNode = nil
+      // ...with this line:
+      containerNode = nil
+}
+</code></pre><p>删除backgroundImageNode属性：</p>
+<pre><code>class RainforestCardCell: UICollectionViewCell {
+      var featureImageSizeOptional: CGSize?
+      var placeholderLayer: CALayer!
+      // var backgroundImageNode: ASImageNode? ///&lt; REMOVE THIS LINE
+      var contentLayer: CALayer?
+      var containerNode: ASDisplayNode?
+      ...
+}    
+</code></pre><p>编译并运行，app呈现如之前一样，但现在你的图像node在容器node中，而重用依然和它应有的方式一样。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0009.png" alt=""></p>
+<h2 id="cell的内容"><a href="#cell的内容" class="headerlink" title="cell的内容"></a>cell的内容</h2><p>目前为止你有了一个node层级结构，但容器内还只有一个node——图像node。现在是时候设置node层级结构去复制在添加AsyncDisplayKit之前时应用的视图层级结构了。这意味着添加text和一个未模糊的特征图像。</p>
+<p><strong>增加特征图像</strong><br>要添加特征图像了，它是一个未模糊的图像，显示在卡片的顶部。<br>打开cell文件并找到configureCellDisplayWithCardInfo(cardInfo:)方法，在Node Creation Section的底部，添加如下代码：</p>
+<pre><code>let featureImageNode = ASImageNode()
+featureImageNode.layerBacked = true
+featureImageNode.contentMode = .ScaleAspectFit
+featureImageNode.image = image
+</code></pre><p>这就创建并配置了一个叫做featureImageNode的ASImageNode的常量。它被设置为由layer支持，自适应缩放，并设置显示图像，这次不需要模糊。</p>
+<p>在Node Hierarchy Section的最后，将featureImageNode设为containerNode的一个子node。<br>    containerNode.addSubnode(featureImageNode)</p>
+<p>在Node Layout Section，布局featureImageNode<br>    featureImageNode.frame = FrameCalculator.frameForFeatureImage(featureImageSize: image.size, containerFrameWidth: containerNode.frame.size.width)</p>
+<p>编译并运行，你会看到特征图像显示在卡片的顶部，位于模糊图像的上方。注意特征图像和模糊图像是在同一时间跳出的。这是你之前添加的shouldRasterizeDescendants在起作用。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0015.png" alt=""></p>
+<p><strong>增加标题文字</strong><br>接下来添加文字label，用来显示动物的名字和描述。首先来动物名字吧。<br>继续在configureCellDisplayWithCardInfo(cardInfo:)中，找到Node Creation Section。添加下列代码到这节尾部，就在创建featureImageNode之后：</p>
+<pre><code>let titleTextNode = ASTextNode()
+titleTextNode.layerBacked = true
+titleTextNode.backgroundColor = UIColor.clearColor()
+titleTextNode.attributedString = NSAttributedString.attributedStringForTitleText(cardInfo.name)
+</code></pre><p>这就创建了一个叫做titleTextNode的ASTextNode类型常量。<br>ASTextNode是另一个AsyncDisplayKit提供的node子类，用于显示文本。它是一个基于UILabel效果的node。它接受一个attributed string，由TextKit支持，拥有如文本链接等许多特性。要学到更多关于这个Node的功能，去看看ASTextNode.h吧。<br>初始项目包含有一个NSAttributedString的扩展，它提供了一个工厂方法去生成一个属性字符串用于将title和description文本显示在雨林卡片上。上面的代码使用了这个扩展的attributedStringForTitleText(…)方法。<br>在Node Hierarchy Section的最后，添加：<br>    containerNode.addSubnode(titleTextNode)</p>
+<p>这样就将titleTextNode增加到了node层级结构中，因为它是最后一个添加的所以它会在最上面。</p>
+<p>在Node Layout Section的最后，添加：<br>    titleTextNode.frame = FrameCalculator.frameForTitleText(containerBounds: containerNode.bounds, featureImageFrame: featureImageNode.frame)</p>
+<p>这样就完成了titleTextNode的布局。<br>编译并运行，你就有了一个显示在特征图像顶部的标题。再次说明，label只会在整个cell准备好渲染时才渲染。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0017.png" alt=""></p>
+<p><strong>增加描述文字</strong></p>
+<p>和增加标题文字差不多。<br>在configureCellDisplayWithCardInfo(cardInfo:)方法中创建node：</p>
+<pre><code>let descriptionTextNode = ASTextNode()
+descriptionTextNode.layerBacked = true
+descriptionTextNode.backgroundColor = UIColor.clearColor()
+descriptionTextNode.attributedString = NSAttributedString.attributedStringForDescriptionText(cardInfo.description)
+</code></pre><p>添加到node层级结构中：</p>
+<pre><code>containerNode.addSubnode(descriptionTextNode)
+</code></pre><p>布局：</p>
+<pre><code>descriptionTextNode.frame = FrameCalculator.frameForDescriptionText(containerBounds: containerNode.bounds, featureImageFrame: featureImageNode.frame)
+</code></pre><p>编译并运行，你就也能看到描述文字了。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0018.png" alt=""></p>
+<h2 id="自定义Node子类"><a href="#自定义Node子类" class="headerlink" title="自定义Node子类"></a>自定义Node子类</h2><p>现在你已经使用了ASImageNode和ASTextNode。现在来学习下如何创建node子类吧。</p>
+<p><strong>创建一个渐变的Node类</strong></p>
+<p>接下来，你将用GradientView.swift中的Core Graphics代码来构建一个自定义的渐变的node。渐变会显示在特征图像的底部以便让标题看起来更加明显。</p>
+<p>打开Layers-Bridging-Header.h文件，添加如下：</p>
+<pre><code>#import &lt;AsyncDisplayKit/_ASDisplayLayer.h&gt;
+</code></pre><p>这一步是必需的因为这个类没有包含在库的主头文件里。你在子类化任何ASDisplayNode或_ASDisplayLayer时都需要访问这个类。</p>
+<p>创建一个继承自ASDisplayNode的子类GradientNode，增加如下方法：</p>
+<pre><code>class func drawRect(bounds: CGRect, withParameters parameters: NSObjectProtocol!,
+    isCancelled isCancelledBlock: asdisplaynode_iscancelled_block_t!, isRasterizing: Bool) {
+
+}
+</code></pre><p>如同UIView或CALayer，你可以子类化ASDisplayNode去做自定义绘制。你可以绘制到UIView的layer或是单独的CALayer，这取决于实际情况。查看ASDisplayNode+Subclasses.h以获取更多关于子类化ASDisplayNode的信息。<br>另外，ASDisplayNode的绘制方法比在UIView和CALayer里的接受更多参数，给你提供方法少做工作，并更有效率。<br>要为你自定义Display Node填充内容，你需要实现来自_ASDisplayLayerDelegate协议的drawRect(…)或displayWithParameters(…)。在继续之前，看看_ASDisplayLayer.h中这些方法和它们的参数。搜索 _ASDisplayLayerDelegate，重点看看头文件注释里关于drawRect(…)的描述。<br>因为渐变图位于特征图的上方，使用Core Graphics绘制，所以你需要使用drawRect(…)。<br>打开GradientView.swift并拷贝drawRect(…)的内容到GradientNode.swift的drawRect(…)中，如下：</p>
+<pre><code>class func drawRect(bounds: CGRect, withParameters parameters: NSObjectProtocol!,
+isCancelled isCancelledBlock: asdisplaynode_iscancelled_block_t!, isRasterizing: Bool) {
+      let myContext = UIGraphicsGetCurrentContext()
+      CGContextSaveGState(myContext)
+      CGContextClipToRect(myContext, bounds)
+
+      let componentCount: Int = 2
+      let locations: [CGFloat] = [0.0, 1.0]
+      let components: [CGFloat] = [0.0, 0.0, 0.0, 1.0,
+0.0, 0.0, 0.0, 0.0]
+      let myColorSpace = CGColorSpaceCreateDeviceRGB()
+      let myGradient = CGGradientCreateWithColorComponents(myColorSpace, components,
+locations, componentCount)
+
+      let myStartPoint = CGPoint(x: bounds.midX, y: bounds.maxY)
+      let myEndPoint = CGPoint(x: bounds.midX, y: bounds.midY)
+      CGContextDrawLinearGradient(myContext, myGradient, myStartPoint,
+myEndPoint, UInt32(kCGGradientDrawsAfterEndLocation))
+
+      CGContextRestoreGState(myContext)
+}
+</code></pre><p>现在可以删除GradientView.swift了。</p>
+<p><strong>增加渐变Node</strong></p>
+<p>打开RainforestCardCell.swift文件，找到configureCellDisplayWithCardInfo(cardInfo:)方法，在Node Creation Section的底下，增加代码：</p>
+<pre><code>let gradientNode = GradientNode()
+gradientNode.opaque = false
+gradientNode.layerBacked = true
+</code></pre><p>在Node Hierarchy Section，修改如下：</p>
+<pre><code>//MARK: Node Hierarchy Section
+containerNode.addSubnode(backgroundImageNode)
+containerNode.addSubnode(featureImageNode)
+containerNode.addSubnode(gradientNode) ///&lt; ADD THIS LINE
+containerNode.addSubnode(titleTextNode)
+containerNode.addSubnode(descriptionTextNode)
+</code></pre><p>在Node Layout Section底下:</p>
+<pre><code>gradientNode.frame = FrameCalculator.frameForGradient(featureImageFrame: featureImageNode.frame)
+</code></pre><p>编译运行一下，看看效果！<br><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0019.png" alt=""><br><strong>爆米花效果</strong><br>如之前提到的，cell的node内容会在完成绘制时“弹出”。这不是很理想。所以现在来以修复这个问题。但首先，更加深入学习AsyncDisplayKit以看看它是如何工作的。<br>在configureCellDisplayWithCardInfo(cardInfo:)的Container Node Creation Section，关闭容器node的shouldRasterizeDescendants：<br>    containerNode.shouldRasterizeDescendants = false</p>
+<p>编译并运行，你会注意到现在容器层级结构里不同的node一个接一个的弹出。首先是文字，然后是特征图，再然后是模糊背景图。<br>当shouldRasterizeDescendants被关闭后，AsyncDisplayKit就不是绘制一个容器layer了，它会创建一个能够反映卡片node层级结构的layer tree。记得爆米花特效的出现是因为每个layer都在它绘制完成后立即出现，而某些layer比其他的花费更多时间在绘制上。<br>这不是我们想要的，但它说明了AsyncDisplayKit的工作方式。我们不想要这个行为，所以还是将shouldRasterizeDescendants打开：<br>    containerNode.shouldRasterizeDescendants = true</p>
+<p>现在来想想怎么样去掉爆米花特效。首先，看看node如何在后台被构建。</p>
+<h2 id="在后台构建Node"><a href="#在后台构建Node" class="headerlink" title="在后台构建Node"></a>在后台构建Node</h2><p>除了异步地绘制，使用AsyncDisplayKit，你同样可以异步地创建、配置以及布局。深呼吸一下，因为这就是你接下来要做的事情。<br><strong>创建一个Node构建operation</strong><br>你要将node层级结构的构造包装到一个NSOperation中。这样做很棒，因为操作能很容易的在不同的操作队列上执行，包括后台队列。<br>打开 RainforestCardCell.swift 。然后添加如下方法：<br>    func nodeConstructionOperationWithCardInfo(cardInfo: RainforestCardInfo, image: UIImage) -&gt; NSOperation {<br>          let nodeConstructionOperation = NSBlockOperation()<br>          nodeConstructionOperation.addExecutionBlock {<br>            // TODO: Add node hierarchy construction<br>          }<br>          return nodeConstructionOperation<br>    }</p>
+<p>绘制并不是唯一会拖慢主线程的操作。对于复杂的屏幕来说，布局计算也有可能变的昂贵。目前为止，本工程的当前状态，缓慢的node布局会引起collection view丢帧。<br>60 FPS意味着你有大约17ms的时间让你的cell准备好显示，否则一个或多个帧就会被丢掉。这在有很多很复杂的cell的table view和collection view中是非常常见的，滑动时丢帧就是这个原因。<br>AsyncDisplayKit前来救援！<br>你将使用上面的nodeConstructionOperation将所有node层级结构的构建以及布局从主线程分离并放入后台NSOperationQueue，进一步确保collection view能尽量以接近60 FPS的帧率滑动。<br>警告：你可以在后台访问并设置node的属性，但只能在node的layer或view未被创建之前，也就是当你第一次访问node的layer或view属性时。<br>一旦node的layer或view被创建，你就必须在主线程才能访问和设置node的属性了，因为node将会转发这些调用到它的layer或view上。如果你得到一个崩溃log显示“Incorrect display node thread affinity”，那就意味着node在创建了layer或view之后，你依然尝试在后台访问或设置node的属性。<br>修改nodeConstructionOperation操作block如下：<br>    nodeConstructionOperation.addExecutionBlock {<br>          [weak self, unowned nodeConstructionOperation] in<br>          if nodeConstructionOperation.cancelled {<br>            return<br>          }<br>          if let strongSelf = self {<br>            // TODO: Add node hierarchy construction<br>          }<br>    }<br>当这个操作运行时，cell可能已经被释放了。那样的话，就不需要做任何工作了。类似的，如果操作被取消了，那一样也没有工作要做了。<br>之所以对nodeConstructionOperation使用unowned引用也是为了避免在操作和执行闭包之间产生保留环。<br>现在找到configureCellDisplayWithCardInfo(cardInfo:)。将任何在Image Size Section之后的代码移动到nodeConstructionOperation的执行闭包里。将代码放在strongSelf的条件语句里，即TODO的位置。之后 configureCellDisplayWithCardInfo(cardInfo:)方法将看起来如下：</p>
+<pre><code>func configureCellDisplayWithCardInfo(cardInfo: RainforestCardInfo) {
+      //MARK: Image Size Section
+      let image = UIImage(named: cardInfo.imageName)!
+      featureImageSizeOptional = image.size
+}
+</code></pre><p>你将会有一些编译错误。这是因为操作block中的self是一个弱引用，因此是可选的。但你有一个对self的强引用，因为代码在可选绑定语句内。所以替换错误的几行成下面的样子：<br>    strongSelf.contentView.layer.addSublayer(containerNode.layer)<br>    strongSelf.contentLayer = containerNode.layer<br>    strongSelf.containerNode = containerNode</p>
+<p>最后，添加如下代码到你刚改动的三行之下：</p>
+<pre><code>containerNode.setNeedsDisplay()
+</code></pre><p>编译确保没有错误。如果你现在运行，那么只有占位图会显示，因为node的创建操作还没有实际被使用。现在来添加它。<br><strong>使用Node创建操作</strong></p>
+<p>打开RainforestCardCell.swift文件，添加新属性：<br>    class RainforestCardCell: UICollectionViewCell {<br>          var featureImageSizeOptional: CGSize?<br>          var placeholderLayer: CALayer!<br>          var contentLayer: CALayer?<br>          var containerNode: ASDisplayNode?<br>          var nodeConstructionOperation: NSOperation? ///&lt; ADD THIS LINE<br>          …<br>    }</p>
+<p>这样增加了一个NSOperation类型可选变量。<br>当cell准备回收时，你将使用这个属性去取消node的构建。这在用户非常快速地滑动collection view时发生，特别是如果布局还需要一些计算时间的话。<br>在prepareForReuse()中添加如下指示的代码：<br>    override func prepareForReuse() {<br>          super.prepareForReuse()</p>
+<pre><code>      // ADD FROM HERE...
+      if let operation = nodeConstructionOperation {
+        operation.cancel()
+      }
+      // ...TO HERE
+
+      containerNode?.recursiveSetPreventOrCancelDisplay(true)
+      contentLayer?.removeFromSuperlayer()
+      contentLayer = nil
+      containerNode = nil
+}
+</code></pre><p>这就在cell被重用时取消了操作，所以如果node创建还没完成，它就不会完成了。<br>现在找到configureCellDisplayWithCardInfo(cardInfo:)方法，添加代码：<br>    func configureCellDisplayWithCardInfo(cardInfo: RainforestCardInfo) {<br>          // ADD FROM HERE…<br>          if let oldNodeConstructionOperation = nodeConstructionOperation {<br>            oldNodeConstructionOperation.cancel()<br>          }<br>          // …TO HERE</p>
+<pre><code>      //MARK: Image Size Section
+      let image = UIImage(named: cardInfo.imageName)!
+      featureImageSizeOptional = image.size
+}
+</code></pre><p>这个cell现在会在它准备重用并开始配置时，取消任何进行中的node构造操作。这确保了操作被取消，即使cell在准备好重用前就被重新配置。<br>编译一下以确保没有错误。<br><strong>运行在主线程</strong><br>AsyncDisplayKit允许你在非主线程做许多工作。但当它要面对UIKit和CoreAnimation时，你还是需要在主线程做。目前为止，你从主线程移走了所有的node创建。但还有一件事需要被放在主线程——即设置CoreAnimation的layer层级结构。<br>在RainforestCardCell.swift中，找到nodeConstructionOperationWithCardInfo(cardInfo:image:)并替换Node Layer and Wrap Up Section为如下代码：<br>    // 1<br>    dispatch_async(dispatch_get_main_queue()) { [weak nodeConstructionOperation] in<br>          if let strongNodeConstructionOperation = nodeConstructionOperation {<br>            // 2<br>            if strongNodeConstructionOperation.cancelled {<br>                  return<br>            }</p>
+<pre><code>        // 3
+        if strongSelf.nodeConstructionOperation !== strongNodeConstructionOperation {
+          return
+            }
+
+        // 4
+        if containerNode.preventOrCancelDisplay {
+              return
+        }
+
+        // 5
+        //MARK: Node Layer and Wrap Up Section
+        strongSelf.contentView.layer.addSublayer(containerNode.layer)
+        containerNode.setNeedsDisplay()
+        strongSelf.contentLayer = containerNode.layer
+        strongSelf.containerNode = containerNode
+      }
+}
+</code></pre><p>稍微解释一下：</p>
+<ol>
+<li>回忆当node的layer属性第一次被访问时，所有的layer都会被创建。这就是为何你必须运行在主线程。</li>
+<li>操作被检查以确定是否在添加到layer层级结构之前就已经取消了。在操作完成前，cell被重用或者重新配置，就很可能会出现这样的情况，那你就不应该添加layer了。</li>
+<li>作为一个保护措施，确保node当前的nodeConstructionOperation和被调度到此闭包中的操作是同一个NSOperation。</li>
+<li>如果containerNode的preventOrCancel是true就立即返回。如果构造操作完成，但node的绘制被取消了，你依然不想将node的layer显示到cell中。</li>
+<li>最后，添加node的layer到层级结构中，如果必要这将创建layer。 </li>
+</ol>
+<p>编译一下以确保一切OK。</p>
+<p><strong>开始Node创建操作</strong></p>
+<p>你依然没有实际创建和开始操作，现在来做。<br>继续在RainforestCardCell.swift里，改变configureCellDisplayWithCardInfo(cardInfo:)的方法签名为：<br>    func configureCellDisplayWithCardInfo(cardInfo: RainforestCardInfo, nodeConstructionQueue: NSOperationQueue)</p>
+<p>这里添加了一个新的参数nodeConstructionQueue。它就是一个用于将node创建操作入队的NSOperationQueue。</p>
+<p>在configureCellDisplayWithCardInfo(cardInfo:nodeConstructionQueue:)底部，添加如下代码：<br>    let newNodeConstructionOperation = nodeConstructionOperationWithCardInfo(cardInfo, image: image)<br>    nodeConstructionOperation = newNodeConstructionOperation<br>    nodeConstructionQueue.addOperation(newNodeConstructionOperation)<br>这就创建了一个node构造操作，将其保留在nodeConstructionOperation属性中，并将其添加到传入的队列中。<br>最后，打开RainforestViewController.swift，给RainforestViewController添加一个叫做nodeConstructionQueue的初始化为常量的属性，如下：<br>    class RainforestViewController: UICollectionViewController {<br>          let rainforestCardsInfo = getAllCardInfo()<br>          let nodeConstructionQueue = NSOperationQueue() ///&lt; ADD THIS LINE<br>          …<br>    }<br>在collectionView(collectionView:cellForItemAtIndexPath indexPath:)方法中：<br>    cell.configureCellDisplayWithCardInfo(cardInfo, nodeConstructionQueue: nodeConstructionQueue)<br>cell将会创建一个新的node构造操作并将其添加到Controller的操作队列里并发运行。记住在cell出队时就会创建一个新的node层级结构。这并不理想，但也还行。如果你要缓存node并重用，看看ASRangeController吧。<br>呜呼，OK，现在编译并运行！你将看到和之前一样的效果，但现在布局和渲染都没在主线程执行了。酷！我打赌你从来没有想过有一天能做到这样的事情。这就是AsyncDisplayKit的威力。你可以将越来越多不必需在主线程的操作从主线程移除，这将给主线程更多资源去处理用户交互，让你的app如黄油般顺滑。<br><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0019.png" alt=""></p>
+<h2 id="cell中的淡入效果"><a href="#cell中的淡入效果" class="headerlink" title="cell中的淡入效果"></a>cell中的淡入效果</h2><p>现在是有趣的部分。在这个简短的小节，你将学到：</p>
+<ul>
+<li>用自定义的layer子类来支持node；</li>
+<li><p>将隐式动画应用到node layer上。<br>这将会确保你移除爆米花特效并最终带来良好的淡入动画。<br><strong>创建一个新的Layer子类</strong><br>创建一个_ASDisplayLayer的子类命名为AnimatedContentsDisplayLayer，增加如下方法：<br>  override func actionForKey(event: String!) -&gt; CAAction! {</p>
+<pre><code>if let action = super.actionForKey(event) {
+  return action
+}
+
+if event == &quot;contents&quot; &amp;&amp; contents == nil {
+  let transition = CATransition()
+  transition.duration = 0.6
+  transition.type = kCATransitionFade
+  return transition
+}
+
+return nil
+</code></pre><p>  }<br>Layer有一个contents属性告诉系统为这个layer绘制什么。AsyncDisplayKit在最终在主线程设置contents之前在后台渲染contents。<br>这段代码将会添加一个过渡动画，这样contents会淡入到View中。你可以在Apple的<a href="https://developer.apple.com/library/mac/documentation/cocoa/conceptual/CoreAnimation_guide/ReactingtoLayerChanges/ReactingtoLayerChanges.html" target="_blank" rel="external">Core Animation Programming Guide</a>中找到更多关于隐式Layer动画以及CAAction的信息.。<br>编译以确保没有错误。<br><strong>在容器Node中淡入</strong><br>你已经设置好一个当其contents被设置时淡入的layer，现在来使用。<br>打开RainforestCardCell.swift，在nodeConstructionOperationWithCardInfo(cardInfo:image:)方法中，在Container Node Creation Section的开头，改动如下：<br>  // REPLACE THIS LINE…<br>  // let containerNode = ASDisplayNode()<br>  // …WITH THIS LINE:<br>  let containerNode = ASDisplayNode(layerClass: AnimatedContentsDisplayLayer.self)<br>这会告诉容器node使用 AnimatedContentsDisplayLayer实例作为其支持的layer，因此自动带来淡入的效果。<br>  注意：只有 _ASDisplayLayer 的子类才能被异步地绘制。<br>编译并运行,你将看到容器node会在其绘制好之后淡入出现。<br><img src="http://www.raywenderlich.com/wp-content/uploads/2014/10/IMG_0023.png" alt=""></p>
+<h2 id="何去何从"><a href="#何去何从" class="headerlink" title="何去何从"></a>何去何从</h2><p>恭喜你！当你需要构建高性能的可以滑动的用户界面的时候，你有了另外一个工具。<br>在本教程里，你通过替换视图层级结构为一个栅格化的AsyncDisplayKit Node层级结构，显著改善了一个性能很差的collection view的滑动性能。多么令人激动！<br>这只是一个例子而已。AsyncDisplayKit承诺能提高UI性能到一定水平，而通过普通的UIKit优化往往难以达到。<br>实际说来，要充分利用 AsyncDisplayKit，你需要对标准的UIKit真正的性能瓶颈所在有足够的了解。AsyncDisplayKit很棒的一点是它引发我们探讨这些问题并思考我们的app能如何在物理的极限上更快以及更具响应性。<br>AsyncDisplayKit是探讨此性能前沿的一个非常强大的工具。明智地使用它。<br>这仅仅是AsyncDisplayKit的一个开始！它的作者和贡献者每天都在构建新的特性。请关注1.1 版中的ASCollectionView以及ASMultiplexImageNode。从头文件中可看到“ASMultiplexImageNode是一个图像 Node，它能加载并显示一个图像的多个版本。例如，它可以在高分辨率的图像还在渲染时先显示一个低分辨率的图像。” 非常酷，对吧 :]<br>你可以在此下载最终的Xcode<a href="https://cdn3.raywenderlich.com/wp-content/uploads/2014/11/Layers-Finished-7.3.zip" target="_blank" rel="external">工程</a>。<br>AsyncDisplayKit的指导在<a href="http://asyncdisplaykit.org/guide/" target="_blank" rel="external">这里</a>，AsyncDisplayKit的Github仓库在<a href="https://github.com/facebook/AsyncDisplayKit" target="_blank" rel="external">这里</a>。<br>这个库的作者在收集API设计的反馈。你可以在Facebook上的Paper Engineering Community group中分享你的想法，或者直接参与到AsyncDisplayKit的开发中。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/undefined/翻译/2016-09-05-MVVM-Tutorial-with-ReactiveCocoa-Part-2-2【译】.html" rel="next" title="MVVM & ReactiveCocoa入门教程－第二部分">
+                <i class="fa fa-chevron-left"></i> MVVM & ReactiveCocoa入门教程－第二部分
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/undefined/翻译/2016-09-19-AsyncDisplayKit-Tutorial-Node-Hierarchies【译】.html" rel="prev" title="AsyncDisplayKit教程: 节点层级结构">
+                AsyncDisplayKit教程: 节点层级结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="undefined/uncategorized/2016-09-16-AsyncDisplayKit-Tutorial-Achieving-60-FPS-scrolling【译】.html"
+           data-title="" data-url="http://yoursite.com/undefined/uncategorized/2016-09-16-AsyncDisplayKit-Tutorial-Achieving-60-FPS-scrolling【译】.html">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Kaisa" />
+          <p class="site-author-name" itemprop="name">Kaisa</p>
+          <p class="site-description motion-element" itemprop="description">心若不老，仍是少年</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/kaisayoung" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tags-AsyncDisplayKit"><span class="nav-number">1.</span> <span class="nav-text">tags: AsyncDisplayKit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开始"><span class="nav-number">2.</span> <span class="nav-text">开始</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测量反应灵敏度"><span class="nav-number">3.</span> <span class="nav-text">测量反应灵敏度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备应用AsyncDisplayKit"><span class="nav-number">4.</span> <span class="nav-text">准备应用AsyncDisplayKit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你的第一个Node"><span class="nav-number">5.</span> <span class="nav-text">你的第一个Node</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rasterized容器Node"><span class="nav-number">6.</span> <span class="nav-text">Rasterized容器Node</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cell的内容"><span class="nav-number">7.</span> <span class="nav-text">cell的内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义Node子类"><span class="nav-number">8.</span> <span class="nav-text">自定义Node子类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在后台构建Node"><span class="nav-number">9.</span> <span class="nav-text">在后台构建Node</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cell中的淡入效果"><span class="nav-number">10.</span> <span class="nav-text">cell中的淡入效果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#何去何从"><span class="nav-number">11.</span> <span class="nav-text">何去何从</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kaisa</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"kaisayoung"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("nRzHUuGqxgGGukmsOOWW1Tzi-gzGzoHsz", "5KkfnJ5UlP0Yw8JFVRqgm2th");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

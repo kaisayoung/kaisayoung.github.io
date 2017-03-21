@@ -1,0 +1,1091 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="MVVM," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="本文由Colin Eberhardt于14年发表于raywenderlich，原文可查看MVVM Tutorial with ReactiveCocoa: Part 2/2。
+Model-View-ViewModel (MVVM) 是一种正在逐渐成为Model-View-Controller (MVC)的替代方案的UI设计模式。
+在本教程的第一部分中，你已经见识到ReactiveCocoa是怎样扮">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MVVM & ReactiveCocoa入门教程－第二部分">
+<meta property="og:url" content="http://yoursite.com/undefined/翻译/2016-09-05-MVVM-Tutorial-with-ReactiveCocoa-Part-2-2【译】.html">
+<meta property="og:site_name" content="一直在路上">
+<meta property="og:description" content="本文由Colin Eberhardt于14年发表于raywenderlich，原文可查看MVVM Tutorial with ReactiveCocoa: Part 2/2。
+Model-View-ViewModel (MVVM) 是一种正在逐渐成为Model-View-Controller (MVC)的替代方案的UI设计模式。
+在本教程的第一部分中，你已经见识到ReactiveCocoa是怎样扮">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/06/MVVMReactiveCocoa.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/06/FinishedApp.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/06/BlankView.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/06/PopulatedTable.png">
+<meta property="og:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/06/UsingTheBindingHelper.png">
+<meta property="og:updated_time" content="2016-09-06T06:29:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MVVM & ReactiveCocoa入门教程－第二部分">
+<meta name="twitter:description" content="本文由Colin Eberhardt于14年发表于raywenderlich，原文可查看MVVM Tutorial with ReactiveCocoa: Part 2/2。
+Model-View-ViewModel (MVVM) 是一种正在逐渐成为Model-View-Controller (MVC)的替代方案的UI设计模式。
+在本教程的第一部分中，你已经见识到ReactiveCocoa是怎样扮">
+<meta name="twitter:image" content="http://www.raywenderlich.com/wp-content/uploads/2014/06/MVVMReactiveCocoa.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6321865863578256000,
+      author: '主编大人'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/undefined/翻译/2016-09-05-MVVM-Tutorial-with-ReactiveCocoa-Part-2-2【译】.html"/>
+
+  <title> MVVM & ReactiveCocoa入门教程－第二部分 | 一直在路上 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d9a1587ce4c6042894f106ae7486a3ce";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一直在路上</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                MVVM & ReactiveCocoa入门教程－第二部分
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-05T09:58:06+08:00" content="2016-09-05">
+              2016-09-05
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/翻译/" itemprop="url" rel="index">
+                    <span itemprop="name">翻译</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/undefined/翻译/2016-09-05-MVVM-Tutorial-with-ReactiveCocoa-Part-2-2【译】.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="undefined/翻译/2016-09-05-MVVM-Tutorial-with-ReactiveCocoa-Part-2-2【译】.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/undefined/翻译/2016-09-05-MVVM-Tutorial-with-ReactiveCocoa-Part-2-2【译】.html" class="leancloud_visitors" data-flag-title="MVVM & ReactiveCocoa入门教程－第二部分">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文由Colin Eberhardt于14年发表于<a href="https://www.raywenderlich.com" target="_blank" rel="external">raywenderlich</a>，原文可查看<a href="https://www.raywenderlich.com/74131/mvvm-tutorial-with-reactivecocoa-part-2" target="_blank" rel="external">MVVM Tutorial with ReactiveCocoa: Part 2/2</a>。</p>
+<p>Model-View-ViewModel (MVVM) 是一种正在逐渐成为Model-View-Controller (MVC)的替代方案的UI设计模式。</p>
+<p>在本教程的<a href="https://kaisayoung.github.io/undefined/iOS/2016-09-02-MVVM-Tutorial-with-ReactiveCocoa-Part-1-2%E3%80%90%E8%AF%91%E3%80%91.html#more" target="_blank" rel="external">第一部分</a>中，你已经见识到ReactiveCocoa是怎样扮演‘胶水’的角色来将ViewModel绑定到相应的View上。</p>
+<a id="more"></a>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/06/MVVMReactiveCocoa.png" alt=""> </p>
+<p>下面是你要构建的应用最终运行后的样子，它是一个Flickr搜索app。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/06/FinishedApp.png" alt=""></p>
+<p>在本篇第二部分中，你将看到能怎样利用程序中的ViewModel来驱动不同controller中的navigation。</p>
+<p>到目前为止，你所开发的应用允许你应用一个简单的字符串来搜索Flickr。如果你需要当前工程的一个备份，猛击<a href="http://www.raywenderlich.com/wp-content/uploads/2014/06/FlickrSearchPart1Project1.zip" target="_blank" rel="external">这里</a>。</p>
+<p>一个Model层的服务利用ReactiveCocoa来提供搜索结果，而ViewModel仅仅是打印出来。</p>
+<p>现在到了解决怎样跳转到搜索结果页问题的时间了。</p>
+<h3 id="声明ViewModel导航"><a href="#声明ViewModel导航" class="headerlink" title="声明ViewModel导航"></a>声明ViewModel导航</h3><p>当一个Flickr搜索成功返回期望的数据，应用导航要跳转到一个展示搜索结果的新的controller页面。</p>
+<p>当前应用只有一个ViewModel，是RWTFlickrSearchViewModel类。为了实现期望的效果，需要增加一个新的ViewModel来为搜索结果View提供支持。</p>
+<p>在ViewModel分组中增加一个继承自NSObject的子类命名为RWTSearchResultsViewModel，然后修改如下：</p>
+<pre><code>@import Foundation;
+#import &quot;RWTViewModelServices.h&quot;
+#import &quot;RWTFlickrSearchResults.h&quot;
+
+@interface RWTSearchResultsViewModel : NSObject
+
+- (instancetype)initWithSearchResults:(RWTFlickrSearchResults *)results services:(id&lt;RWTViewModelServices&gt;)services;
+
+@property (strong, nonatomic) NSString *title;
+@property (strong, nonatomic) NSArray *searchResults;
+
+@end
+</code></pre><p>上面添加了几个描述View的属性和一个以RWTFlickrSearchResults模型对象（由Model层的服务返回）构建的初始化方法。</p>
+<p>打开RWTSearchResultsViewModel.m文件，实现初始化方法：</p>
+<pre><code>- (instancetype)initWithSearchResults:(RWTFlickrSearchResults *)results services:(id&lt;RWTViewModelServices&gt;)services {
+      if (self = [super init]) {
+        _title = results.searchString;
+        _searchResults = results.photos;
+      }
+      return self;
+}
+</code></pre><p>这样就完成了RWTSearchResultsViewModel类。</p>
+<p>如果你回忆一下第一部分，ViewModel是在其相对应的View出现之前就已经构建好了然后‘驱动’整个工程的。下一步就是给View匹配上对应的ViewModel。</p>
+<p>打开RWTSearchResultsViewController.h文件，导入ViewModel头文件，增加初始化方法如下：</p>
+<pre><code>#import &quot;RWTSearchResultsViewModel.h&quot;
+
+@interface RWTSearchResultsViewController : UIViewController
+
+- (instancetype)initWithViewModel:(RWTSearchResultsViewModel *)viewModel;
+
+@end
+</code></pre><p>打开RWTSearchResultsViewController.m文件，在类拓展中增加私有属性：</p>
+<pre><code>@property (strong, nonatomic) RWTSearchResultsViewModel *viewModel;
+</code></pre><p>然后实现初始化方法：</p>
+<pre><code>- (instancetype)initWithViewModel:(RWTSearchResultsViewModel *)viewModel {
+      if (self = [super init]) {
+        _viewModel = viewModel;
+      }
+      return self;
+}
+</code></pre><p>在这一步，你要关注于navigation是怎样工作的。一会儿再来给这个controller绑定ViewModel。</p>
+<p>整个工程现在有了两个ViewModel，但是你遇到了一个难题：怎样从一个ViewModel切换到另一个，然后同时用导航跳转到它们各自对应的controller呢？</p>
+<p>ViewModel不能对View有直接引用，所以到底应该怎么办呢？</p>
+<p>其实答案就存在于RWTViewModelServices协议中。它当前被用于获得一个Model层的引用，现在还用这个协议来允许ViewModel初始化导航。</p>
+<p>打开RWTViewModelServices.h文件增加一个新的协议方法：</p>
+<pre><code>- (void)pushViewModel:(id)viewModel;
+</code></pre><p>概念上讲，是ViewModel层驱动整个应用；这一层中的逻辑决定View上展示什么，也决定了何时以何种方法使导航出现（实现页面跳转）。</p>
+<p>这个方法允许ViewModel层初始化导航：‘pushing’到一个新的ViewModel和一个UINavigationController允许你‘pushing’到一个新的Controller其实异曲同工。</p>
+<p>在完成协议实现时，还要在ViewModel层做些事情。</p>
+<p>打开RWTFlickrSearchViewModel.m文件导入新增加的ViewModel头文件：</p>
+<pre><code>#import &quot;RWTSearchResultsViewModel.h&quot;
+</code></pre><p>然后更新executeSearchSignal方法实现：</p>
+<pre><code>- (RACSignal *)executeSearchSignal {
+      return [[[self.services getFlickrSearchService]
+        flickrSearchSignal:self.searchText]
+        doNext:^(id result) {
+            RWTSearchResultsViewModel *resultsViewModel =
+            [[RWTSearchResultsViewModel alloc] initWithSearchResults:result services:self.services];
+            [self.services pushViewModel:resultsViewModel];
+        }];
+}
+</code></pre><p>上面方法中为当搜索命令执行时创建的信号增加了一个doNext的操作。doNext block中创建了一个新的ViewModel来展示搜索结果，然后通过ViewModel的services实现push。</p>
+<p>现在到了更新代码来实现协议的时候了，这样当一个ViewModel被push也会导航到必要的controller上。为了实现次，需要有一个navigation controller的引用。</p>
+<p>打开RWTViewModelServicesImpl.h文件增加初始化方法：</p>
+<pre><code>- (instancetype)initWithNavigationController:(UINavigationController *)navigationController;
+</code></pre><p>打开RWTViewModelServicesImpl.m文件导入头文件：</p>
+<pre><code>@property (weak, nonatomic) UINavigationController *navigationController;
+</code></pre><p>然后实现初始化方法：</p>
+<pre><code>- (instancetype)initWithNavigationController:(UINavigationController *)navigationController {
+      if (self = [super init]) {
+        _searchService = [RWTFlickrSearchImpl new];
+        _navigationController = navigationController;
+      }
+      return self;
+}
+</code></pre><p>这样简单更新初始化方法就存储了一个navigation controller的引用。</p>
+<p>最后，增加新方法：</p>
+<pre><code>- (void)pushViewModel:(id)viewModel {
+  id viewController;
+
+  if ([viewModel isKindOfClass:RWTSearchResultsViewModel.class]) {
+    viewController = [[RWTSearchResultsViewController alloc] initWithViewModel:viewModel];
+  } else {
+       NSLog(@&quot;an unknown ViewModel was pushed!&quot;);
+  }
+
+  [self.navigationController pushViewController:viewController animated:YES];
+}
+</code></pre><p>上面的方法运用这种方式来让ViewModel决定需要展示哪个View。</p>
+<p>在上面的代码中，只有一对具体的ViewModel-View，不过我确信你能看出来怎么样拓展更多。navigationController会push到结果View页。</p>
+<p>最后一步：打开RWTAppDelegate.m文件，在createInitialViewController方法中找到RWTViewModelServicesImpl实例被创建的地方，更新代码以通过初始化方法将navigation controller传进去。</p>
+<pre><code>self.viewModelServices = [[RWTViewModelServicesImpl alloc] initWithNavigationController:self.navigationController];
+</code></pre><p>运行一下，输入一些内容，点击‘Go’按钮观察应用会过渡到新的ViewModel／View。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/06/BlankView.png" alt=""></p>
+<p>新页面是空的！不用沮丧，你很快就会添加内容的。</p>
+<p>你现在有了一个拥有多个ViewModel的应用，而且通过ViewModel层来控制所有controller的跳转。</p>
+<p>完成的差不多了，现在开始UI绑定。</p>
+<h3 id="渲染结果列表"><a href="#渲染结果列表" class="headerlink" title="渲染结果列表"></a>渲染结果列表</h3><p>展示搜索结果的View，也就是RWTSearchResultsViewController中，有一个在xib中初始化的UITableView。下一步就是用这个表来展示ViewModel的内容。</p>
+<p>打开RWTSearchResultsViewController.m文件，找到类的拓展，更新代码以实现UITableViewDataSource协议。</p>
+<pre><code>@interface RWTSearchResultsViewController () &lt;UITableViewDataSource&gt;
+</code></pre><p>然后重写viewDidLoad方法：</p>
+<pre><code>- (void)viewDidLoad {
+      [super viewDidLoad];
+
+      [self.searchResultsTable registerClass:UITableViewCell.class
+              forCellReuseIdentifier:@&quot;cell&quot;];
+      self.searchResultsTable.dataSource = self;
+
+      [self bindViewModel];
+}
+</code></pre><p>在下面添加bindViewModel方法：</p>
+<pre><code>- (void)bindViewModel {
+      self.title = self.viewModel.title;
+}
+</code></pre><p>此时，这个方法并没有做很多事情。这个ViewModel有两个属性：一个title显示在导航条上，另一个searchResults数组将会渲染在table上。</p>
+<p>那怎么样将这个数组绑定到table view上呢？不幸的是，没有现成的答案。</p>
+<p>ReactiveCocoa能绑定简单的属性到UIKit子控件上，但是不能处理复杂的情况，比如说将数据放入table view中。我知道，这很令人扫兴。</p>
+<p>但是没必要恐慌，因为有另外一种方法。是时候卷起袖子大干一场了。</p>
+<p>还是在这个文件中，增加这两个必须的协议方法：</p>
+<pre><code>- (NSInteger)tableView:(UITableView *)tableView
+ numberOfRowsInSection:(NSInteger)section {
+      return self.viewModel.searchResults.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView
+     cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+      UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@&quot;cell&quot;];
+      cell.textLabel.text = [self.viewModel.searchResults[indexPath.row] title];
+      return cell;
+}
+</code></pre><p>第一个方法说明有多少条搜索结果，第二个方法用cell的title属性来展示来自ViewModel中的数据。</p>
+<p>运行一下，可以看到现在列表中有数据了。</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/06/PopulatedTable.png" alt=""></p>
+<h3 id="更好的Table-View绑定"><a href="#更好的Table-View绑定" class="headerlink" title="更好的Table View绑定"></a>更好的Table View绑定</h3><p>table view缺少绑定的话会迅速导致原本已经瘦身的controller再次臃肿。</p>
+<p>这个问题困扰了我，所以我决定要解决它。</p>
+<p>概念上来说，ViewModel中的searchResults数组中的每一项都应该也是一个ViewModel，每一个cell成为相应ViewModel实例所对应的View。</p>
+<p>在最近的一篇<a href="http://www.scottlogic.com/blog/2014/05/11/reactivecocoa-tableview-binding.html" target="_blank" rel="external">博客</a>中我创造了一个通用的绑定帮助类，命名为CETableViewBindingHelper，它会帮助你实现datasource协议中必要的方法，从而允许你用每个子ViewModel定义相应的View。你能在当前工程的Util分组中找到这个帮助类。</p>
+<p>CETableViewBindingHelper类的初始化类方法如下：</p>
+<pre><code>+ (instancetype) bindingHelperForTableView:(UITableView *)tableView
+                              sourceSignal:(RACSignal *)source
+                          selectionCommand:(RACCommand *)selection
+                              templateCell:(UINib *)templateCellNib;
+</code></pre><p>为了将一个数组和一个view进行绑定，你只需要简单创建一个这个帮助类的实例。4个参数分别为：</p>
+<ol>
+<li>将要展示ViewModel数组内容的tableview</li>
+<li>传播数组变化的数据源信号</li>
+<li>一个可选的命令当一个row被选中时去执行</li>
+<li>cell的nib</li>
+</ol>
+<p>给定nib文件的cell必须实现了CEReactiveView协议。</p>
+<p>工程已经包含了一个你可以用于渲染搜索结果的cell。<br>打开RWTSearchResultsTableViewCell.h文件，导入必要的协议：</p>
+<pre><code>#import &quot;CEReactiveView.h&quot;
+</code></pre><p>然后去应用它。</p>
+<pre><code>@interface RWTSearchResultsTableViewCell : UITableViewCell &lt;CEReactiveView&gt;
+</code></pre><p>下一步就是实现这个协议。打开RWTSearchResultsTableViewCell.m文件增加如下代码：</p>
+<pre><code>#import &lt;SDWebImage/UIImageView+WebCache.h&gt;
+#import &quot;RWTFlickrPhoto.h&quot;
+</code></pre><p>然后增加以下方法：</p>
+<pre><code>- (void)bindViewModel:(id)viewModel {
+      RWTFlickrPhoto *photo = viewModel;
+      self.titleLabel.text = photo.title;
+
+      self.imageThumbnailView.contentMode = UIViewContentModeScaleToFill;
+
+      [self.imageThumbnailView setImageWithURL:photo.url];
+}
+</code></pre><p>当前RWTSearchResultsViewModel中的searchResults属性是包含了RWTFlickrPhoto实例的数组，而没有用ViewModel去包裹这些Model对象，view可以直接使用。</p>
+<p>注意：有时候有一些view只是用来展示而不需要进行用户交互，此时直接将Model对象暴露给View也是没有问题的。保持简单，无需增加不必要的复杂度。</p>
+<p>你刚刚添加的bindViewModel方法同时使用了SDWebImage库。它会在后台线程进行图片下载和解码，从而提高scroll的性能。</p>
+<p>最后一步是用刚才说的绑定帮助类来渲染table。</p>
+<p>打开RWTSearchResultsViewController.m文件导入帮助类：</p>
+<pre><code>#import &quot;CETableViewBindingHelper.h&quot;
+</code></pre><p>在当前文件中，移除UITableDataSource协议的实现与两个代理方法。</p>
+<p>接着，在类的拓展里增加一个私有属性：</p>
+<pre><code>@property (strong, nonatomic) CETableViewBindingHelper *bindingHelper;
+</code></pre><p>然后在viewDidLoad方法中删除不再需要的代码，改成下面的样子：</p>
+<pre><code>- (void)viewDidLoad {
+      [super viewDidLoad]; 
+      [self bindViewModel];
+}
+</code></pre><p>最后，在bindViewModel方法的最后添加如下代码：</p>
+<pre><code>UINib *nib = [UINib nibWithNibName:@&quot;RWTSearchResultsTableViewCell&quot; bundle:nil];
+
+self.bindingHelper =
+      [CETableViewBindingHelper bindingHelperForTableView:self.searchResultsTable
+                                             sourceSignal:RACObserve(self.viewModel, searchResults)
+                                         selectionCommand:nil
+                                             templateCell:nib];
+</code></pre><p>这样从nib文件中创建一个UINib的实例来构建这个绑定帮助对象，而sourceSignal是由观察ViewModel中的searchResults属性的变化而创建的。</p>
+<p>再运行一下，可以欣赏一会儿新UI了：</p>
+<p><img src="http://www.raywenderlich.com/wp-content/uploads/2014/06/UsingTheBindingHelper.png" alt=""></p>
+<p>这是一个相当优雅的将table view和数组进行绑定的方法。</p>
+<h3 id="查询评论和喜爱数量"><a href="#查询评论和喜爱数量" class="headerlink" title="查询评论和喜爱数量"></a>查询评论和喜爱数量</h3><p>cell应该在右下方展示每张照片的评论和喜爱数量。然而，现在仅仅是展示了‘123’的假数据。</p>
+<p>你应该在将其替换成真正的值之前先在Model层添加这个功能。首先增加一个表示Flickr API查询结果的Model对象。</p>
+<p>在Model分组中创建一个继承自NSObject的子类RWTFlickrPhotoMetadata，打开.h文件增加如下属性：</p>
+<pre><code>@property (nonatomic) NSUInteger favorites;
+@property (nonatomic) NSUInteger comments;
+</code></pre><p>然后打开.m文件增加description方法的实现：</p>
+<pre><code>- (NSString *)description {
+      return [NSString stringWithFormat:@&quot;metadata: comments=%lU, faves=%lU&quot;,
+              self.comments, self.favorites];
+}
+</code></pre><p>当然这个方法还是为了测试时输出日志的方便。</p>
+<h3 id="为可见Cell查询元数据"><a href="#为可见Cell查询元数据" class="headerlink" title="为可见Cell查询元数据"></a>为可见Cell查询元数据</h3><p>你可以拓展当前的代码以实现为所有搜索的结果查询元数据。</p>
+<p>然后，如果一次结果中有100张照片，这样就会产生200的API请求，或者说每张照片有两个请求。很显然，这是相当不合理的。</p>
+<p>事实上，你只需要为当前表中正在可见的cell查询元数据。所以怎么实现呢？你需要一个清楚自身是否可见的ViewModel。</p>
+<p>当前RWTSearchResultsViewModel暴露了一个包含RWTFlickrPhoto实例集合的数组用于为View提供数据，这些Model层的对象直接暴露给了View。为了增加可见的概念，你需要用ViewModel来包裹这些model对象。</p>
+<p>在ViewModel分组中添加一个NSObject的子类命名为RWTSearchResultsItemViewModel。打开头文件更新如下：</p>
+<pre><code>@import Foundation;
+#import &quot;RWTFlickrPhoto.h&quot;
+#import &quot;RWTViewModelServices.h&quot;
+
+@interface RWTSearchResultsItemViewModel : NSObject
+
+- (instancetype) initWithPhoto:(RWTFlickrPhoto *)photo services:(id&lt;RWTViewModelServices&gt;)services;
+
+@property (nonatomic) BOOL isVisible;
+@property (strong, nonatomic) NSString *title;
+@property (strong, nonatomic) NSURL *url;
+@property (strong, nonatomic) NSNumber *favorites;
+@property (strong, nonatomic) NSNumber *comments;
+
+@end
+</code></pre><p>从初始化方法中可以看出，ViewModel包裹了一个RWTFlickrPhoto的模型对象。</p>
+<p>ViewModel的属性包括如下作用：</p>
+<ul>
+<li>暴露Model的基本属性（title，url）</li>
+<li>当元数据被查询到时动态更新</li>
+<li>isVisible用于表明这个ViewModel当前是否可见。</li>
+</ul>
+<p>打开RWTSearchResultsItemViewModel.m文件，导入头文件：</p>
+<pre><code>#import &lt;ReactiveCocoa/ReactiveCocoa.h&gt;
+#import &lt;ReactiveCocoa/RACEXTScope.h&gt;
+#import &quot;RWTFlickrPhotoMetadata.h&quot;
+</code></pre><p>在下面增加一个类拓展并且添加几个私有属性：</p>
+<pre><code>@interface RWTSearchResultsItemViewModel ()
+
+@property (weak, nonatomic) id&lt;RWTViewModelServices&gt; services;
+@property (strong, nonatomic) RWTFlickrPhoto *photo;
+
+@end
+</code></pre><p>实现初始化方法：</p>
+<pre><code>- (instancetype)initWithPhoto:(RWTFlickrPhoto *)photo services:(id&lt;RWTViewModelServices&gt;)services {
+      self = [super init];
+      if (self) {
+        _title = photo.title;
+        _url = photo.url;
+        _services = services;
+        _photo = photo;
+
+        [self initialize];
+      }
+      return  self;
+}
+</code></pre><p>title和url属性从Model对象中获取，然后通过私有属性存储了services和photo参数的引用。</p>
+<p>接着增加initialize方法。准备好，接下来是见证奇迹的时刻！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">- (void)initialize &#123;</div><div class="line">  RACSignal *fetchMetadata =</div><div class="line">    [RACObserve(self, isVisible)</div><div class="line">     filter:^BOOL(NSNumber *visible) &#123;</div><div class="line">       return [visible boolValue];</div><div class="line">     &#125;];</div><div class="line"> </div><div class="line">  @weakify(self)</div><div class="line">  [fetchMetadata subscribeNext:^(id x) &#123;</div><div class="line">    @strongify(self)</div><div class="line">    [[[self.services getFlickrSearchService] flickrImageMetadata:self.photo.identifier]</div><div class="line">     subscribeNext:^(RWTFlickrPhotoMetadata *x) &#123;</div><div class="line">       self.favorites = @(x.favorites);</div><div class="line">       self.comments = @(x.comments);</div><div class="line">     &#125;];</div><div class="line">  &#125;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此方法的第一部分创建了一个叫做fetchMetadata的信号用于观察isVisible属性并且过滤出来’true’的值。作为结果，当isVisible属性变为true时，这个信号会发送一个next的值。</p>
+<p>第二部分订阅了这个信号以为了触发flickrImageMetadata方法进行请求。当里面的信号发送一个next事件，favorites和comments会更新结果。</p>
+<p>总之呢，当isVisible变为true，Flickr API请求会被触发，comments和favorites属性稍后会被更新。 </p>
+<p>为了将这个ViewModel投入使用，打开RWTSearchResultsViewModel.m文件导入以下头文件：</p>
+<pre><code>#import &lt;LinqToObjectiveC/NSArray+LinqExtensions.h&gt;
+#import &quot;RWTSearchResultsItemViewModel.h&quot;
+</code></pre><p>在初始化方法中，去掉当前设置_searchResults的代码，以下面的代替：</p>
+<pre><code>_searchResults =
+      [results.photos linq_select:^id(RWTFlickrPhoto *photo) {
+        return [[RWTSearchResultsItemViewModel alloc]
+                  initWithPhoto:photo services:services];
+  }];
+</code></pre><p>这样就用ViewModel包裹了每一个Model对象。</p>
+<p>最后一步就是通过View来设置isVisible属性然后使用这些新属性。</p>
+<p>打开RWTSearchResultsTableViewCell.m文件，导入新的头文件：</p>
+<pre><code>#import &quot;RWTSearchResultsItemViewModel.h&quot;
+</code></pre><p>然后改变bindViewModel方法中的第一行来使用新添加的ViewModel：</p>
+<pre><code>RWTSearchResultsItemViewModel *photo = viewModel;
+</code></pre><p>还是这个方法，添加如下：</p>
+<pre><code>[RACObserve(photo, favorites) subscribeNext:^(NSNumber *x) {
+      self.favouritesLabel.text = [x stringValue];
+      self.favouritesIcon.hidden = (x == nil);
+}];
+
+[RACObserve(photo, comments) subscribeNext:^(NSNumber *x) {
+      self.commentsLabel.text = [x stringValue];
+      self.commentsIcon.hidden = (x == nil);
+}];
+
+photo.isVisible = YES;
+</code></pre><p>这样就观察了新的comments和favorites属性，然后用于更新相应的label和图片。</p>
+<p>最后，将ViewModel的isVisible属性设为YES。</p>
+<p>最终版本的工程可到<a href="https://github.com/ColinEberhardt/ReactiveFlickrSearch" target="_blank" rel="external">这里</a>下载。</p>
+<p>PS：</p>
+<ol>
+<li>原作者在博客中还加入了一些UI效果，但和MVVM无关，故没有翻译。</li>
+<li>最终版的工程中还有一些功能但是博客并没有细致讲解，可自行查看。</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MVVM/" rel="tag">#MVVM</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/undefined/翻译/2016-09-02-MVVM-Tutorial-with-ReactiveCocoa-Part-1-2【译】.html" rel="next" title="MVVM & ReactiveCocoa入门教程－第一部分">
+                <i class="fa fa-chevron-left"></i> MVVM & ReactiveCocoa入门教程－第一部分
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/undefined/翻译/2016-09-15-AsyncDisplayKit-Tutorial-Achieving-60-FPS-scrolling【译】.html" rel="prev" title="AsyncDisplayKit教程: 达到60FPS的滚动帧率">
+                AsyncDisplayKit教程: 达到60FPS的滚动帧率 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="undefined/翻译/2016-09-05-MVVM-Tutorial-with-ReactiveCocoa-Part-2-2【译】.html"
+           data-title="MVVM & ReactiveCocoa入门教程－第二部分" data-url="http://yoursite.com/undefined/翻译/2016-09-05-MVVM-Tutorial-with-ReactiveCocoa-Part-2-2【译】.html">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Kaisa" />
+          <p class="site-author-name" itemprop="name">Kaisa</p>
+          <p class="site-description motion-element" itemprop="description">心若不老，仍是少年</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">14</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/kaisayoung" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#声明ViewModel导航"><span class="nav-number">1.</span> <span class="nav-text">声明ViewModel导航</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#渲染结果列表"><span class="nav-number">2.</span> <span class="nav-text">渲染结果列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更好的Table-View绑定"><span class="nav-number">3.</span> <span class="nav-text">更好的Table View绑定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询评论和喜爱数量"><span class="nav-number">4.</span> <span class="nav-text">查询评论和喜爱数量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为可见Cell查询元数据"><span class="nav-number">5.</span> <span class="nav-text">为可见Cell查询元数据</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kaisa</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"kaisayoung"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("nRzHUuGqxgGGukmsOOWW1Tzi-gzGzoHsz", "5KkfnJ5UlP0Yw8JFVRqgm2th");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
