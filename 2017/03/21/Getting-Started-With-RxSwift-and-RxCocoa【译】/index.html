@@ -1,0 +1,1085 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="RxSwift," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="本文由Ellen Shapiro于16年发表于raywenderlich，原文可查看Getting Started With RxSwift and RxCocoa。
+若能随心所欲的控制自己的代码达成预期的效果，想来一定是极好的。
+面向对象编程中大部分程序都是命令式的：你的代码告诉你的程序去干什么同时有多种方式来监听变化－但是通常你又必须显示的告诉系统什么时候发生的变化。
+这样其实也还好，不过如果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxSwift & RxCocoa 入门教程">
+<meta property="og:url" content="http://yoursite.com/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/index.html">
+<meta property="og:site_name" content="一直在路上">
+<meta property="og:description" content="本文由Ellen Shapiro于16年发表于raywenderlich，原文可查看Getting Started With RxSwift and RxCocoa。
+若能随心所欲的控制自己的代码达成预期的效果，想来一定是极好的。
+面向对象编程中大部分程序都是命令式的：你的代码告诉你的程序去干什么同时有多种方式来监听变化－但是通常你又必须显示的告诉系统什么时候发生的变化。
+这样其实也还好，不过如果">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/initial_landing.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/added_chocolate.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/checkout.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/cc_form.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/Simulator-Screen-Shot-Jul-4-2016-9.26.45-PM.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/initial_landing.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/added_chocolate.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/rage_chocolate1-1.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/no_chocolate_for_you.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/initial_landing.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/initial_landing.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/added_chocolate.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/checkout.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/cc_form.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/Simulator-Screen-Shot-Jul-4-2016-7.47.40-PM.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/Simulator-Screen-Shot-Jul-4-2016-7.47.36-PM.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/enabled_checkout.png">
+<meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/success.png">
+<meta property="og:updated_time" content="2017-03-22T02:41:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxSwift & RxCocoa 入门教程">
+<meta name="twitter:description" content="本文由Ellen Shapiro于16年发表于raywenderlich，原文可查看Getting Started With RxSwift and RxCocoa。
+若能随心所欲的控制自己的代码达成预期的效果，想来一定是极好的。
+面向对象编程中大部分程序都是命令式的：你的代码告诉你的程序去干什么同时有多种方式来监听变化－但是通常你又必须显示的告诉系统什么时候发生的变化。
+这样其实也还好，不过如果">
+<meta name="twitter:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/initial_landing.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6321865863578256000,
+      author: '主编大人'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/"/>
+
+  <title> RxSwift & RxCocoa 入门教程 | 一直在路上 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d9a1587ce4c6042894f106ae7486a3ce";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一直在路上</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                RxSwift & RxCocoa 入门教程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-03-21T00:06:39+08:00" content="2017-03-21">
+              2017-03-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/翻译/" itemprop="url" rel="index">
+                    <span itemprop="name">翻译</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/" class="leancloud_visitors" data-flag-title="RxSwift & RxCocoa 入门教程">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文由Ellen Shapiro于16年发表于<a href="https://www.raywenderlich.com/" target="_blank" rel="external">raywenderlich</a>，原文可查看<a href="https://www.raywenderlich.com/138547/getting-started-with-rxswift-and-rxcocoa" target="_blank" rel="external">Getting Started With RxSwift and RxCocoa</a>。</p>
+<p>若能随心所欲的控制自己的代码达成预期的效果，想来一定是极好的。</p>
+<p>面向对象编程中大部分程序都是<font color="green">命令式</font>的：你的代码告诉你的程序去干什么同时有多种方式来监听变化－但是通常你又必须显示的告诉系统什么时候发生的变化。</p>
+<p>这样其实也还好，不过如果能提前都设置好，在发生变化时代码能够自动更新会不会感觉更加棒棒的？这就是<font color="green">响应式</font>编程的基本思想：你的应用会针对底层数据的改变而做出相应的响应，而不需要你去直接告诉它。这样使得可以全心关注于逻辑处理而不需要维护一堆状态。</p>
+<p>在Objective-C或Swift中这其实都可以实现，主要可以通过系统的KVO机制，在Swift中还可以使用didSet方法。然而实际效果你懂的。为了避免这些问题，现在在Objective-C和Swift上都有了一些比较成熟的框架，来实现响应式编程。</p>
+<blockquote>
+<p>注意：如果想了解更多，强烈推荐你看看这篇文章<a href="https://www.raywenderlich.com/126522/reactivecocoa-vs-rxswift" target="_blank" rel="external">ReactiveCocoa vs RxSwift</a>，并且正文下面的评论也值得一读。</p>
+</blockquote>
+<p>今天我们将使用其中一个框架，<font color="green">RxSwift</font>，还有它的小伙伴<font color="green">RxCocoa</font>，通过实现一个购买巧克力的App，学习如何从令人恼火的命令式编程过渡到优雅的响应式编程。</p>
+<a id="more"></a>
+<h2 id="RxSwift-amp-RxCocoa是什么"><a href="#RxSwift-amp-RxCocoa是什么" class="headerlink" title="RxSwift &amp; RxCocoa是什么?"></a>RxSwift &amp; RxCocoa是什么?</h2><p><font color="green">RxSwift</font>和<font color="green">RxCocoa</font>是<a href="http://reactivex.io/" target="_blank" rel="external">ReactiveX</a>（通常被简称为“Rx”）语言工具全套的一部分，这个套件跨越了多种编程语言和平台。Rx起源于.Net/C#生态体系，不过现在已经非常受Ruby、JS、尤其是Java和Android开发人员的欢迎了。</p>
+<p><font color="green">RxSwift</font>是一个用于与Swift语言交互的框架，而<font color="green">RxCocoa</font>是一个通过应用响应式技巧来使得Cocoa的API更容易使用的框架。</p>
+<p>Rx框架提供了一套通用的词汇，以方便在不同的语言中描述相同的任务。理论上，这使得你可以更加专注于语言本身的语法，而不会把时间浪费在将一个普通任务从一种语言转换到另一种新语言上。</p>
+<h3 id="Observables-and-Observers"><a href="#Observables-and-Observers" class="headerlink" title="Observables and Observers"></a>Observables and Observers</h3><p>本篇教程中需要知道的两个基本概念：<font color="green">Observable</font>（被观察者）和<font color="green">Observer</font>（观察者）。</p>
+<ul>
+<li><font color="green">Observable</font>是发出变化通知的对象；</li>
+<li><font color="green">Observer</font>是订阅了一个Observable的对象，以便在Observable变化时接收通知</li>
+</ul>
+<p>当然可以同时有多个Observer监听同一个Observable。这意味着当Observable变化时，会通知到所有相关的Observer。</p>
+<h3 id="The-DisposeBag"><a href="#The-DisposeBag" class="headerlink" title="The DisposeBag"></a>The DisposeBag</h3><p>RxSwift和RxCocoa还有一个额外的工具来帮助处理ARC和内存管理，即：<font color="green">DisposeBag</font>类。这是Observer对象的一个虚拟“包”，当它们的父对象被释放时，这个虚拟包也会被销毁。</p>
+<p>当带有一个DisposeBag属性的对象调用析构函数时，虚拟包将会被清空，与此同时每一个可销毁的Observer会自动取消订阅它所观察的对象。这允许ARC可以像通常一样回收内存。</p>
+<p>如果没有DisposeBag，就会产生两种结果：或者Observer会产生一个retain cycle，被永久的绑定到被观察对象上；或者意外地被释放时，导致程序崩溃。</p>
+<p>所以为了更好的配合ARC，记得设置Observable对象时，一定要将它们添加到DisposeBag中。这样它们才能很好地被清理掉。</p>
+<h2 id="正式开始"><a href="#正式开始" class="headerlink" title="正式开始"></a>正式开始</h2><p>让我们去买巧克力吧！首先下载本教程的初始工程<a href="https://koenig-media.raywenderlich.com/uploads/2016/10/Chocotastic-starter-s3-rxs-3b1.zip" target="_blank" rel="external">Chocotastic</a>。解压后用Xcode打开Chocotastic.xcworkspace文件。</p>
+<p>构建并运行程序。你会看到以下效果，列出了几种你可以从欧洲购买到的巧克力，以及各自的价格：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/initial_landing.png" alt="1"></p>
+<p>随便点击一行，对应的巧克力将会添加到你的购物车中：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/added_chocolate.png" alt="2"></p>
+<p>点击右上角，会进入到购物车界面，此时可以结账或者清空购物车：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/checkout.png" alt="3"></p>
+<p>如果点击结账按钮，将显示一个信用卡信息输入页面：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/cc_form.png" alt="4"></p>
+<p>在本教程的后面，你将使用纯响应式编程来解决这些问题。先点击Cart按钮返回购物车页，然后点击Reset按钮返回主界面，同时购物车已被清空。</p>
+<h3 id="起点：非响应式"><a href="#起点：非响应式" class="headerlink" title="起点：非响应式"></a>起点：非响应式</h3><p>现在你已经知道了这个程序是干什么的了，来看看它是怎么做的。打开<font color="green">ChocolatesOfTheWorldViewController.swift</font>文件，在这里你可以看到一些标准的<font color="green">UITableViewDelegate</font>和<font color="green">UITableViewDataSource</font>的实现方法。</p>
+<p>还有一个<font color="green">updateCartButton()</font>方法，用当前购物车中的巧克力数量来更新购物车按钮。这个方法在两个地方被调用：</p>
+<p>在<font color="green">viewWillAppear(:)</font>和 <font color="green">tableView(_:didSelectRowAt:)</font>中。<br>这些都是以<font color="green">命令式</font>的方法来修改数量：你必须显示调用方法来更新计数。</p>
+<p>此时，你必须跟踪你要改变值的位置，不过当你使用响应式的方式来重写这些代码之后，无论数量是在哪或是怎样改变了，购物车按钮都会自动更新。</p>
+<h2 id="RxSwift：让购物车数量自动响应"><a href="#RxSwift：让购物车数量自动响应" class="headerlink" title="RxSwift：让购物车数量自动响应"></a>RxSwift：让购物车数量自动响应</h2><p>所有引用购物车中物品的方法都是使用的一个<font color="green">ShoppingCart.sharedCart</font>单例。打开<font color="green">ShoppingCart.swift</font>文件，你能看到单例实例上一个变量的标准设置方式：</p>
+<pre><code>var chocolates = [Chocolate]()
+</code></pre><p>现在，<font color="green">chocolates</font>数组内容变化时不会被观察到。你可以在它的定义中添加一个<font color="green">didSet</font>闭包，但它只有在整个数组变化时才会被调用，而不是它的任意一个元素发生改变。</p>
+<p>幸运的是，RxSwift有一个解决方案。使用下面这行代码来替代原<font color="green">chocolates</font>变量的创建：</p>
+<pre><code>let chocolates: Variable&lt;[Chocolate]&gt; = Variable([])
+</code></pre><blockquote>
+<p>注意：如上修改之后会出现很多编译错误，稍后就会修改。</p>
+</blockquote>
+<p>这种语法确实有点难理解，所以下面我们来慢慢了解到底发生了什么。</p>
+<p>与将<font color="green">chocolates</font>设置为一个包含<font color="green">Chocolate</font>对象的数组不同，将其定义为一个RxSwift的<font color="green">Variable</font>类型的变量，其中泛型类型指定为包含<font color="green">Chocolate</font>对象的数组。</p>
+<p><font color="green">Variable</font>是一个类，所以它使用引用语义–也就是说<font color="green">chocolates</font>引用了一个<font color="green">Variable</font>的实例。</p>
+<p><font color="green">Variable</font>有一个<font color="green">value</font>属性。这是你的<font color="green">Chocolate</font>对象数组的实际存储位置。</p>
+<p><font color="green">Variable</font>的神奇之处来自于一个叫做<font color="green">asObservable()</font>方法。与过去你需要时刻手动检查值不同的是，现在你可以添加一个Observer来观察这个值，当值发生变化时，Observer会通知你，以便你可以对任何变化做出响应。</p>
+<p>这样设置的缺点在于当你需要访问或改变chocolates数组中的元素时，你必须通过<font color="green">value</font>属性，而不能直接使用它；这也就是为什么编译器会提示一堆错误。开始修改。</p>
+<p>在<font color="green">ShoppingCart.swift</font>中，找到<font color="green">totalCost()</font>方法中下面这行：</p>
+<pre><code>return chocolates.reduce(0) {
+</code></pre><p>改成：</p>
+<pre><code>return chocolates.value.reduce(0) {
+</code></pre><p>在<font color="green">itemCountString()</font>方法中，修改这行：</p>
+<pre><code>guard chocolates.count &gt; 0 else {
+</code></pre><p>改成：</p>
+<pre><code>guard chocolates.value.count &gt; 0 else {
+</code></pre><p>然后，</p>
+<pre><code>let setOfChocolates = Set&lt;Chocolate&gt;(chocolates)
+</code></pre><p>改成：</p>
+<pre><code>let setOfChocolates = Set&lt;Chocolate&gt;(chocolates.value)
+</code></pre><p>最后，</p>
+<pre><code>let count: Int = chocolates.reduce(0) {
+</code></pre><p>改成：</p>
+<pre><code>let count: Int = chocolates.value.reduce(0) {
+</code></pre><p>在<font color="green">CartViewController.swift</font>中，找到<font color="green">reset()</font>方法中下面这行：</p>
+<pre><code>ShoppingCart.sharedCart.chocolates = []
+</code></pre><p>改成：</p>
+<pre><code>ShoppingCart.sharedCart.chocolates.value = []、
+</code></pre><p>回到<font color="green">ChocolatesOfTheWorldViewController.swift</font>中，修改<font color="green">updateCartButton()</font>方法为：</p>
+<pre><code>cartButton.title = &quot;\(ShoppingCart.sharedCart.chocolates.value.count) \u{1f36b}&quot;
+</code></pre><p>在<font color="green">tableView(_:didSelectRowAt:)</font>方法中，修改</p>
+<pre><code>ShoppingCart.sharedCart.chocolates.append(chocolate)
+</code></pre><p>为</p>
+<pre><code>ShoppingCart.sharedCart.chocolates.value.append(chocolate)
+</code></pre><p>此时错误就全部被修复了，并且<font color="green">chocolates</font>也可以被监听了。</p>
+<p>在<font color="green">ChocolatesOfTheWorldViewController.swift</font>中，添加如下一个属性</p>
+<pre><code>let disposeBag = DisposeBag()
+</code></pre><p>这样就创建了一个<font color="green">DisposeBag</font>对象，用于确保设置的Observer在deinit()中会被清理掉。</p>
+<p>在 <font color="green">//MARK: Rx Setup</font> 注释下面添加代码：</p>
+<pre><code>//MARK: Rx Setup
+
+private func setupCartObserver() {
+    //1
+    ShoppingCart.sharedCart.chocolates.asObservable()
+        .subscribe(onNext: { //2
+            chocolates in
+            self.cartButton.title = &quot;\(chocolates.count) \u{1f36b}&quot;
+        })
+        .addDisposableTo(disposeBag) //3
+}
+</code></pre><p>这样设置了一个响应式的Observer来自动更新购物车。如你所见，RxSwift使用链式函数，也就是说每一个函数都接受前一个函数的结果。</p>
+<p>来解释一下上面的代码：</p>
+<p>1.首先，把购物车的<font color="green">chocolates</font>变量设置为一个Observable。</p>
+<p>2.在这个Observable上调用<font color="green">subscribe(onNext:)</font>方法，以找到Observable的值的变化。<font color="green">subscribe(onNext:)</font>接受一个每当值改变时就会执行的闭包作为参数。闭包的传入参数是Observable的新值。你将会持续接收到变更通知，直到你取消订阅或者你的订阅被丢弃。从这个方法得到的是一个遵守了<font color="green">Disposable</font>的Observer对象；</p>
+<p>3.将上一步得到的Observer对象添加到<font color="green">disposeBag</font>中以确保在订阅对象被释放时你的订阅被丢弃。</p>
+<p>最后，删除命令式的<font color="green">updateCartButton()</font>方法。当然，这会导致调用这个方法的地方出现错误。</p>
+<p>要修复它们，整个删除<font color="green">viewWillAppear(:)</font>方法，在<font color="green">tableView(_:didSelectRowAt:)</font>方法中删除<font color="green">updateCartButton()</font>的调用。</p>
+<p>运行一下，你会看到：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/Simulator-Screen-Shot-Jul-4-2016-9.26.45-PM.png" alt="5"></p>
+<p>但是注意右上角购物车的按钮只显示了’Item’。当你点击了列表时，什么也没有发生。这是为啥呢？</p>
+<p>因为刚才创建的方法还没有被调用，在<font color="green">viewDidLoad()</font>里面添加如下代码：</p>
+<pre><code>setupCartObserver()
+</code></pre><p>再次运行</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/initial_landing.png" alt="1"></p>
+<p>点击任意一个巧克力-你会发现购物车中商品的数量自动更新了！</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/added_chocolate.png" alt="2"></p>
+<p>成功，现在所有的巧克力又都可以被添加到购物车中了。</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/rage_chocolate1-1.png" alt="15"></p>
+<h2 id="RxCocoa-让TableView变得响应式"><a href="#RxCocoa-让TableView变得响应式" class="headerlink" title="RxCocoa:让TableView变得响应式"></a>RxCocoa:让TableView变得响应式</h2><p>目前为止，通过使用RxSwift你已经让购物车变成响应式了，现在来学习使用RxCocoa让<font color="green">UITableView</font>也变成响应式。</p>
+<p>RxCocoa扩展了UI元素以支持响应式API。这让你可以很方便的使用UITableView，而不需要直接重写delegate或data source的方法。</p>
+<p>为了演示，删除<font color="green">UITableViewDataSource</font>和<font color="green">UITableViewDelegate</font>两个拓展以及相关的方法。然后，在<font color="green">viewDidLoad()</font>方法中删除对<font color="green">tableView.dataSource</font>和<font color="green">tableView.delegate</font>的设置。</p>
+<p>运行程序，你会看到啥也没有了：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/no_chocolate_for_you.png" alt="7"></p>
+<p>一点也不好玩。现在来把巧克力找回来吧！</p>
+<p>首先，为了获得一个响应式的table view，你需要一些让table view响应的东西。还是在<font color="green">ChocolatesOfTheWorldViewController.swift</font>文件中，更新<font color="green">europeanChocolates</font>属性，让其作为一个Observable对象：</p>
+<pre><code>let europeanChocolates = Observable.just(Chocolate.ofEurope)
+</code></pre><p><font color="green">just(_:)</font>方法不会对Observable对象的底层值做任何修改，但你仍然需要以Observable值的方式来访问它。</p>
+<blockquote>
+<p>有时，调用<font color="green">just(_:)</font>意味着可能是过度地使用响应式编程了 – 毕竟，如果一个值从不改变，又何必使用响应式技术来监测它的变化呢？在本例中，你将使用它来设置将要改变的单元格的响应，不过经常思考如何使用Rx总是件好事。举个🌰，虽然你有一个锤子，但并不意味着每一个问题都是一个钉子。</p>
+</blockquote>
+<p>现在你已经让<font color="green">europeanChocolates</font>成为了一个Observable，添加以下代码：</p>
+<pre><code>private func setupCellConfiguration() {
+    //1
+    europeanChocolates
+        .bindTo(tableView
+            .rx //2
+            .items(cellIdentifier: ChocolateCell.Identifier,
+                    cellType: ChocolateCell.self)) { // 3
+              row, chocolate, cell in
+              cell.configureWithChocolate(chocolate: chocolate) //4
+            }
+            .addDisposableTo(disposeBag) //5
+}
+</code></pre><p>稍微解释一下：</p>
+<p>1.调用<font color="green">bindTo(_:)</font>将<font color="green">europeanChocolates</font>可观察对象关联到table view每一行都会执行的代码上；</p>
+<p>2.调用<font color="green">rx</font>，你可以访问任何类的RxCocoa扩展 – 在这里就是一个<font color="green">UITableView</font>；</p>
+<p>3.调用Rx的<font color="green">items(cellIdentifier:cellType:)</font>方法，传入cell identifier及要使用的cell类型。这让Rx框架可以调用dequeuing方法；</p>
+<p>4.对于列表的每一项传入一个闭包。闭包的参数包括行信息、行对应的chocolate对象以及当前cell，再去配置cell就非常简单了；</p>
+<p>5.获取到<font color="green">bindTo(_:)</font>返回的Disposable，然后添加到<font color="green">disposeBag</font>中。</p>
+<p>可以发现，通常是需要tableView的三个data source方法才能实现的效果现在一个方法就都做好了。在<font color="green">viewDidLoad()</font>方法中添加一行来调用此方法：</p>
+<pre><code>setupCellConfiguration()
+</code></pre><p>运行一下，会发现巧克力又回来了</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/initial_landing.png" alt="1">    </p>
+<p>然而，当点击了一个巧克力时，他们并没有被添加到购物车中。为何之前的Rx方法不起作用了呢？</p>
+<p>其实不是，而是因为删除了<font color="green">tableView(_:didSelectRowAt:)</font>方法。</p>
+<p>为了修复这个问题，需要使用RxCocoa提供的另一个<font color="green">UITableView</font>的扩展方法：<font color="green">modelSelected(_:)</font>，它返回一个你可以用来观察模型对象何时被选中的Observable。</p>
+<p>添加以下方法：</p>
+<pre><code>private func setupCellTapHandling() {
+    tableView
+        .rx
+        .modelSelected(Chocolate.self) //1
+        .subscribe(onNext: { //2
+            chocolate in
+            ShoppingCart.sharedCart.chocolates.value.append(chocolate) //3
+
+            if let selectedRowIndexPath = self.tableView.indexPathForSelectedRow {
+                self.tableView.deselectRow(at: selectedRowIndexPath, animated: true)
+            } //4
+        })
+        .addDisposableTo(disposeBag) //5
+}
+</code></pre><p>详细说明一下：</p>
+<p>1.调用table view的响应式拓展方法<font color="green">modelSelected(_:)</font>，传入Chocolate模型类型供后面使用。这个方法依然返回一个Observable；</p>
+<p>2.获取到Observable后，调用<font color="green">subscribe(onNext:)</font>方法，传入一个在模型被选中时会被调用的尾随闭包；</p>
+<p>3.在尾随闭包中，将选中的巧克力添加到购物车中；</p>
+<p>4.还是在闭包中，确保当前被点击的单元格选中状态被取消；</p>
+<p>5.<font color="green">subscribe(onNext:)</font>方法返回一个Disposable，添加这个Disposable到disposeBag中。</p>
+<p>最后，在<font color="green">viewDidLoad()</font>中添加一行来调用这个方法：</p>
+<pre><code>setupCellTapHandling()
+</code></pre><p>运行一下，你会看到熟悉的巧克力列表：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/initial_landing.png" alt="1">    </p>
+<p>而且现在你又可以往购物车中添加巧克力了！</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/added_chocolate.png" alt="2"></p>
+<h2 id="RxSwift-and-Direct-Text-Input"><a href="#RxSwift-and-Direct-Text-Input" class="headerlink" title="RxSwift and Direct Text Input"></a>RxSwift and Direct Text Input</h2><p>RxSwift另一个非常有用的特性是它能够获取并响应用户输入的文本。</p>
+<p>为了感受一下响应式的处理文本输入，你将在信用卡输入页面中添加一些简单的验证和卡类型检测。</p>
+<p>在非响应式编程中信用卡输入的处理是通过一些<font color="green">UITextFieldDelegate</font>的方法来实现的，通常每个方法中都包含大量的<font color="green">if/else</font>语句，用于判断当前是哪个text field正在被编辑，从而决定应该执行什么操作和逻辑。</p>
+<p>响应式编程直接将处理逻辑连接到每个text field上，是不是很方便。</p>
+<p>在<font color="green">BillingInfoViewController.swift</font>类中，在顶部添加如下代码：</p>
+<pre><code>private let disposeBag = DisposeBag()
+</code></pre><p>和前面一样，首先定义一个<font color="green">DisposeBag</font>。</p>
+<p>一个非常有用的事情是，基于当前已知的<a href="https://en.wikipedia.org/wiki/Payment_card_number" target="_blank" rel="external">卡片类型</a>，当用户输入卡号时展示一下此信用卡的类型。</p>
+<p>为了实现这一目的，在 <font color="green">//MARK: - Rx Setup</font>下面添加以下代码：</p>
+<pre><code>//MARK: - Rx Setup
+
+private func setupCardImageDisplay() {
+    cardType
+        .asObservable()
+        .subscribe(onNext: {
+            cardType in
+            self.creditCardImageView.image = cardType.image
+        })
+        .addDisposableTo(disposeBag)
+}
+</code></pre><p>稍后，你将使用这个方法来根据卡类型的改变去更新卡图片。它为变量的值添加了一个Observer，并附加一个在值改变时会执行的闭包，同时确保Observer被添加到<font color="green">disposeBag</font>中了。</p>
+<p>现在到了最有趣的部分：文本改变处理。</p>
+<p>由于用户可能会快速输入，因此你可能不希望每次用户按键都去验证。这样会导致昂贵的计算甚至是UI卡顿。</p>
+<p>一种更好的方式是<font color="green">限制</font>验证的幅度，即只有一定的时间间隔后再去验证输入的内容。这样，再快的打字速度也不会阻塞整个程序的运行。</p>
+<p>Throttling是RxSwift的一个特性。因为在一些东西改变时，通常有大量的逻辑操作。而使用Throttling特性，能够减少这些逻辑操作发生的次数。</p>
+<p>首先，在<font color="green">BillingInfoViewController.swift</font>中的其它属性声明下面添加如下代码：</p>
+<pre><code>private let throttleInterval = 0.1
+</code></pre><p>这里以秒为单位为节流(throttle)长度定义了一个常量。</p>
+<p>然后添加如下方法：</p>
+<pre><code>private func setupTextChangeHandling() {
+    let creditCardValid = creditCardNumberTextField
+        .rx
+        .text //1
+        .throttle(throttleInterval, scheduler: MainScheduler.instance) //2
+        .map { self.validate(cardText: $0) } //3
+
+    creditCardValid
+        .subscribe(onNext: { self.creditCardNumberTextField.valid = $0 }) //4
+        .addDisposableTo(disposeBag) //5
+}
+</code></pre><blockquote>
+<p>注意：如果在设置<font color="green">creditCardValid</font>时得到一个”Generic parameter R could not be inferred“的编译错误，改成这样就可以解决：<font color="green">let creditCardValid: Observable</font>。理论上，编译器能推导出它的类型，但偶尔还是需要一点帮助。</p>
+</blockquote>
+<p>来看看上面代码做了什么：</p>
+<p>1.<font color="green">text</font>是另外一个RxCocoa的扩展(在使用之前必须先调用<font color="green">rx</font>)，这一次供UITextField使用。它将text field的内容作为一个Observable值返回；</p>
+<p>2.节流输入，使得你设置的验证方式只在设置的时间间隔才运行。<font color="green">scheduler</font>参数是一个更高级的概念，简单地说就是它绑定能到一个线程。因为你希望所有操作都是在主线程上执行，所以使用<font color="green">MainScheduler</font>；</p>
+<p>3.将被节流的输入值应用<font color="green">validate(cardText:)</font>来转换它，此方法已经由当前类提供了。如果输入的卡号有效，则观察到的布尔值的最终值为<font color="green">true</font>；</p>
+<p>4.接受所创建的Observable值并订阅它，根据传入的值来更新text field的验证；</p>
+<p>5.将生成的Disposable添加到<font color="green">disposeBag</font>中。</p>
+<p>将以下代码添加到<font color="green">setupTextChangeHandling()</font>方法下面，以创建有效日期和卡片安全代码(CVV)的Observable变量：</p>
+<pre><code>let expirationValid = expirationDateTextField
+    .rx
+    .text
+    .throttle(throttleInterval, scheduler: MainScheduler.instance)
+    .map { self.validate(expirationDateText: $0) }
+
+expirationValid
+    .subscribe(onNext: { self.expirationDateTextField.valid = $0 })
+    .addDisposableTo(disposeBag)
+
+let cvvValid = cvvTextField
+    .rx
+    .text
+    .map { self.validate(cvvText: $0) }
+
+cvvValid
+    .subscribe(onNext: { self.cvvTextField.valid = $0 })
+    .addDisposableTo(disposeBag)
+</code></pre><p>现在你已经为三个text field的有效性设置了Observable值，添加如下代码：</p>
+<pre><code>let everythingValid = Observable
+    .combineLatest(creditCardValid, expirationValid, cvvValid) {
+        $0 &amp;&amp; $1 &amp;&amp; $2 //All must be true
+}
+
+everythingValid
+    .bindTo(purchaseButton.rx.enabled)
+    .addDisposableTo(disposeBag)
+</code></pre><p>这里使用了Observable的<font color="green">combineLatest(_:)</font>方法使用前面创建的三个Observable生成第四个，即<font color="green">everythingValid</font>，其值是否为true取决于前面三个输入值是否都有效。</p>
+<p>然后将<font color="green">everythingValid</font>绑定到UIButton的响应式扩展的<font color="green">enabled</font>属性上，这样购买按钮的状态就由<font color="green">everythingValid</font>的值来控制了。</p>
+<p>如果所有的输入都有效，那么<font color="green">everythingValid</font>的内部值就为<font color="green">true</font>。否则的话，为<font color="green">false</font>。通过这种方式，购买按钮只有在信用卡详细信息有效时才可点击。</p>
+<p>设置好了，接下来可以在<font color="green">viewDidLoad()</font>方法中去调用了：</p>
+<pre><code>setupCardImageDisplay()
+setupTextChangeHandling()
+</code></pre><p>跑一下，要进入信用卡输入页面，需要至少选择一个巧克力将其添加到购物车，然后点击购物车按钮进入购物车界面。只要购物车中至少有一个巧克力，checkout按钮就是可用的：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/checkout.png" alt="3"></p>
+<p>点击Checkout按钮，将进入信用卡输入页面：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/cc_form.png" alt="4"></p>
+<p>在卡号的text field中输入<font color="green">4</font>–你将看到右侧表示卡片类型的图片显示了Visa：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/Simulator-Screen-Shot-Jul-4-2016-7.47.40-PM.png" alt="9"></p>
+<p>删除4，卡片类型的图片将恢复成未知状态。输入<font color="green">55</font>，图片将变成MasterCard：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/Simulator-Screen-Shot-Jul-4-2016-7.47.36-PM.png" alt="12"></p>
+<p>赞。这个应用涵盖了美国四种主要的信用卡类型(Visa, MasterCard, American Express, Discover)。如果你有其中一种卡，你可以输入卡号来看看图片是否正确以及卡号是否有效。</p>
+<blockquote>
+<p>如果你没有任何美国信用卡，你可以使用<a href="https://www.paypalobjects.com/en_US/vhelp/paypalmanager_help/credit_card_numbers.htm" target="_blank" rel="external">Paypal</a>提供的测试卡卡号，这些应该可以通过程序的所有本地验证，即使卡号实际上是不可用的。</p>
+</blockquote>
+<p>一旦输入有效的信用卡卡号，同时有效期和cvv也是有效的，那么<font color="green">Buy Chocolate!</font>按钮将可以被点击：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/enabled_checkout.png" alt="13"></p>
+<p>点击按钮看下效果：</p>
+<p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/success.png" alt="14"></p>
+<p>恭喜你！感谢RxSwift和RxCocoa，你可以随心所欲的买巧克力了。</p>
+<h2 id="何去何从"><a href="#何去何从" class="headerlink" title="何去何从"></a>何去何从</h2><p>最终的代码可以在<a href="https://koenig-media.raywenderlich.com/uploads/2016/10/Chocotastic-finished-s3-rxs-3b1.zip" target="_blank" rel="external">这里</a>找到。</p>
+<p>如果你想挑战一下，可以尝试将程序中的其他几个类也改成响应式：</p>
+<ul>
+<li><p>修改<font color="green">CartViewController</font>类，使用响应式的table view（而不用label）来展示购物车的内容；</p>
+</li>
+<li><p>允许用户直接从购物车中添加或删除巧克力，并能自动更新价格。</p>
+</li>
+</ul>
+<p>现在你已经稍微感受了下Rx编程，很有意思有木有?!以下是一些资源，以帮助你继续学习：</p>
+<ul>
+<li><a href="https://www.appbuilders.ch/" target="_blank" rel="external">RxSwift Slack</a></li>
+<li><a href="https://github.com/ReactiveX/RxSwift/blob/master/Documentation/GettingStarted.md" target="_blank" rel="external">RxSwift’s Getting Started guide</a></li>
+<li><a href="https://realm.io/news/slug-max-alexander-functional-reactive-rxswift/" target="_blank" rel="external">Max Alexander’s talk on Rx at Realm</a></li>
+</ul>
+<p>最后，我们的<a href="https://www.raywenderlich.com/u/icanzilb" target="_blank" rel="external">Marin Todorov</a>有一个不错的博客<a href="http://rx-marin.com/" target="_blank" rel="external">rx_marin</a>，里面有他学习响应式编程的一些心得。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RxSwift/" rel="tag">#RxSwift</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/20/商品详情页多个列表滑动效果实现方案/" rel="next" title="商品详情页多个列表滑动效果实现方案">
+                <i class="fa fa-chevron-left"></i> 商品详情页多个列表滑动效果实现方案
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/"
+           data-title="RxSwift & RxCocoa 入门教程" data-url="http://yoursite.com/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Kaisa" />
+          <p class="site-author-name" itemprop="name">Kaisa</p>
+          <p class="site-description motion-element" itemprop="description">心若不老，仍是少年</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">14</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/kaisayoung" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RxSwift-amp-RxCocoa是什么"><span class="nav-number">1.</span> <span class="nav-text">RxSwift & RxCocoa是什么?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Observables-and-Observers"><span class="nav-number">1.1.</span> <span class="nav-text">Observables and Observers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-DisposeBag"><span class="nav-number">1.2.</span> <span class="nav-text">The DisposeBag</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正式开始"><span class="nav-number">2.</span> <span class="nav-text">正式开始</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#起点：非响应式"><span class="nav-number">2.1.</span> <span class="nav-text">起点：非响应式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RxSwift：让购物车数量自动响应"><span class="nav-number">3.</span> <span class="nav-text">RxSwift：让购物车数量自动响应</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RxCocoa-让TableView变得响应式"><span class="nav-number">4.</span> <span class="nav-text">RxCocoa:让TableView变得响应式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RxSwift-and-Direct-Text-Input"><span class="nav-number">5.</span> <span class="nav-text">RxSwift and Direct Text Input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#何去何从"><span class="nav-number">6.</span> <span class="nav-text">何去何从</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kaisa</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"kaisayoung"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("nRzHUuGqxgGGukmsOOWW1Tzi-gzGzoHsz", "5KkfnJ5UlP0Yw8JFVRqgm2th");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
