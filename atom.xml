@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-03-22T02:41:02.000Z</updated>
+  <updated>2017-03-22T02:49:26.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yoursite.com/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa%E3%80%90%E8%AF%91%E3%80%91/"/>
     <id>http://yoursite.com/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/</id>
     <published>2017-03-20T16:06:39.000Z</published>
-    <updated>2017-03-22T02:41:02.000Z</updated>
+    <updated>2017-03-22T02:49:26.000Z</updated>
     
     <content type="html"><![CDATA[<p>本文由Ellen Shapiro于16年发表于<a href="https://www.raywenderlich.com/" target="_blank" rel="external">raywenderlich</a>，原文可查看<a href="https://www.raywenderlich.com/138547/getting-started-with-rxswift-and-rxcocoa" target="_blank" rel="external">Getting Started With RxSwift and RxCocoa</a>。</p>
 <p>若能随心所欲的控制自己的代码达成预期的效果，想来一定是极好的。</p>
@@ -59,7 +59,7 @@
 <p>还有一个<font color="green">updateCartButton()</font>方法，用当前购物车中的巧克力数量来更新购物车按钮。这个方法在两个地方被调用：</p>
 <p>在<font color="green">viewWillAppear(:)</font>和 <font color="green">tableView(_:didSelectRowAt:)</font>中。<br>这些都是以<font color="green">命令式</font>的方法来修改数量：你必须显示调用方法来更新计数。</p>
 <p>此时，你必须跟踪你要改变值的位置，不过当你使用响应式的方式来重写这些代码之后，无论数量是在哪或是怎样改变了，购物车按钮都会自动更新。</p>
-<h2 id="RxSwift：让购物车数量自动响应"><a href="#RxSwift：让购物车数量自动响应" class="headerlink" title="RxSwift：让购物车数量自动响应"></a>RxSwift：让购物车数量自动响应</h2><p>所有引用购物车中物品的方法都是使用的一个<font color="green">ShoppingCart.sharedCart</font>单例。打开<font color="green">ShoppingCart.swift</font>文件，你能看到单例实例上一个变量的标准设置方式：</p>
+<h2 id="RxSwift：让购物车数量成响应式"><a href="#RxSwift：让购物车数量成响应式" class="headerlink" title="RxSwift：让购物车数量成响应式"></a>RxSwift：让购物车数量成响应式</h2><p>所有引用购物车中物品的方法都是使用的一个<font color="green">ShoppingCart.sharedCart</font>单例。打开<font color="green">ShoppingCart.swift</font>文件，你能看到单例实例上一个变量的标准设置方式：</p>
 <pre><code>var chocolates = [Chocolate]()
 </code></pre><p>现在，<font color="green">chocolates</font>数组内容变化时不会被观察到。你可以在它的定义中添加一个<font color="green">didSet</font>闭包，但它只有在整个数组变化时才会被调用，而不是它的任意一个元素发生改变。</p>
 <p>幸运的是，RxSwift有一个解决方案。使用下面这行代码来替代原<font color="green">chocolates</font>变量的创建：</p>
@@ -133,7 +133,7 @@ private func setupCartObserver() {
 <p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/added_chocolate.png" alt="2"></p>
 <p>成功，现在所有的巧克力又都可以被添加到购物车中了。</p>
 <p><img src="https://koenig-media.raywenderlich.com/uploads/2016/07/rage_chocolate1-1.png" alt="15"></p>
-<h2 id="RxCocoa-让TableView变得响应式"><a href="#RxCocoa-让TableView变得响应式" class="headerlink" title="RxCocoa:让TableView变得响应式"></a>RxCocoa:让TableView变得响应式</h2><p>目前为止，通过使用RxSwift你已经让购物车变成响应式了，现在来学习使用RxCocoa让<font color="green">UITableView</font>也变成响应式。</p>
+<h2 id="RxCocoa：让TableView成响应式"><a href="#RxCocoa：让TableView成响应式" class="headerlink" title="RxCocoa：让TableView成响应式"></a>RxCocoa：让TableView成响应式</h2><p>目前为止，通过使用RxSwift你已经让购物车变成响应式了，现在来学习使用RxCocoa让<font color="green">UITableView</font>也变成响应式。</p>
 <p>RxCocoa扩展了UI元素以支持响应式API。这让你可以很方便的使用UITableView，而不需要直接重写delegate或data source的方法。</p>
 <p>为了演示，删除<font color="green">UITableViewDataSource</font>和<font color="green">UITableViewDelegate</font>两个拓展以及相关的方法。然后，在<font color="green">viewDidLoad()</font>方法中删除对<font color="green">tableView.dataSource</font>和<font color="green">tableView.delegate</font>的设置。</p>
 <p>运行程序，你会看到啥也没有了：</p>
