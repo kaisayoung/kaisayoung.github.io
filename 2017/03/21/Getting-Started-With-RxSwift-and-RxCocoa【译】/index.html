@@ -114,7 +114,7 @@
 <meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/Simulator-Screen-Shot-Jul-4-2016-7.47.36-PM.png">
 <meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/enabled_checkout.png">
 <meta property="og:image" content="https://koenig-media.raywenderlich.com/uploads/2016/07/success.png">
-<meta property="og:updated_time" content="2017-03-22T02:49:26.000Z">
+<meta property="og:updated_time" content="2017-03-22T02:53:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RxSwift & RxCocoa 入门教程">
 <meta name="twitter:description" content="本文由Ellen Shapiro于16年发表于raywenderlich，原文可查看Getting Started With RxSwift and RxCocoa。
@@ -363,12 +363,12 @@
 <p>若能随心所欲的控制自己的代码达成预期的效果，想来一定是极好的。</p>
 <p>面向对象编程中大部分程序都是<font color="green">命令式</font>的：你的代码告诉你的程序去干什么同时有多种方式来监听变化－但是通常你又必须显示的告诉系统什么时候发生的变化。</p>
 <p>这样其实也还好，不过如果能提前都设置好，在发生变化时代码能够自动更新会不会感觉更加棒棒的？这就是<font color="green">响应式</font>编程的基本思想：你的应用会针对底层数据的改变而做出相应的响应，而不需要你去直接告诉它。这样使得可以全心关注于逻辑处理而不需要维护一堆状态。</p>
+<a id="more"></a>
 <p>在Objective-C或Swift中这其实都可以实现，主要可以通过系统的KVO机制，在Swift中还可以使用didSet方法。然而实际效果你懂的。为了避免这些问题，现在在Objective-C和Swift上都有了一些比较成熟的框架，来实现响应式编程。</p>
 <blockquote>
 <p>注意：如果想了解更多，强烈推荐你看看这篇文章<a href="https://www.raywenderlich.com/126522/reactivecocoa-vs-rxswift" target="_blank" rel="external">ReactiveCocoa vs RxSwift</a>，并且正文下面的评论也值得一读。</p>
 </blockquote>
 <p>今天我们将使用其中一个框架，<font color="green">RxSwift</font>，还有它的小伙伴<font color="green">RxCocoa</font>，通过实现一个购买巧克力的App，学习如何从令人恼火的命令式编程过渡到优雅的响应式编程。</p>
-<a id="more"></a>
 <h2 id="RxSwift-amp-RxCocoa是什么"><a href="#RxSwift-amp-RxCocoa是什么" class="headerlink" title="RxSwift &amp; RxCocoa是什么?"></a>RxSwift &amp; RxCocoa是什么?</h2><p><font color="green">RxSwift</font>和<font color="green">RxCocoa</font>是<a href="http://reactivex.io/" target="_blank" rel="external">ReactiveX</a>（通常被简称为“Rx”）语言工具全套的一部分，这个套件跨越了多种编程语言和平台。Rx起源于.Net/C#生态体系，不过现在已经非常受Ruby、JS、尤其是Java和Android开发人员的欢迎了。</p>
 <p><font color="green">RxSwift</font>是一个用于与Swift语言交互的框架，而<font color="green">RxCocoa</font>是一个通过应用响应式技巧来使得Cocoa的API更容易使用的框架。</p>
 <p>Rx框架提供了一套通用的词汇，以方便在不同的语言中描述相同的任务。理论上，这使得你可以更加专注于语言本身的语法，而不会把时间浪费在将一个普通任务从一种语言转换到另一种新语言上。</p>
