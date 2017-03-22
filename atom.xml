@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-03-22T02:53:37.000Z</updated>
+  <updated>2017-03-22T02:59:06.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yoursite.com/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa%E3%80%90%E8%AF%91%E3%80%91/"/>
     <id>http://yoursite.com/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/</id>
     <published>2017-03-20T16:06:39.000Z</published>
-    <updated>2017-03-22T02:53:37.000Z</updated>
+    <updated>2017-03-22T02:59:06.000Z</updated>
     
     <content type="html"><![CDATA[<p>本文由Ellen Shapiro于16年发表于<a href="https://www.raywenderlich.com/" target="_blank" rel="external">raywenderlich</a>，原文可查看<a href="https://www.raywenderlich.com/138547/getting-started-with-rxswift-and-rxcocoa" target="_blank" rel="external">Getting Started With RxSwift and RxCocoa</a>。</p>
 <p>若能随心所欲的控制自己的代码达成预期的效果，想来一定是极好的。</p>
