@@ -1,0 +1,1980 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="RxSwift," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="去年公司项目搞重构时学习并应用过一阵RAC，感觉真是6的起飞。近来听说在swift上有一个RxSwift库写的棒棒的，特地学习了下。写下一点学习笔记仅供参考。
+本篇文章主要分四个部分：RxSwift简介，RxSwift中的基本概念，RxSwift基本用法，RxSwift中丰富而神奇的操作。
+先来一张图镇帖。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxSwift基本概念与使用">
+<meta property="og:url" content="http://yoursite.com/2017/04/21/RxSwift-from-zero-to-one-first-lesson/index.html">
+<meta property="og:site_name" content="一直在路上">
+<meta property="og:description" content="去年公司项目搞重构时学习并应用过一阵RAC，感觉真是6的起飞。近来听说在swift上有一个RxSwift库写的棒棒的，特地学习了下。写下一点学习笔记仅供参考。
+本篇文章主要分四个部分：RxSwift简介，RxSwift中的基本概念，RxSwift基本用法，RxSwift中丰富而神奇的操作。
+先来一张图镇帖。">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-first-lesson.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-first-lesson.png">
+<meta property="og:updated_time" content="2017-04-23T10:30:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxSwift基本概念与使用">
+<meta name="twitter:description" content="去年公司项目搞重构时学习并应用过一阵RAC，感觉真是6的起飞。近来听说在swift上有一个RxSwift库写的棒棒的，特地学习了下。写下一点学习笔记仅供参考。
+本篇文章主要分四个部分：RxSwift简介，RxSwift中的基本概念，RxSwift基本用法，RxSwift中丰富而神奇的操作。
+先来一张图镇帖。">
+<meta name="twitter:image" content="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-first-lesson.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6321865863578256000,
+      author: '主编大人'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/21/RxSwift-from-zero-to-one-first-lesson/"/>
+
+  <title> RxSwift基本概念与使用 | 一直在路上 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d9a1587ce4c6042894f106ae7486a3ce";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一直在路上</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                RxSwift基本概念与使用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-04-21T16:57:03+08:00" content="2017-04-21">
+              2017-04-21
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/FRP/" itemprop="url" rel="index">
+                    <span itemprop="name">FRP</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/04/21/RxSwift-from-zero-to-one-first-lesson/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/04/21/RxSwift-from-zero-to-one-first-lesson/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>去年公司项目搞重构时学习并应用过一阵RAC，感觉真是6的起飞。近来听说在swift上有一个RxSwift库写的棒棒的，特地学习了下。写下一点学习笔记仅供参考。</p>
+<p>本篇文章主要分四个部分：RxSwift简介，RxSwift中的基本概念，RxSwift基本用法，RxSwift中丰富而神奇的操作。</p>
+<p>先来一张图镇帖。</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-first-lesson.png" alt="1"></p>
+<a id="more"></a>
+<p>继续阅读之前，强烈建议读者先去读一遍官方的<a href="https://github.com/ReactiveX/RxSwift/blob/master/README.md" target="_blank" rel="external">ReadMe</a>，然后运行一下官方的Playgrounds和Example工程，稍微有个印象对于接下来的理解会很有帮助。</p>
+<h2 id="RxSwift简介"><a href="#RxSwift简介" class="headerlink" title="RxSwift简介"></a>RxSwift简介</h2><p>RxSwift是<a href="http://reactivex.io/" target="_blank" rel="external">ReactiveX</a>在Swift语言平台上实现的一个函数响应式编程框架。兼具函数式与响应式的特性，再加上Swift本身已经集众家之所长，配合使用简直如虎添翼，使得代码优雅简洁。</p>
+<p>事实上，我们写的绝大部分代码其实都是为了响应事件：当一个按钮被点击时，需要写一个@IBAction方法来处理；当需要监听键盘位置变化时，需要注册一个notification；当使用URLSession做网络请求时需要提供一个closure来执行结果；想要时刻关注一个值的变化时，使用KVO；处理一个tableview的点击事件时，应用delegate。应用系统提供的多种不同的方式最终会导致我们的代码异常的复杂与混乱。如果有一种方式可以将上述五种合而为一，会不会很大程度提高代码可读性？答案是肯定的，Rx做到了。</p>
+<h2 id="RxSwift中的基本概念"><a href="#RxSwift中的基本概念" class="headerlink" title="RxSwift中的基本概念"></a>RxSwift中的基本概念</h2><p>所谓响应式编程最基本的就是两个概念：被观察者和观察者。被观察者能够对外发送可被接收的数据，观察者能够设置去接收这些数据，然后对不同数据进行不同处理。这个设置的动作叫做订阅。从设计模式的角度讲，这个过程应用了观察者模式，像系统提供的KVO，notification其实都是这一模式。</p>
+<h3 id="Observable-amp-Observer"><a href="#Observable-amp-Observer" class="headerlink" title="Observable &amp; Observer"></a>Observable &amp; Observer</h3><p>在RxSwift的世界中，Observable表示被观察者，Observer表示观察者。</p>
+<p>首先确定你已经了解了Swift中的序列(sequence)，一个Observable的实例可以理解成就是一个序列。<br>而一个Observable序列比Swift中的序列强大之处在于它能够异步接收数据。这是RxSwift的精髓。其他所有都是基于这一概念拓展而来的。</p>
+<p>Observable有一个函数表示被订阅，即subscribe(_:) ，调用了之后它发送任何数据都能被接收到。</p>
+<p>创建一个Observable对象，此时它还只是拥有被观察的能力，并没有发挥出来，直到被调用了订阅函数subscribe(_:)，在哪个对象中调用的这个函数，哪个对象即是Observer。</p>
+<p>当一个Observable被一个Observer订阅时，可以认为在两者之间建立起了一条管道，Observable可以源源不断的向Observer发送数据，直到管道被销毁。但是要注意，这是一条很窄的管道，窄到一次只能通过一条数据。如果将一条数据理解成一个球，那么通俗的说就是一个球发送完再发送另一个球，而绝不能同时发送两个球。</p>
+<h3 id="Event"><a href="#Event" class="headerlink" title="Event"></a>Event</h3><p>刚才提到Observable可以对外发送数据，那应用什么样的载体来装这些数据呢？在什么样的时机来发送这些数据呢？答案是事件。那什么是事件呢，我举几个例子，一个文本框内容改变是事件，一个按钮被点击是事件，一个列表被滑动是事件，一个网络请求被触发是事件，一个数据库被修改还是事件。</p>
+<p>在RxSwift的世界中，Event表示事件。Observable序列可以发送出去的事件被分成了三种类型，分别是next类型，错误(error)类型和完成(completed)类型。其中next事件和错误事件内部都装有数据，而完成事件并没有。</p>
+<p>所以下文中提到的Observable序列发送事件或者发送数据其实都是一个意思，别纠结。</p>
+<p>一个Observable序列作为一个事件源理论上当然可以发送任意多个事件。所以规定以发送一个完成事件或者一个错误事件作为结束，在这之前可以发送无限多个next事件，但是只要这两个事件其中之一一发送，以后就不能再继续发送任何事件了。</p>
+<p>根据Observable是否会发送代表结束的事件可以分两种类型，我举2个具体的例子感受下，网络请求可以作为一个Observable，设置去订阅它，被触发即调用API得到结果后将数据装配到next事件中发出，然后根据结果决定发送一个错误事件或是一个完成事件，此时这个网络请求完全结束，以后再不能发送事件。想重新调用此API只能创建另一个网络请求；一个按钮可以也作为一个Observable，设置去订阅它，被点击后就发送一个next事件，但是只要这个按钮不被销毁，就可以源源不断发送事件，即使被销毁时，也不会发送错误事件或是完成事件。</p>
+<p>看一下官方出的图标特别形象：</p>
+<p>–1–2–3–4–5–6–|—-&gt; // “|” = Terminates normally: with an completed</p>
+<p>–a–b–c–d–e–f–X—-&gt; // “X” = Terminates with an error</p>
+<p>–tap–tap———-tap–&gt; // “|” = Continues indefinitely, such as a sequence of button taps</p>
+<p>总结一下，记住四个核心概念，三个名词：Observable被观察者，Observer观察者，Event事件；一个动词：订阅subscribe。</p>
+<h2 id="RxSwift基本用法"><a href="#RxSwift基本用法" class="headerlink" title="RxSwift基本用法"></a>RxSwift基本用法</h2><p>RxSwift的使用说起来非常简单：第一步创建一个Observable序列；第二步去订阅它，此时可以提前设置好遇到不同的事件消息进行不同相应的处理；第三步记得在适当的时候销毁，回收资源。</p>
+<p>三个步骤核心关键词：创建create，订阅subscribe，销毁dispose。</p>
+<h3 id="创建-create-amp-订阅-subscribe"><a href="#创建-create-amp-订阅-subscribe" class="headerlink" title="创建 create &amp; 订阅 subscribe"></a>创建 create &amp; 订阅 subscribe</h3><p>前面提到过，创建一个Observable对象后只有调用订阅函数才能让其将能力发挥出来，所以两者需要配合使用。</p>
+<p>针对Observable序列可以发出的三种不同类型事件，订阅时也可以有选择性的只订阅单一类型的事件或者全部类型的事件。</p>
+<p>订阅所有类型事件：<code>subscribe(_:)</code></p>
+<p>只订阅next类型事件：<code>subscribe(onNext:)</code></p>
+<p>只订阅错误类型事件：<code>subscribe(onError:)</code></p>
+<p>只订阅完成类型事件：<code>subscribe(onCompleted:)</code></p>
+<p>分别订阅所有类型事件：<code>subscribe(onNext:onError:onCompleted:)</code></p>
+<p>另外，通常调用订阅函数<code>subscribe(_:)</code>之后的返回值都起名叫做<code>***Subscription</code>。</p>
+<h4 id="快速创建"><a href="#快速创建" class="headerlink" title="快速创建"></a>快速创建</h4><p>RxSwift自带一些可以快速创建Observable序列的操作符，应用它们创建后的序列本身已经具有发送事件的能力。一个Observable序列可以发送任意个next事件直到发送了一个完成事件或者错误事件作为结束。</p>
+<h5 id="never"><a href="#never" class="headerlink" title="never"></a>never</h5><p>创建一个永不发送任何事件且永不自动终结的序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag() // 1
+let neverSequence = Observable&lt;String&gt;.never()
+
+let neverSequenceSubscription = neverSequence
+    .subscribe { _ in
+        print(&quot;This will never be printed&quot;)
+}
+
+neverSequenceSubscription.disposed(by: disposeBag) // 1
+</code></pre><p>结果是什么也不输出。</p>
+<p>说明：这两行代码都是和资源回收相关，下面会讲到，暂时先忽略。</p>
+<h5 id="empty"><a href="#empty" class="headerlink" title="empty"></a>empty</h5><p>创建一个只会发送一个完成事件的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable&lt;Int&gt;.empty()
+    .subscribe { event in
+        print(event)
+    }
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>completed
+</code></pre><h5 id="just"><a href="#just" class="headerlink" title="just"></a>just</h5><p>创建一个只会发送一个next事件和一个完成事件的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.just(&quot;🔴&quot;)
+    .subscribe { event in
+        print(event)
+    }
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>next(🔴)
+completed
+</code></pre><h5 id="of"><a href="#of" class="headerlink" title="of"></a>of</h5><p>创建一个会发送固定数量数据的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(&quot;🐶&quot;, &quot;🐱&quot;, &quot;🐭&quot;, &quot;🐹&quot;)
+    .subscribe(onNext: { element in
+        print(element)
+    })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐶
+🐱
+🐭
+🐹
+</code></pre><p>注意此例子中只订阅了next事件，所以并没有像上两个例子一样打印<code>completed</code>。</p>
+<h5 id="from"><a href="#from" class="headerlink" title="from"></a>from</h5><p>从一个Swift的系统类Array，Dictionary，Set这样的序列中创建一个Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.from([&quot;🐶&quot;, &quot;🐱&quot;, &quot;🐭&quot;, &quot;🐹&quot;])
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐶
+🐱
+🐭
+🐹
+</code></pre><h5 id="range"><a href="#range" class="headerlink" title="range"></a>range</h5><p>创建一个会发送一个范围内的连续整数的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.range(start: 1, count: 10)
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>next(1)
+next(2)
+next(3)
+next(4)
+next(5)
+next(6)
+next(7)
+next(8)
+next(9)
+next(10)
+completed
+</code></pre><h5 id="repeatElement"><a href="#repeatElement" class="headerlink" title="repeatElement"></a>repeatElement</h5><p>创建一个会重复发送特定数据的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.repeatElement(&quot;🔴&quot;)
+    .take(3)  // 1
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🔴
+🔴
+🔴
+</code></pre><p>说明：这里使用了一个take操作符，用来控制发送数据的次数，后面会讲到，暂时先忽略。</p>
+<h5 id="generate"><a href="#generate" class="headerlink" title="generate"></a>generate</h5><p>有一个初始值一个判断条件和一个改变数据内容的函数，创建一个只要条件满足就会发送数据的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.generate(
+        initialState: 0,
+        condition: { $0 &lt; 3 },
+        iterate: { $0 + 1 }
+    )
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>0
+1
+2
+</code></pre><h5 id="error"><a href="#error" class="headerlink" title="error"></a>error</h5><p>创建一个会立即发送一个错误事件的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable&lt;Int&gt;.error(TestError.test)
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>error(test)
+</code></pre><p>上面出现的所有操作符中除了never不发送任何事件，其他都发送一个完成事件，只有这个error会发送一个错误事件。</p>
+<h4 id="基本创建"><a href="#基本创建" class="headerlink" title="基本创建"></a>基本创建</h4><h5 id="create"><a href="#create" class="headerlink" title="create"></a>create</h5><p>创建一个自定义的Observable序列。</p>
+<p>此时需要手动设置发送事件的类型和时机，并且要注意在发送完next事件之后需要发送一个完成事件或者错误事件表示结束。</p>
+<p>先来看一个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+var count = 1
+let myJust = { (element: String) -&gt; Observable&lt;String&gt; in
+    print(&quot;Creating \(count)&quot;)
+    count += 1
+    return Observable.create { observer in // 1
+        print(&quot;Emitting...&quot;)
+        observer.on(.next(element))
+        observer.on(.completed)  // 2
+        return Disposables.create()  // 3
+    }
+}
+
+myJust(&quot;🔴&quot;)
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)  // 3
+myJust(&quot;🌰&quot;)
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+</code></pre><p>输出结果是：</p>
+<pre><code>Creating 1
+Emitting...
+next(🔴)
+completed
+Creating 2
+Emitting...
+next(🌰)
+completed
+</code></pre><p>解释一下上面的代码：</p>
+<ol>
+<li>首先发现创建Observable时内部也有一个observer，字面意思也是观察者。而前面提到调用<code>subscribe</code>的对象才是观察者，那现在怎么有两个观察者？不要懵逼，确实有两个但是职责不同，外部的observer是为了观察Observable发出不同数据以便进行不同处理，而内部的observer是为了向外发送数据。事实上如果还是觉得奇怪可以改成任意名字，只要不影响发送数据就好。</li>
+<li>最后要发送一个完成事件作为结束标志。</li>
+<li>仍然是和资源回收相关，下面会讲到，暂时仍忽略。</li>
+</ol>
+<p>create的闭包中有一个observer对象负责去发送事件，仍然是next事件和错误事件需要有数据，而完成事件不需要有数据。</p>
+<p>发送所有类型事件：<code>on(_:)</code>  </p>
+<p>具体分为：<code>on(.next())</code>, <code>on(.error())</code>, <code>on(.completed)</code></p>
+<p>仅发送next类型事件：<code>onNext(_:)</code> </p>
+<p>仅发送错误类型事件：<code>onError(_:)</code></p>
+<p>仅发送完成类型事件：<code>onCompleted()</code></p>
+<h5 id="doOn"><a href="#doOn" class="headerlink" title="doOn"></a>doOn</h5><p><code>doOn</code>操作并不是为了创建Observable序列。而是为了使得Observable序列可以在发送事件之前先来做一些事情。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(&quot;🍎&quot;, &quot;🍐&quot;, &quot;🍊&quot;, &quot;🍋&quot;)
+    .do(onNext: { print(&quot;Intercepted:&quot;, $0) }, onError: { print(&quot;Intercepted error:&quot;, $0) }, onCompleted: { print(&quot;Completed&quot;)  })
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>Intercepted: 🍎
+🍎
+Intercepted: 🍐
+🍐
+Intercepted: 🍊
+🍊
+Intercepted: 🍋
+🍋
+Completed
+</code></pre><p>可以看出在每次发送事件之前都做了一次打印，但是并没有改变要发送数据的值。</p>
+<p>如例子中展示，函数为：<code>do(onNext:onError:onCompleted:)</code> ，可以对一个或多个参数赋值，从而选择在发送相应类型事件之前做些事情。</p>
+<h3 id="销毁-dispose"><a href="#销毁-dispose" class="headerlink" title="销毁 dispose"></a>销毁 dispose</h3><p>上面介绍了如何创建一个Observable序列并且去订阅它，那么问题来了，当这个序列不再发送新事件了，此时如果再继续订阅就没有意义了，如何进行取消或者说如何回收这一部分内存资源呢？</p>
+<h4 id="手动-Disposable"><a href="#手动-Disposable" class="headerlink" title="手动 Disposable"></a>手动 Disposable</h4><p>回到订阅函数：</p>
+<pre><code>public func subscribe(_ on: ) -&gt; Disposable
+</code></pre><p>我们发现订阅函数返回类型是Disposable协议，这个协议中只有一个函数:</p>
+<pre><code>func dispose()
+</code></pre><p>于是乎通过调用这个函数可以进行资源回收。</p>
+<p>举个🌰：</p>
+<pre><code>let subscription = Observable&lt;Int&gt;.interval(0.3, scheduler: MainScheduler.instance)   // 1
+    .subscribe (onNext: { print($0) })
+
+delay(2) {     // 2 
+    subscription.dispose()
+}
+</code></pre><p>结果是：</p>
+<pre><code>0
+1
+2
+3
+4
+5
+</code></pre><p>解释一下上面的代码：</p>
+<ol>
+<li>创建一个间隔0.3s在主线程发送整形变量的Observable。关于多线程相关知识下一篇文章中会有介绍。</li>
+<li>延迟2s执行，非系统提供。</li>
+</ol>
+<p>可以将<code>subscription.dispose()</code>注释掉对比一下结果，会发现在调用了 <code>dispose()</code> 函数之后，创建的Observable序列就不再发送新的事件了，证明资源已经被回收了。</p>
+<p>实际开发当中这种方式并不常用，因为通常并不能很好的掌控调用<code>dispose()</code> 函数的时机，更推荐下面一种函数。</p>
+<h4 id="自动-DisposeBag"><a href="#自动-DisposeBag" class="headerlink" title="自动 DisposeBag"></a>自动 DisposeBag</h4><p>上面介绍了很多创建Observable序列的函数，观察之前的例子中通用的代码有如下两行：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+.disposed(by: disposeBag)
+</code></pre><p>先说一下什么是DisposeBag ，它是RxSwift创造的另一个重要的概念，可以直译成用于销毁的包。其实就是一个类似垃圾袋的东西。我还是举一个例子，我们在家里吃西瓜时会剩下一堆西瓜皮，但是我们不会吃一块西瓜剩下一块西瓜皮就扔到楼下的垃圾桶，否则你会累死。而是先放到一个垃圾袋里，等到切好的西瓜都被吃完了将所有的西瓜皮放到垃圾袋中一次性扔到楼下的垃圾桶。</p>
+<p>DisposeBag的使用其实也是这个思路（作者默认你是在ARC的环境下进行开发，否则别往下看了）。首先在一个类中创建一个DisposeBag的实例，通常起名字叫做<code>disposeBag</code>（打开一个垃圾袋），然后将各种订阅后返回的Disposable类型的对象调用这个<code>disposed(by:)</code> 函数，也就是加入到这个实例中（将一块西瓜皮放到这个垃圾袋中）。程序运行时当这个类的实例被ARC系统自动回收时，会清空内部所有对象并释放相应资源当然也包括这个<code>disposeBag</code>（将垃圾袋扔到楼下垃圾桶）。</p>
+<p>而这也解释了为什么在<code>create</code>一个Observable时闭包里最后要添加这么一个行代码：</p>
+<pre><code>return Disposables.create()
+</code></pre><h2 id="Subjects"><a href="#Subjects" class="headerlink" title="Subjects"></a>Subjects</h2><p>Subject是RxSwift创造的另一个重要的概念，它既是Observable又是Observer，并且可以说是两者之间的一种桥梁。作为一个observer，它可以同时订阅一个或多个Observable，作为一个Observable，它能够传递它订阅的Observable发出的事件，同时自己也能发送新的事件。</p>
+<h3 id="PublishSubject"><a href="#PublishSubject" class="headerlink" title="PublishSubject"></a>PublishSubject</h3><p>向它的所有订阅者发送（广播）新的事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+let subject = PublishSubject&lt;String&gt;()
+
+subject.addObserver(&quot;1&quot;).disposed(by: disposeBag) // 1
+subject.onNext(&quot;🐶&quot;)  // 2
+subject.onNext(&quot;🐱&quot;)
+
+subject.addObserver(&quot;2&quot;).disposed(by: disposeBag) 
+subject.onNext(&quot;🅰️&quot;)
+subject.onNext(&quot;🅱️&quot;)
+</code></pre><p>结果是：</p>
+<pre><code>Subscription: 1 Event: next(🐶)
+Subscription: 1 Event: next(🐱)
+Subscription: 1 Event: next(🅰️)
+Subscription: 2 Event: next(🅰️)
+Subscription: 1 Event: next(🅱️)
+Subscription: 2 Event: next(🅱️)
+</code></pre><p>首先要注意上面使用了一个<code>addObserver</code>函数，它的定义是这样的：</p>
+<pre><code>func addObserver(_ id: String) -&gt; Disposable {
+     return subscribe { print(&quot;Subscription:&quot;, id, &quot;Event:&quot;, $0) }
+}
+</code></pre><p>其实也就是封装了一下<code>subscribe</code> 函数，这是为了在几个例子中可以共用。</p>
+<p>然后解释一下上面的代码：</p>
+<ol>
+<li>因为<code>subject</code>是一个observer，所以可以订阅Observable；</li>
+<li>因为<code>subject</code>是一个Observable，所以可以发送数据。</li>
+</ol>
+<p>观察打印结果可以发现：</p>
+<ol>
+<li>订阅之后发出的事件可以接收到，但之前的事件接收不到；</li>
+<li>这很正常，和上面创建Observable然后去订阅得到的结果是一样的。</li>
+</ol>
+<h3 id="ReplaySubject"><a href="#ReplaySubject" class="headerlink" title="ReplaySubject"></a>ReplaySubject</h3><p>仍然是向它的所有订阅者发送（广播）新的事件，但同时有一个缓存机制，通过设置<code>bufferSize</code>的值可以向新的订阅者重新发送固定数量的历史事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+let subject = ReplaySubject&lt;String&gt;.create(bufferSize: 1)
+
+subject.addObserver(&quot;1&quot;).disposed(by: disposeBag) 
+subject.onNext(&quot;🐶&quot;)
+subject.onNext(&quot;🐱&quot;)
+
+subject.addObserver(&quot;2&quot;).disposed(by: disposeBag) 
+subject.onNext(&quot;🅰️&quot;)
+subject.onNext(&quot;🅱️&quot;)
+</code></pre><p>结果是：</p>
+<pre><code>Subscription: 1 Event: next(🐶)
+Subscription: 1 Event: next(🐱)
+Subscription: 2 Event: next(🐱) // 
+Subscription: 1 Event: next(🅰️)
+Subscription: 2 Event: next(🅰️)
+Subscription: 1 Event: next(🅱️)
+Subscription: 2 Event: next(🅱️)
+</code></pre><p>观察打印结果可以发现：</p>
+<ol>
+<li>第二次订阅后立刻接收到了一个历史事件 <code>&quot;🐱&quot;</code>；</li>
+<li>可见<code>ReplaySubject</code>在内部会保存一下之前发送过的事件，以便将来被新的订阅者订阅时重复发送。</li>
+</ol>
+<h3 id="BehaviorSubject"><a href="#BehaviorSubject" class="headerlink" title="BehaviorSubject"></a>BehaviorSubject</h3><p>仍然是向它的所有订阅者发送（广播）新的事件，但同时立刻向新的订阅者发送最近一次发送过的事件（或者将初始化的值作为事件）。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+let subject = BehaviorSubject(value: &quot;🔴&quot;)
+
+subject.addObserver(&quot;1&quot;).disposed(by: disposeBag) 
+subject.onNext(&quot;🐶&quot;)
+subject.onNext(&quot;🐱&quot;)
+
+subject.addObserver(&quot;2&quot;).disposed(by: disposeBag) 
+subject.onNext(&quot;🅰️&quot;)
+subject.onNext(&quot;🅱️&quot;)
+
+subject.addObserver(&quot;3&quot;).disposed(by: disposeBag) 
+subject.onNext(&quot;🍐&quot;)
+subject.onNext(&quot;🍊&quot;)
+</code></pre><p>结果是：</p>
+<pre><code>Subscription: 1 Event: next(🔴) //
+Subscription: 1 Event: next(🐶)
+Subscription: 1 Event: next(🐱)
+Subscription: 2 Event: next(🐱) //
+Subscription: 1 Event: next(🅰️)
+Subscription: 2 Event: next(🅰️)
+Subscription: 1 Event: next(🅱️)
+Subscription: 2 Event: next(🅱️)
+Subscription: 3 Event: next(🅱️) //
+Subscription: 1 Event: next(🍐)
+Subscription: 2 Event: next(🍐)
+Subscription: 3 Event: next(🍐)
+Subscription: 1 Event: next(🍊)
+Subscription: 2 Event: next(🍊)
+Subscription: 3 Event: next(🍊)
+</code></pre><p>观察打印结果可以发现：</p>
+<ol>
+<li>第一次订阅后立刻接收到了<code>subject</code>的初始值 <code>&quot;🔴&quot;</code>；</li>
+<li>第二次订阅后立刻接收到了<code>subject</code>之前发出的最后一个值 <code>&quot;🐱&quot;</code>；</li>
+<li>第三次订阅后也是立刻接收到了<code>subject</code>之前发出的最后一个值 <code>&quot;🅱️&quot;</code>。</li>
+</ol>
+<p>可见<code>BehaviorSubject</code>就是在将<code>bufferSize</code>设置为1的<code>ReplaySubject</code>的基础上，附加了一个发送初始值的功能。</p>
+<h3 id="Variable"><a href="#Variable" class="headerlink" title="Variable"></a>Variable</h3><p>在内部包装着一个<code>BehaviorSubject</code>，类似于将<code>BehaviorSubject</code>放进了一个箱子，所以它拥有<code>BehaviorSubject</code>的全部能力；此外<code>Variable</code>还记录着当前值的状态。<code>Variable</code>永远不会发送错误事件，但是它会自动发送一个完成事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+let variable = Variable(&quot;🔴&quot;)
+
+variable.asObservable().addObserver(&quot;1&quot;).disposed(by: disposeBag) // 1
+variable.value = &quot;🐶&quot; // 2
+variable.value = &quot;🐱&quot;
+
+variable.asObservable().addObserver(&quot;2&quot;).disposed(by: disposeBag)
+variable.value = &quot;🅰️&quot;
+variable.value = &quot;🅱️&quot;
+</code></pre><p>结果是：</p>
+<pre><code>Subscription: 1 Event: next(🔴)
+Subscription: 1 Event: next(🐶)
+Subscription: 1 Event: next(🐱)
+Subscription: 2 Event: next(🐱)
+Subscription: 1 Event: next(🅰️)
+Subscription: 2 Event: next(🅰️)
+Subscription: 1 Event: next(🅱️)
+Subscription: 2 Event: next(🅱️)
+Subscription: 1 Event: completed //
+Subscription: 2 Event: completed
+</code></pre><p>然后解释一下上面的代码：</p>
+<ol>
+<li>因为<code>Variable</code>相当于<code>BehaviorSubject</code>外面的一个箱子，所以首先要调用<code>asObservable()</code>函数拆箱。</li>
+<li><code>Variable</code>并没有直接实现发送事件的几个函数，作为代替它对外暴露了一个<code>value</code>属性用于取得当前值或是设置最新值。设置新值的时候就会加到内部的<code>BehaviorSubject</code>序列上，从而间接实现了发送数据功能。</li>
+</ol>
+<p>观察打印结果可以发现：</p>
+<ol>
+<li>拥有<code>BehaviorSubject</code>的全部特性；</li>
+<li>会在最后自动发送一个完成事件。</li>
+</ol>
+<h2 id="种类丰富而神奇的操作"><a href="#种类丰富而神奇的操作" class="headerlink" title="种类丰富而神奇的操作"></a>种类丰富而神奇的操作</h2><p>RxSwift已经定义好了非常多的<a href="http://reactivex.io/documentation/operators.html" target="_blank" rel="external">操作符</a>，熟练使用它们可以大幅度提高开发效率。<a href="http://rxmarbles.com/" target="_blank" rel="external">这里</a>是用形象的图表来展示描述它们，可以看看帮助理解，虽然并不全。</p>
+<p>因为实在太多，下面仅介绍一些主要和常用的。</p>
+<h3 id="组合操作"><a href="#组合操作" class="headerlink" title="组合操作"></a>组合操作</h3><p>将多个源Observale组合成一个Observale。</p>
+<h4 id="startWith"><a href="#startWith" class="headerlink" title="startWith"></a>startWith</h4><p>在源Observale开始发出事件之前先发出特定的事件序列。</p>
+<p>举个🌰：</p>
+<pre><code>Observable.of(&quot;🐶&quot;, &quot;🐱&quot;, &quot;🐭&quot;, &quot;🐹&quot;)
+    .startWith(&quot;1️⃣&quot;)
+    .startWith(&quot;2️⃣&quot;)
+    .startWith(&quot;3️⃣&quot;, &quot;🅰️&quot;, &quot;🅱️&quot;)
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果为：</p>
+<pre><code>3️⃣
+🅰️
+🅱️
+2️⃣
+1️⃣
+🐶
+🐱
+🐭
+🐹    
+</code></pre><p>可以看出 <code>startWith</code>拥有<code>LIFO</code>即<code>last-in-first-out</code>的特性，越在后面添加的事件越先被发送出去。</p>
+<h4 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h4><p>将多个源Observale序列发出的事件组合装进一个新的Observale序列，每一个源Observale序列发出事件时，新合成的序列都会发出。</p>
+<p>可以理解成多条管道汇并入一条，简单的说就是并。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+let subject1 = PublishSubject&lt;String&gt;()
+let subject2 = PublishSubject&lt;String&gt;()
+
+Observable.of(subject1, subject2)
+    .merge()
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+
+subject1.onNext(&quot;🅰️&quot;)
+
+subject1.onNext(&quot;🅱️&quot;)
+
+subject2.onNext(&quot;①&quot;)
+
+subject2.onNext(&quot;②&quot;)
+
+subject1.onNext(&quot;🆎&quot;)
+
+subject2.onNext(&quot;③&quot;)
+</code></pre><p>结果为：</p>
+<pre><code>🅰️
+🅱️
+①
+②
+🆎
+③
+</code></pre><h4 id="zip"><a href="#zip" class="headerlink" title="zip"></a>zip</h4><p>将最多不超过8个源Observale序列组合成一个新的Observale序列，新序列将每次每个源Observale序列分别发出的事件组合后再发出。</p>
+<p>注意每个源Observale都要发出一个事件后合成后的Observale序列才会发出一个事件。举个生活中的例子，做肉夹馍时，肉和馍都属于原材料，也就是源Observale，一份肉严格对应一个馍，夹在一起之后才算是一个成品，也就是才能合成一个事件。一种材料用完之后另一种无论剩下多少都不能做成新的肉夹馍，也就是不能合成新的事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+let stringSubject = PublishSubject&lt;String&gt;()
+let intSubject = PublishSubject&lt;Int&gt;()
+
+Observable.zip(stringSubject, intSubject) { stringElement, intElement in
+    &quot;\(stringElement) \(intElement)&quot;
+    }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+
+stringSubject.onNext(&quot;🅰️&quot;)
+stringSubject.onNext(&quot;🅱️&quot;)
+
+intSubject.onNext(1)
+
+intSubject.onNext(2)
+
+stringSubject.onNext(&quot;🆎&quot;)
+intSubject.onNext(3)
+</code></pre><p>结果是：</p>
+<pre><code>🅰️ 1
+🅱️ 2
+🆎 3    
+</code></pre><h4 id="combineLatest"><a href="#combineLatest" class="headerlink" title="combineLatest"></a>combineLatest</h4><p>将最多不超过8个源Observale序列组合成一个新的Observale序列，当所有的源Observale都至少发出了一个事件或者之后任何一个Observale发出了一个新的事件时，合成后的Observale序列根据每一个源Observale序列最后发出的事件发出一个事件。</p>
+<p>注意每个源Observale发出一个事件后合成后的Observale序列都会发出一个事件。举个例子，计算几个可手动输入的数字的总和时，每个数字重新被输入后，总和都要重新被计算才正确。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+let stringSubject = PublishSubject&lt;String&gt;()
+let intSubject = PublishSubject&lt;Int&gt;()
+
+Observable.combineLatest(stringSubject, intSubject) { stringElement, intElement in
+        &quot;\(stringElement) \(intElement)&quot;
+    }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+
+stringSubject.onNext(&quot;🅰️&quot;)
+
+stringSubject.onNext(&quot;🅱️&quot;)
+
+intSubject.onNext(1)
+
+intSubject.onNext(2)
+
+stringSubject.onNext(&quot;🆎&quot;)
+</code></pre><p>结果是：</p>
+<pre><code>🅱️ 1
+🅱️ 2
+🆎 2
+</code></pre><h4 id="switchLatest"><a href="#switchLatest" class="headerlink" title="switchLatest"></a>switchLatest</h4><p>将源Observale序列装进一个Variable中，使用者直接去订阅Variable转换成的Observale，当Variable的<code>value</code>改变时，只接收最新的Observale发出的事件，之前被放进Variable中的Observale发出的事件将不再被收到。</p>
+<p>可以这里理解，每一个被放进Variable中的Observale都是皇上，订阅者都是大臣，大臣只听皇上的话<br>；当<code>value</code>改变时，新Observale变成了皇上，大臣开始只听他的，原来的Observale或者是变成太上皇或者是死了或者是出家，但不管怎样，大臣都不再听他的了。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+let subject1 = BehaviorSubject(value: &quot;⚽️&quot;)
+let subject2 = BehaviorSubject(value: &quot;🍎&quot;)
+
+let variable = Variable(subject1)
+
+variable.asObservable()
+    .switchLatest()
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+
+subject1.onNext(&quot;🏈&quot;)
+subject1.onNext(&quot;🏀&quot;)
+
+variable.value = subject2
+
+subject1.onNext(&quot;⚾️&quot;)
+
+subject2.onNext(&quot;🍐&quot;)
+</code></pre><p>结果是：</p>
+<pre><code>⚽️
+🏈
+🏀
+🍎
+🍐
+</code></pre><h3 id="变换操作"><a href="#变换操作" class="headerlink" title="变换操作"></a>变换操作</h3><p>对Observable序列发送的每一个next事件中的数值进行变换。</p>
+<h4 id="map"><a href="#map" class="headerlink" title="map"></a>map</h4><p>对Observable序列发出的每一个next事件中的数值应用一个闭包转换成一个新的数值，这样接收到的就是转换过后的数值了。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+Observable.of(1, 2, 3)
+    .map { $0 * $0 }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>1
+4
+9
+</code></pre><p>观察打印结果可以发现：</p>
+<p>源序列发送三个值，经过<code>map</code>之后仍然是三个值，也就是说<code>map</code>只是改变了每一个值的内容，并不会改变数量。</p>
+<h4 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h4><p>在介绍flatMap之前，首先看一下下面的例子：</p>
+<p>let disposeBag = DisposeBag()<br>    Observable.of(1, 2, 3)<br>        .map { Observable.just($0) }<br>        .subscribe(onNext: { print($0) })<br>        .disposed(by: disposeBag)</p>
+<p>输出结果是：</p>
+<pre><code>RxSwift.Just&lt;Swift.Int&gt;
+RxSwift.Just&lt;Swift.Int&gt;
+RxSwift.Just&lt;Swift.Int&gt;
+</code></pre><p>观察打印结果可以发现：</p>
+<p>虽然发送数据的数量仍然没有变化，但是每一个数值却变成了一个序列。专业一点的说就是出现了升维。什么是升维？比如说过生日时朋友送你礼物一般都会装进一个包装盒中，但是这次将装礼物的包装盒外面又套了一层或者n层包装盒。拆礼物时我们可以耐着性子一层一层拆，总会拿到，但针对Observable我们不能订阅多次吧，因为关键问题是我们并不知道到底包装了多少层。这就尴尬了，此时应该怎样取到最内层的数据呢？</p>
+<p>这就是<code>flatMap</code>能做的事，针对升维做降维，理解了升维就不难理解降维，直白的说就是取得序列中的序列的数值。</p>
+<p>看一下官方解释：对Observable序列发出的每一个Next事件中的数值应用一个闭包转换成一个Observable序列，然后将所有这些Observable序列应用上面介绍的<code>merge</code>操作，合并进一个新的Observable序列。</p>
+<p>所以flatMap操作其实是<code>map</code> + <code>merge</code>两个操作结合而成的复合操作。</p>
+<p>针对上面的例子将map换成flatMap：</p>
+<pre><code>let disposeBag = DisposeBag()
+Observable.of(1, 2, 3)
+    .flatMap { Observable.just($0) }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>1
+4
+9
+</code></pre><p>观察打印结果可以发现：</p>
+<p>结果和<code>map</code>例子中是一样的，证明确实能取得多层序列中的值。</p>
+<p>另外说明一点，源序列发送三个值，经过<code>flatMap</code>之后不一定是三个值，也就是很可能会改变数量。</p>
+<p>再举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+Observable.of(1, 2, 3)
+    .flatMap { Observable.of($0, $0 * $0) }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>1
+1
+2
+4
+3
+9 
+</code></pre><p>很神奇很酷有木有？！</p>
+<h4 id="flatMapLatest"><a href="#flatMapLatest" class="headerlink" title="flatMapLatest"></a>flatMapLatest</h4><p>理解了<code>flatMap</code>再理解<code>flatMapLatest</code>就非常简单了，加上Latest则只会用内部最近的Observable序列发送事件。</p>
+<p><code>flatMapLatest</code>操作其实就是<code>map</code> + <code>switchLatest</code>两个操作结合而成的复合操作。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+struct Player {
+    var score: Variable&lt;Int&gt;
+}
+
+let 👦🏻 = Player(score: Variable(80))
+let 👧🏼 = Player(score: Variable(90))
+
+let player = Variable(👦🏻)
+
+player.asObservable()
+    .flatMapLatest { $0.score.asObservable() } 
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+
+👦🏻.score.value = 85
+
+player.value = 👧🏼
+
+👦🏻.score.value = 95     
+👧🏼.score.value = 100
+</code></pre><p>结果是：</p>
+<pre><code>80
+85
+90
+100
+</code></pre><p>说一个<code>flatMapLatest</code>可以实际应用的场景，在搜索页面中当用户输入内容时一般都会据此进行网络请求获得联想数据，那如果上一个网络请求得到的数据还没有回来时用户输入的内容变了，此时就需要根据新内容发送新请求获得新数据。此时上一个请求获得的数据就没有意义了，无需再展示给用户。具体例子就不写了，第三篇Demo工程中会展示。</p>
+<h4 id="scan"><a href="#scan" class="headerlink" title="scan"></a>scan</h4><p>有一个初始值，应用一个累加的闭包到Observable序列发送的每一条数据上，每一次的计算结果都作为下一个闭包的初始值，最后返回和原序列数量相等的事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(10, 100, 1000)
+    .scan(2) { aggregateValue, newValue in
+        return aggregateValue + newValue
+    }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：    </p>
+<pre><code>12
+112
+1112        
+</code></pre><h3 id="过滤和条件操作"><a href="#过滤和条件操作" class="headerlink" title="过滤和条件操作"></a>过滤和条件操作</h3><p>让一个源Observable序列有选择的发送事件。</p>
+<h4 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h4><p>让源Observable序列只发送满足条件的事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(
+    &quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;,
+    &quot;🐸&quot;, &quot;🐱&quot;, &quot;🐰&quot;,
+    &quot;🐹&quot;, &quot;🐸&quot;, &quot;🐱&quot;)
+    .filter {
+        $0 == &quot;🐱&quot;
+    }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐱
+🐱
+🐱
+</code></pre><h4 id="distinctUntilChanged"><a href="#distinctUntilChanged" class="headerlink" title="distinctUntilChanged"></a>distinctUntilChanged</h4><p>阻止源Observable序列连续发送重复事件，也就是事件变化了才发送。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(&quot;🐱&quot;, &quot;🐷&quot;, &quot;🐱&quot;, &quot;🐱&quot;, &quot;🐱&quot;, &quot;🐵&quot;, &quot;🐱&quot;)
+    .distinctUntilChanged()
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐱
+🐷
+🐱
+🐵
+🐱
+</code></pre><h4 id="elementAt"><a href="#elementAt" class="headerlink" title="elementAt"></a>elementAt</h4><p>让源Observable序列只发送特定索引的事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(&quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;, &quot;🐸&quot;, &quot;🐷&quot;, &quot;🐵&quot;)
+    .elementAt(3)
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐸    
+</code></pre><h4 id="single"><a href="#single" class="headerlink" title="single"></a>single</h4><p>仅发送源Observable序列发出的第一个事件(或者是符合条件的第一个事件)，如果Observable序列不是正好发送一个事件会报错。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(&quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;, &quot;🐸&quot;, &quot;🐷&quot;, &quot;🐵&quot;)
+    .single()
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+
+Observable.of(&quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;, &quot;🐸&quot;, &quot;🐷&quot;, &quot;🐵&quot;)
+    .single { $0 == &quot;🐸&quot; }
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+
+Observable.of(&quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;, &quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;)
+    .single { $0 == &quot;🐰&quot; }
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+
+Observable.of(&quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;, &quot;🐸&quot;, &quot;🐷&quot;, &quot;🐵&quot;)
+    .single { $0 == &quot;🔵&quot; }
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐱
+Received unhandled error: Sequence contains more than one element.
+
+next(🐸)
+completed
+
+next(🐰)
+error(Sequence contains more than one element.)
+
+error(Sequence doesn&apos;t contain any elements.)
+</code></pre><h4 id="take"><a href="#take" class="headerlink" title="take"></a>take</h4><p>让源Observable序列只发送从头开始的特定数量的事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(&quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;, &quot;🐸&quot;, &quot;🐷&quot;, &quot;🐵&quot;)
+    .take(3)
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐱
+🐰
+🐶    
+</code></pre><h4 id="takeLast"><a href="#takeLast" class="headerlink" title="takeLast"></a>takeLast</h4><p>让源Observable序列只发送在最后的特定数量的事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(&quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;, &quot;🐸&quot;, &quot;🐷&quot;, &quot;🐵&quot;)
+    .takeLast(3)
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐸
+🐷
+🐵
+</code></pre><h4 id="takeWhile"><a href="#takeWhile" class="headerlink" title="takeWhile"></a>takeWhile</h4><p>让源Observable序列只发送满足特定条件的事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(1, 2, 3, 4, 5, 6)
+    .takeWhile { $0 &lt; 4 }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>1
+2
+3
+</code></pre><h4 id="takeUntil"><a href="#takeUntil" class="headerlink" title="takeUntil"></a>takeUntil</h4><p>让源Observable序列正常发送事件直到另一个Observable序列发出了第一个事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+let sourceSequence = PublishSubject&lt;String&gt;()
+let referenceSequence = PublishSubject&lt;String&gt;()
+
+sourceSequence
+    .takeUntil(referenceSequence)
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+
+sourceSequence.onNext(&quot;🐱&quot;)
+sourceSequence.onNext(&quot;🐰&quot;)
+sourceSequence.onNext(&quot;🐶&quot;)
+
+referenceSequence.onNext(&quot;🔴&quot;)
+
+sourceSequence.onNext(&quot;🐸&quot;)
+sourceSequence.onNext(&quot;🐷&quot;)
+sourceSequence.onNext(&quot;🐵&quot;)
+</code></pre><p>结果是：</p>
+<pre><code>next(🐱)
+next(🐰)
+next(🐶)
+completed
+</code></pre><h4 id="skip"><a href="#skip" class="headerlink" title="skip"></a>skip</h4><p>阻止源Observable序列从头开始发送特定数量的事件，也就是跳过前n个事件，从n+1个事件开始发。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(&quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;, &quot;🐸&quot;, &quot;🐷&quot;, &quot;🐵&quot;)
+    .skip(2)
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐶
+🐸
+🐷
+🐵    
+</code></pre><h4 id="skipWhile"><a href="#skipWhile" class="headerlink" title="skipWhile"></a>skipWhile</h4><p>阻止源Observable序列发送满足特定条件的事件，也就是条件满足就跳过。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(1, 2, 3, 4, 5, 6)
+    .skipWhile { $0 &lt; 4 }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>4
+5
+6
+</code></pre><h4 id="skipWhileWithIndex"><a href="#skipWhileWithIndex" class="headerlink" title="skipWhileWithIndex"></a>skipWhileWithIndex</h4><p>阻止源Observable序列发送满足特定条件的事件，和上面操作的区别是判断条件的闭包中也传入了当前事件所属的索引号，所以不但可以用实际数据做判断条件也可以用索引号做判断条件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(&quot;🐱&quot;, &quot;🐰&quot;, &quot;🐶&quot;, &quot;🐸&quot;, &quot;🐷&quot;, &quot;🐵&quot;)
+    .skipWhileWithIndex { element, index in
+        index &lt; 3
+    }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🐸
+🐷
+🐵
+</code></pre><h4 id="skipUntil"><a href="#skipUntil" class="headerlink" title="skipUntil"></a>skipUntil</h4><p>阻止源Observable序列发送事件直到另一个Observable序列发出了第一个事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+let sourceSequence = PublishSubject&lt;String&gt;()
+let referenceSequence = PublishSubject&lt;String&gt;()
+
+sourceSequence
+    .skipUntil(referenceSequence)
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+
+sourceSequence.onNext(&quot;🐱&quot;)
+sourceSequence.onNext(&quot;🐰&quot;)
+sourceSequence.onNext(&quot;🐶&quot;)
+
+referenceSequence.onNext(&quot;🔴&quot;)
+
+sourceSequence.onNext(&quot;🐸&quot;)
+sourceSequence.onNext(&quot;🐷&quot;)
+sourceSequence.onNext(&quot;🐵&quot;)
+</code></pre><p>结果是：</p>
+<pre><code>🐸
+🐷
+🐵
+</code></pre><h3 id="数学和整体操作"><a href="#数学和整体操作" class="headerlink" title="数学和整体操作"></a>数学和整体操作</h3><p>对Observable发出的整个事件序列进行操作。</p>
+<h4 id="toArray"><a href="#toArray" class="headerlink" title="toArray"></a>toArray</h4><p>将一个Observable序列转变成一个数组，将这个数组作为一个新的单一事件发出，然后发出完成事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.range(start: 1, count: 10)
+    .toArray()
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)    )    
+</code></pre><p>结果是：</p>
+<pre><code>next([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+completed
+</code></pre><h4 id="reduce"><a href="#reduce" class="headerlink" title="reduce"></a>reduce</h4><p>以一个值开始，应用一个累加的闭包到Observable序列发出的每一条数据上，最后返回总的计算结果作为一个单一事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable.of(10, 100, 1000)
+    .reduce(1, accumulator: +)
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>1111    
+</code></pre><h4 id="concat"><a href="#concat" class="headerlink" title="concat"></a>concat</h4><p>拼接多个Observable序列成一个，等待上一个序列发出了完成事件后下一个序列才开始发送事件。</p>
+<p>类似接力比赛，只有上一棒的小伙伴A跑完他的位置将棒成功放到下一棒小伙伴B的手中B才拿着棒开始跑。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+let subject1 = BehaviorSubject(value: &quot;🍎&quot;)
+let subject2 = BehaviorSubject(value: &quot;🐶&quot;)
+
+let variable = Variable(subject1)
+
+variable.asObservable()
+    .concat()
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+
+subject1.onNext(&quot;🍐&quot;)
+subject1.onNext(&quot;🍊&quot;)
+
+variable.value = subject2
+
+subject2.onNext(&quot;I would be ignored&quot;)
+subject2.onNext(&quot;🐱&quot;)
+
+subject1.onCompleted()
+
+subject2.onNext(&quot;🐭&quot;)
+</code></pre><p>结果是：</p>
+<pre><code>next(🍎)
+next(🍐)
+next(🍊)
+next(🐱)
+next(🐭)
+</code></pre><h3 id="连接操作"><a href="#连接操作" class="headerlink" title="连接操作"></a>连接操作</h3><p>可连接的Observable序列内部封装了普通的Observable序列，区别在于普通的Observable序列在被订阅后立刻发送事件，而可连接的Observable序列只有被调用了<code>connect()</code>函数后才开始发送。这样可以等所有订阅者都订阅了之后再发送事件。</p>
+<p>在学习可连接的Observable序列之前，先回顾一下普通的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let interval = Observable&lt;Int&gt;.interval(2, scheduler: MainScheduler.instance)
+
+_ = interval
+    .subscribe(onNext: { print(&quot;Subscription: 1, Event: \($0)&quot;) })
+
+delay(2) {
+    print(&quot;delay two seconds&quot;)
+    _ = interval
+        .subscribe(onNext: { print(&quot;Subscription: 2, Event: \($0)&quot;) })
+}    }
+</code></pre><p>结果是：</p>
+<pre><code>Subscription: 1, Event: 0
+delay two seconds
+Subscription: 1, Event: 1
+Subscription: 2, Event: 0
+Subscription: 1, Event: 2
+Subscription: 2, Event: 1
+Subscription: 1, Event: 3
+Subscription: 2, Event: 2
+Subscription: 1, Event: 4
+Subscription: 2, Event: 3
+Subscription: 1, Event: 5
+Subscription: 2, Event: 4
+...
+</code></pre><p>观察打印结果可以发现：</p>
+<ol>
+<li>普通的Observable序列每当被订阅时立刻发送事件；</li>
+<li>普通的Observable序列每当被新的订阅者订阅时都会重新从头开始发送事件。</li>
+</ol>
+<h4 id="publish"><a href="#publish" class="headerlink" title="publish"></a>publish</h4><p>将普通的源Observable序列转换成一个可连接的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>print(&quot;here is begin&quot;)
+
+let intSequence = Observable&lt;Int&gt;.interval(1, scheduler: MainScheduler.instance)
+    .publish()  // 1
+
+_ = intSequence
+    .subscribe(onNext: { print(&quot;Subscription 1:, Event: \($0)&quot;) })
+
+delay(2) {
+    print(&quot;delay two seconds&quot;)
+    _ = intSequence.connect()  // 2
+}
+
+delay(4) {
+    print(&quot;delay four seconds&quot;)
+    _ = intSequence
+        .subscribe(onNext: { print(&quot;Subscription 2:, Event: \($0)&quot;) })
+}
+
+delay(6) {
+    print(&quot;delay six seconds&quot;)
+    _ = intSequence
+        .subscribe(onNext: { print(&quot;Subscription 3:, Event: \($0)&quot;) })
+}
+</code></pre><p>结果是：</p>
+<pre><code>here is begin
+delay two seconds
+Subscription 1:, Event: 0
+delay four seconds
+Subscription 1:, Event: 1
+Subscription 2:, Event: 1
+Subscription 1:, Event: 2
+Subscription 2:, Event: 2
+delay six seconds
+Subscription 1:, Event: 3
+Subscription 2:, Event: 3
+Subscription 3:, Event: 3
+Subscription 1:, Event: 4
+Subscription 2:, Event: 4
+Subscription 3:, Event: 4
+...
+</code></pre><p>解释一下上面的代码：</p>
+<ol>
+<li>调用<code>publish()</code>函数将普通的Observable序列转换成一个可连接的Observable序列；</li>
+<li>调用<code>connect()</code>函数使得可连接的Observable序列开始发送事件。</li>
+</ol>
+<p>观察打印结果可以发现：</p>
+<ol>
+<li>可连接的Observable序列被订阅时不会立刻发送事件；</li>
+<li>可连接的Observable序列只有被调用<code>connect()</code>函数后才会从头开始发送事件；</li>
+<li>可连接的Observable序列每当被新的订阅者订阅时不会重新从头开始发送事件，而是继续保持当前发送事件的节奏。</li>
+</ol>
+<h4 id="replay"><a href="#replay" class="headerlink" title="replay"></a>replay</h4><p>将普通的源Observable序列转换成一个可连接的Observable序列，并且有一个缓存机制可以使得新的订阅者能收到之前已经发送过的特定数量的历史事件。</p>
+<p>举个🌰：</p>
+<pre><code>print(&quot;here is begin&quot;)
+
+let intSequence = Observable&lt;Int&gt;.interval(1, scheduler: MainScheduler.instance)
+    .replay(5)  // 1
+
+_ = intSequence
+    .subscribe(onNext: { print(&quot;Subscription 1:, Event: \($0)&quot;) })
+
+delay(2) {
+    print(&quot;delay two seconds&quot;)
+    _ = intSequence.connect()  // 2
+}
+
+delay(4) {
+    print(&quot;delay four seconds&quot;)
+    _ = intSequence
+        .subscribe(onNext: { print(&quot;Subscription 2:, Event: \($0)&quot;) })
+}
+
+delay(8) {
+    print(&quot;delay eight seconds&quot;)
+    _ = intSequence
+        .subscribe(onNext: { print(&quot;Subscription 3:, Event: \($0)&quot;) })
+}
+</code></pre><p>结果是：</p>
+<pre><code>here is begin
+delay two seconds
+Subscription 1:, Event: 0
+delay four seconds
+Subscription 2:, Event: 0
+Subscription 1:, Event: 1
+Subscription 2:, Event: 1
+Subscription 1:, Event: 2
+Subscription 2:, Event: 2
+Subscription 1:, Event: 3
+Subscription 2:, Event: 3
+Subscription 1:, Event: 4
+Subscription 2:, Event: 4
+delay eight seconds
+Subscription 3:, Event: 0
+Subscription 3:, Event: 1
+Subscription 3:, Event: 2
+Subscription 3:, Event: 3
+Subscription 3:, Event: 4
+Subscription 1:, Event: 5
+Subscription 2:, Event: 5
+Subscription 3:, Event: 5
+Subscription 1:, Event: 6
+Subscription 2:, Event: 6
+Subscription 3:, Event: 6
+...
+</code></pre><p>解释一下上面的代码：</p>
+<ol>
+<li>调用<code>replay()</code>函数将普通的Observable序列转换成一个可连接的Observable序列，并且设置缓存历史事件数量为5；</li>
+<li>调用<code>connect()</code>函数使得可连接的Observable序列开始发送事件。</li>
+</ol>
+<p>观察打印结果可以发现：</p>
+<ol>
+<li><code>replay</code>拥有上面<code>publish</code>一切的能力；</li>
+<li>通过设置<code>replay</code>数量为5使得可连接的Observable序列每当被新的订阅者订阅时首先会最多发送5个历史事件；</li>
+</ol>
+<h4 id="multicast"><a href="#multicast" class="headerlink" title="multicast"></a>multicast</h4><p>将普通的源Observable序列转换成一个可连接的Observable序列，并且通过特定的<code>subject</code>对象发送事件。</p>
+<p>举个🌰：</p>
+<pre><code>print(&quot;here is begin&quot;)
+
+let subject = PublishSubject&lt;Int&gt;()
+
+_ = subject
+    .subscribe(onNext: { print(&quot;Subject: \($0)&quot;) }) // 1
+
+let intSequence = Observable&lt;Int&gt;.interval(1, scheduler: MainScheduler.instance)
+    .multicast(subject)  // 2
+
+_ = intSequence
+    .subscribe(onNext: { print(&quot;\tSubscription 1:, Event: \($0)&quot;) })
+
+delay(2) {
+    print(&quot;delay two seconds&quot;)
+    _ = intSequence.connect()  // 3
+}
+
+delay(4) {
+    print(&quot;delay four seconds&quot;)
+    _ = intSequence
+        .subscribe(onNext: { print(&quot;\tSubscription 2:, Event: \($0)&quot;) })
+}
+
+delay(6) {
+    print(&quot;delay six seconds&quot;)
+    _ = intSequence
+        .subscribe(onNext: { print(&quot;\tSubscription 3:, Event: \($0)&quot;) })
+}
+</code></pre><p>结果是：</p>
+<pre><code>here is begin
+delay two seconds
+Subject: 0
+    Subscription 1:, Event: 0
+delay four seconds
+Subject: 1
+    Subscription 1:, Event: 1
+    Subscription 2:, Event: 1
+Subject: 2
+    Subscription 1:, Event: 2
+    Subscription 2:, Event: 2
+delay six seconds
+Subject: 3
+    Subscription 1:, Event: 3
+    Subscription 2:, Event: 3
+    Subscription 3:, Event: 3
+Subject: 4
+    Subscription 1:, Event: 4
+    Subscription 2:, Event: 4
+    Subscription 3:, Event: 4
+...
+</code></pre><p>解释一下上面的代码：</p>
+<ol>
+<li>首先创建一个<code>PublishSubject</code>类型的对象<code>subject</code>并且去订阅它；</li>
+<li>调用<code>multicast()</code>函数将普通的Observable序列转换成一个可连接的Observable序列，并且将刚才创建的<code>subject</code>对象作为参数传入；</li>
+<li>调用<code>connect()</code>函数使得可连接的Observable序列开始发送事件。</li>
+</ol>
+<p>观察打印结果可以发现：</p>
+<ol>
+<li><code>multicast</code>拥有上面<code>publish</code>一切的能力；</li>
+<li>通过将<code>subject</code>对象传入<code>multicast()</code>函数，使得每次<code>subject</code>对象都会首先接收到事件。</li>
+</ol>
+<p>综上，可连接的Observable序列只有被调用了<code>connect()</code>方法之后才会开始发送事件，并且维持发送事件的节奏不变，不论同时有多少个订阅者是新订阅者还是老订阅者，他们收到的事件都是一样的。可见它的内部是有一个<code>Subject</code>的。</p>
+<h3 id="错误处理操作"><a href="#错误处理操作" class="headerlink" title="错误处理操作"></a>错误处理操作</h3><p>遇到错误事件时进行一些处理的操作。</p>
+<h4 id="catchErrorJustReturn"><a href="#catchErrorJustReturn" class="headerlink" title="catchErrorJustReturn"></a>catchErrorJustReturn</h4><p>遇到错误事件时改成返回一个next类型事件，然后发送一个完成事件。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+let sequenceThatFails = PublishSubject&lt;String&gt;()
+
+sequenceThatFails
+    .catchErrorJustReturn(&quot;😊&quot;)
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+
+sequenceThatFails.onNext(&quot;😬&quot;)
+sequenceThatFails.onNext(&quot;😨&quot;)
+sequenceThatFails.onNext(&quot;😡&quot;)
+sequenceThatFails.onNext(&quot;🔴&quot;)
+sequenceThatFails.onError(TestError.test)
+</code></pre><p>结果是：</p>
+<pre><code>next(😬)
+next(😨)
+next(😡)
+next(🔴)
+next(😊)
+completed
+</code></pre><h4 id="catchError"><a href="#catchError" class="headerlink" title="catchError"></a>catchError</h4><p>遇到错误事件时返回另一个Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+let sequenceThatFails = PublishSubject&lt;String&gt;()
+let recoverySequence = PublishSubject&lt;String&gt;()
+
+sequenceThatFails
+    .catchError {
+        print(&quot;Error:&quot;, $0)
+        return recoverySequence
+    }
+    .subscribe { print($0) }
+    .disposed(by: disposeBag)
+
+sequenceThatFails.onNext(&quot;😬&quot;)
+sequenceThatFails.onNext(&quot;😨&quot;)
+sequenceThatFails.onNext(&quot;😡&quot;)
+sequenceThatFails.onNext(&quot;🔴&quot;)
+sequenceThatFails.onError(TestError.test)
+
+recoverySequence.onNext(&quot;😊&quot;)
+</code></pre><p>结果是：</p>
+<pre><code>next(😬)
+next(😨)
+next(😡)
+next(🔴)
+Error: test
+next(😊)
+</code></pre><h4 id="retry"><a href="#retry" class="headerlink" title="retry"></a>retry</h4><p>遇到错误事件时重新订阅此Observable序列。</p>
+<p>举个🌰：</p>
+<p>let disposeBag = DisposeBag()<br>    var count = 1</p>
+<pre><code>let sequenceThatErrors = Observable&lt;String&gt;.create { observer in
+
+    observer.onNext(&quot;🍎&quot;)
+    observer.onNext(&quot;🍐&quot;)
+    observer.onNext(&quot;🍊&quot;)
+
+    if count == 1 {
+        observer.onError(TestError.test)
+        print(&quot;Error encountered&quot;)
+        count += 1
+    }
+
+    observer.onNext(&quot;🐶&quot;)
+    observer.onNext(&quot;🐱&quot;)
+    observer.onNext(&quot;🐭&quot;)
+    observer.onCompleted()
+
+    return Disposables.create()
+}
+
+sequenceThatErrors
+    .retry(3)
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+
+-------
+
+let disposeBag = DisposeBag()
+var count = 1
+
+let sequenceThatErrors = Observable&lt;String&gt;.create { observer in
+    observer.onNext(&quot;🍎&quot;)
+    observer.onNext(&quot;🍐&quot;)
+    observer.onNext(&quot;🍊&quot;)
+
+    if count &lt; 5 {
+        observer.onError(TestError.test)
+        print(&quot;Error encountered&quot;)
+        count += 1
+    }
+
+    observer.onNext(&quot;🐶&quot;)
+    observer.onNext(&quot;🐱&quot;)
+    observer.onNext(&quot;🐭&quot;)
+    observer.onCompleted()
+
+    return Disposables.create()
+}
+
+sequenceThatErrors
+    .retry(3)
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>🍎
+🍐
+🍊
+Error encountered
+🍎
+🍐
+🍊
+🐶
+🐱
+🐭
+
+-------
+
+🍎
+🍐
+🍊
+Error encountered
+🍎
+🍐
+🍊
+Error encountered
+🍎
+🍐
+🍊
+Error encountered
+Received unhandled error: -&gt; test
+</code></pre><h3 id="Debug操作"><a href="#Debug操作" class="headerlink" title="Debug操作"></a>Debug操作</h3><p>帮助debug的操作。</p>
+<h4 id="debug"><a href="#debug" class="headerlink" title="debug"></a>debug</h4><p>打印所有被订阅，事件和被销毁。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+var count = 1
+
+let sequenceThatErrors = Observable&lt;String&gt;.create { observer in
+    observer.onNext(&quot;🍎&quot;)
+    observer.onNext(&quot;🍐&quot;)
+    observer.onNext(&quot;🍊&quot;)
+
+    if count &lt; 5 {
+        observer.onError(TestError.test)
+        print(&quot;Error encountered&quot;)
+        count += 1
+    }
+
+    observer.onNext(&quot;🐶&quot;)
+    observer.onNext(&quot;🐱&quot;)
+    observer.onNext(&quot;🐭&quot;)
+    observer.onCompleted()
+
+    return Disposables.create()
+}
+
+sequenceThatErrors
+    .retry(3)
+    .debug()
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>2017-04-17 21:41:29.960: playground20.swift:42 (__lldb_expr_20) -&gt; subscribed
+2017-04-17 21:41:29.963: playground20.swift:42 (__lldb_expr_20) -&gt; Event next(🍎)
+🍎
+2017-04-17 21:41:29.964: playground20.swift:42 (__lldb_expr_20) -&gt; Event next(🍐)
+🍐
+2017-04-17 21:41:29.964: playground20.swift:42 (__lldb_expr_20) -&gt; Event next(🍊)
+🍊
+Error encountered
+2017-04-17 21:41:29.967: playground20.swift:42 (__lldb_expr_20) -&gt; Event next(🍎)
+🍎
+2017-04-17 21:41:29.967: playground20.swift:42 (__lldb_expr_20) -&gt; Event next(🍐)
+🍐
+2017-04-17 21:41:29.967: playground20.swift:42 (__lldb_expr_20) -&gt; Event next(🍊)
+🍊
+Error encountered
+2017-04-17 21:41:29.969: playground20.swift:42 (__lldb_expr_20) -&gt; Event next(🍎)
+🍎
+2017-04-17 21:41:29.969: playground20.swift:42 (__lldb_expr_20) -&gt; Event next(🍐)
+🍐
+2017-04-17 21:41:29.970: playground20.swift:42 (__lldb_expr_20) -&gt; Event next(🍊)
+🍊
+Error encountered
+2017-04-17 21:41:29.971: playground20.swift:42 (__lldb_expr_20) -&gt; Event error(test)
+Received unhandled error: -&gt; test
+2017-04-17 21:41:29.997: playground20.swift:42 (__lldb_expr_20) -&gt; isDisposed
+</code></pre><h4 id="RxSwift-Resources-total"><a href="#RxSwift-Resources-total" class="headerlink" title="RxSwift.Resources.total"></a>RxSwift.Resources.total</h4><p>展示了Rx当前所有资源使用数，用于开发期间检查是否存在内存泄漏。</p>
+<p>举个🌰：</p>
+<pre><code>{
+    print(RxSwift.Resources.total)
+
+    let disposeBag = DisposeBag()
+
+    print(RxSwift.Resources.total)
+
+    let variable = Variable(&quot;🍎&quot;)
+
+    let subscription1 = variable.asObservable().subscribe(onNext: { print($0) })
+
+    print(RxSwift.Resources.total)
+
+    let subscription2 = variable.asObservable().subscribe(onNext: { print($0) })
+
+    print(RxSwift.Resources.total)
+
+    subscription1.dispose()
+
+    print(RxSwift.Resources.total)
+
+    subscription2.dispose()
+
+    print(RxSwift.Resources.total)
+}
+
+print(RxSwift.Resources.total)
+</code></pre><p>结果是：</p>
+<pre><code>0
+2
+🍎
+8
+🍎
+10
+9
+8
+0
+</code></pre><p>再看一眼最开始出现过的图片。</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-first-lesson.png" alt="1"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RxSwift/" rel="tag">#RxSwift</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/21/Getting-Started-With-RxSwift-and-RxCocoa【译】/" rel="next" title="RxSwift & RxCocoa 入门教程">
+                <i class="fa fa-chevron-left"></i> RxSwift & RxCocoa 入门教程
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/04/21/RxSwift-from-zero-to-one-first-lesson/"
+           data-title="RxSwift基本概念与使用" data-url="http://yoursite.com/2017/04/21/RxSwift-from-zero-to-one-first-lesson/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Kaisa" />
+          <p class="site-author-name" itemprop="name">Kaisa</p>
+          <p class="site-description motion-element" itemprop="description">心若不老，仍是少年</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/kaisayoung" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RxSwift简介"><span class="nav-number">1.</span> <span class="nav-text">RxSwift简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RxSwift中的基本概念"><span class="nav-number">2.</span> <span class="nav-text">RxSwift中的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Observable-amp-Observer"><span class="nav-number">2.1.</span> <span class="nav-text">Observable & Observer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Event"><span class="nav-number">2.2.</span> <span class="nav-text">Event</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RxSwift基本用法"><span class="nav-number">3.</span> <span class="nav-text">RxSwift基本用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建-create-amp-订阅-subscribe"><span class="nav-number">3.1.</span> <span class="nav-text">创建 create & 订阅 subscribe</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#快速创建"><span class="nav-number">3.1.1.</span> <span class="nav-text">快速创建</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#never"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">never</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#empty"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">empty</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#just"><span class="nav-number">3.1.1.3.</span> <span class="nav-text">just</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#of"><span class="nav-number">3.1.1.4.</span> <span class="nav-text">of</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#from"><span class="nav-number">3.1.1.5.</span> <span class="nav-text">from</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#range"><span class="nav-number">3.1.1.6.</span> <span class="nav-text">range</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#repeatElement"><span class="nav-number">3.1.1.7.</span> <span class="nav-text">repeatElement</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#generate"><span class="nav-number">3.1.1.8.</span> <span class="nav-text">generate</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#error"><span class="nav-number">3.1.1.9.</span> <span class="nav-text">error</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基本创建"><span class="nav-number">3.1.2.</span> <span class="nav-text">基本创建</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#create"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">create</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#doOn"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">doOn</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#销毁-dispose"><span class="nav-number">3.2.</span> <span class="nav-text">销毁 dispose</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#手动-Disposable"><span class="nav-number">3.2.1.</span> <span class="nav-text">手动 Disposable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自动-DisposeBag"><span class="nav-number">3.2.2.</span> <span class="nav-text">自动 DisposeBag</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Subjects"><span class="nav-number">4.</span> <span class="nav-text">Subjects</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PublishSubject"><span class="nav-number">4.1.</span> <span class="nav-text">PublishSubject</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReplaySubject"><span class="nav-number">4.2.</span> <span class="nav-text">ReplaySubject</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BehaviorSubject"><span class="nav-number">4.3.</span> <span class="nav-text">BehaviorSubject</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Variable"><span class="nav-number">4.4.</span> <span class="nav-text">Variable</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#种类丰富而神奇的操作"><span class="nav-number">5.</span> <span class="nav-text">种类丰富而神奇的操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#组合操作"><span class="nav-number">5.1.</span> <span class="nav-text">组合操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#startWith"><span class="nav-number">5.1.1.</span> <span class="nav-text">startWith</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#merge"><span class="nav-number">5.1.2.</span> <span class="nav-text">merge</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zip"><span class="nav-number">5.1.3.</span> <span class="nav-text">zip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#combineLatest"><span class="nav-number">5.1.4.</span> <span class="nav-text">combineLatest</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#switchLatest"><span class="nav-number">5.1.5.</span> <span class="nav-text">switchLatest</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变换操作"><span class="nav-number">5.2.</span> <span class="nav-text">变换操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#map"><span class="nav-number">5.2.1.</span> <span class="nav-text">map</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#flatMap"><span class="nav-number">5.2.2.</span> <span class="nav-text">flatMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#flatMapLatest"><span class="nav-number">5.2.3.</span> <span class="nav-text">flatMapLatest</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#scan"><span class="nav-number">5.2.4.</span> <span class="nav-text">scan</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#过滤和条件操作"><span class="nav-number">5.3.</span> <span class="nav-text">过滤和条件操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#filter"><span class="nav-number">5.3.1.</span> <span class="nav-text">filter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#distinctUntilChanged"><span class="nav-number">5.3.2.</span> <span class="nav-text">distinctUntilChanged</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#elementAt"><span class="nav-number">5.3.3.</span> <span class="nav-text">elementAt</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#single"><span class="nav-number">5.3.4.</span> <span class="nav-text">single</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#take"><span class="nav-number">5.3.5.</span> <span class="nav-text">take</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#takeLast"><span class="nav-number">5.3.6.</span> <span class="nav-text">takeLast</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#takeWhile"><span class="nav-number">5.3.7.</span> <span class="nav-text">takeWhile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#takeUntil"><span class="nav-number">5.3.8.</span> <span class="nav-text">takeUntil</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#skip"><span class="nav-number">5.3.9.</span> <span class="nav-text">skip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#skipWhile"><span class="nav-number">5.3.10.</span> <span class="nav-text">skipWhile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#skipWhileWithIndex"><span class="nav-number">5.3.11.</span> <span class="nav-text">skipWhileWithIndex</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#skipUntil"><span class="nav-number">5.3.12.</span> <span class="nav-text">skipUntil</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数学和整体操作"><span class="nav-number">5.4.</span> <span class="nav-text">数学和整体操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#toArray"><span class="nav-number">5.4.1.</span> <span class="nav-text">toArray</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reduce"><span class="nav-number">5.4.2.</span> <span class="nav-text">reduce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concat"><span class="nav-number">5.4.3.</span> <span class="nav-text">concat</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#连接操作"><span class="nav-number">5.5.</span> <span class="nav-text">连接操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#publish"><span class="nav-number">5.5.1.</span> <span class="nav-text">publish</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#replay"><span class="nav-number">5.5.2.</span> <span class="nav-text">replay</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#multicast"><span class="nav-number">5.5.3.</span> <span class="nav-text">multicast</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#错误处理操作"><span class="nav-number">5.6.</span> <span class="nav-text">错误处理操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#catchErrorJustReturn"><span class="nav-number">5.6.1.</span> <span class="nav-text">catchErrorJustReturn</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#catchError"><span class="nav-number">5.6.2.</span> <span class="nav-text">catchError</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#retry"><span class="nav-number">5.6.3.</span> <span class="nav-text">retry</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Debug操作"><span class="nav-number">5.7.</span> <span class="nav-text">Debug操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#debug"><span class="nav-number">5.7.1.</span> <span class="nav-text">debug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RxSwift-Resources-total"><span class="nav-number">5.7.2.</span> <span class="nav-text">RxSwift.Resources.total</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kaisa</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"kaisayoung"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
