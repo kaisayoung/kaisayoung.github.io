@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-04-23T10:30:16.000Z</updated>
+  <updated>2017-04-23T15:29:20.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yoursite.com/2017/04/21/RxSwift-from-zero-to-one-first-lesson/"/>
     <id>http://yoursite.com/2017/04/21/RxSwift-from-zero-to-one-first-lesson/</id>
     <published>2017-04-21T08:57:03.000Z</published>
-    <updated>2017-04-23T10:30:16.000Z</updated>
+    <updated>2017-04-23T15:29:20.000Z</updated>
     
     <content type="html"><![CDATA[<p>去年公司项目搞重构时学习并应用过一阵RAC，感觉真是6的起飞。近来听说在swift上有一个RxSwift库写的棒棒的，特地学习了下。写下一点学习笔记仅供参考。</p>
 <p>本篇文章主要分四个部分：RxSwift简介，RxSwift中的基本概念，RxSwift基本用法，RxSwift中丰富而神奇的操作。</p>
@@ -167,7 +167,24 @@ Observable.generate(
 <pre><code>0
 1
 2
-</code></pre><h5 id="error"><a href="#error" class="headerlink" title="error"></a>error</h5><p>创建一个会立即发送一个错误事件的Observable序列。</p>
+</code></pre><h5 id="interval"><a href="#interval" class="headerlink" title="interval"></a>interval</h5><p>创建一个间隔固定时间就会发送一个next事件的Observable序列。</p>
+<p>举个🌰：</p>
+<pre><code>let disposeBag = DisposeBag()
+
+Observable&lt;Int&gt;.interval(1, scheduler: MainScheduler.instance)
+   .subscribe(onNext: { print($0) })
+   .disposed(by: disposeBag)
+</code></pre><p>结果是：</p>
+<pre><code>0
+1
+2
+3
+4
+5
+6
+...
+</code></pre><p>说明：<code>MainScheduler.instance</code>这里代表主线程，多线程相关知识下一篇文章中会有介绍，暂时先忽略。</p>
+<h5 id="error"><a href="#error" class="headerlink" title="error"></a>error</h5><p>创建一个会立即发送一个错误事件的Observable序列。</p>
 <p>举个🌰：</p>
 <pre><code>let disposeBag = DisposeBag()
 
@@ -176,7 +193,7 @@ Observable&lt;Int&gt;.error(TestError.test)
     .disposed(by: disposeBag)
 </code></pre><p>结果是：</p>
 <pre><code>error(test)
-</code></pre><p>上面出现的所有操作符中除了never不发送任何事件，其他都发送一个完成事件，只有这个error会发送一个错误事件。</p>
+</code></pre><p>上面出现的所有操作符其实可以分四种，<code>never</code>不发送任何事件，<code>interval</code>一直发送next事件，<code>error</code>仅发送一个错误事件，其他的发送完next事件之后都会发送一个完成事件。</p>
 <h4 id="基本创建"><a href="#基本创建" class="headerlink" title="基本创建"></a>基本创建</h4><h5 id="create"><a href="#create" class="headerlink" title="create"></a>create</h5><p>创建一个自定义的Observable序列。</p>
 <p>此时需要手动设置发送事件的类型和时机，并且要注意在发送完next事件之后需要发送一个完成事件或者错误事件表示结束。</p>
 <p>先来看一个🌰：</p>
@@ -210,8 +227,8 @@ next(🌰)
 completed
 </code></pre><p>解释一下上面的代码：</p>
 <ol>
-<li>首先发现创建Observable时内部也有一个observer，字面意思也是观察者。而前面提到调用<code>subscribe</code>的对象才是观察者，那现在怎么有两个观察者？不要懵逼，确实有两个但是职责不同，外部的observer是为了观察Observable发出不同数据以便进行不同处理，而内部的observer是为了向外发送数据。事实上如果还是觉得奇怪可以改成任意名字，只要不影响发送数据就好。</li>
-<li>最后要发送一个完成事件作为结束标志。</li>
+<li>首先发现创建Observable时内部也有一个observer，字面意思也是观察者。而前面提到调用<code>subscribe</code>的对象才是观察者，那现在怎么有两个观察者？不要懵逼，确实有两个但是职责不同，外部的observer是为了观察Observable发出不同数据以便进行不同处理，而内部的observer是为了向外发送数据。事实上如果还是觉得奇怪可以改成任意名字，只要不影响发送数据就好；</li>
+<li>最后要发送一个完成事件作为结束标志；</li>
 <li>仍然是和资源回收相关，下面会讲到，暂时仍忽略。</li>
 </ol>
 <p>create的闭包中有一个observer对象负责去发送事件，仍然是next事件和错误事件需要有数据，而完成事件不需要有数据。</p>
@@ -250,7 +267,7 @@ Completed
 <pre><code>let subscription = Observable&lt;Int&gt;.interval(0.3, scheduler: MainScheduler.instance)   // 1
     .subscribe (onNext: { print($0) })
 
-delay(2) {     // 2 
+delay(2) {    // 2 
     subscription.dispose()
 }
 </code></pre><p>结果是：</p>
@@ -262,8 +279,8 @@ delay(2) {     // 2
 5
 </code></pre><p>解释一下上面的代码：</p>
 <ol>
-<li>创建一个间隔0.3s在主线程发送整形变量的Observable。关于多线程相关知识下一篇文章中会有介绍。</li>
-<li>延迟2s执行，非系统提供。</li>
+<li>创建一个间隔0.3s在主线程发送整形变量的Observable；</li>
+<li>延迟2s执行，非系统提供，理解意思即可。</li>
 </ol>
 <p>可以将<code>subscription.dispose()</code>注释掉对比一下结果，会发现在调用了 <code>dispose()</code> 函数之后，创建的Observable序列就不再发送新的事件了，证明资源已经被回收了。</p>
 <p>实际开发当中这种方式并不常用，因为通常并不能很好的掌控调用<code>dispose()</code> 函数的时机，更推荐下面一种函数。</p>
@@ -399,7 +416,7 @@ Subscription: 1 Event: completed //
 Subscription: 2 Event: completed
 </code></pre><p>然后解释一下上面的代码：</p>
 <ol>
-<li>因为<code>Variable</code>相当于<code>BehaviorSubject</code>外面的一个箱子，所以首先要调用<code>asObservable()</code>函数拆箱。</li>
+<li>因为<code>Variable</code>相当于<code>BehaviorSubject</code>外面的一个箱子，所以首先要调用<code>asObservable()</code>函数拆箱；</li>
 <li><code>Variable</code>并没有直接实现发送事件的几个函数，作为代替它对外暴露了一个<code>value</code>属性用于取得当前值或是设置最新值。设置新值的时候就会加到内部的<code>BehaviorSubject</code>序列上，从而间接实现了发送数据功能。</li>
 </ol>
 <p>观察打印结果可以发现：</p>
