@@ -96,7 +96,7 @@
 先来一张图镇帖。">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-first-lesson.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-first-lesson.png">
-<meta property="og:updated_time" content="2017-04-23T15:31:07.000Z">
+<meta property="og:updated_time" content="2017-04-26T09:48:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RxSwift基本概念与使用">
 <meta name="twitter:description" content="去年公司项目搞重构时学习并应用过一阵RAC，感觉真是6的起飞。近来听说在swift上有一个RxSwift库写的棒棒的，特地学习了下。写下一点学习笔记仅供参考。
@@ -343,6 +343,7 @@
 <h3 id="Observable-amp-Observer"><a href="#Observable-amp-Observer" class="headerlink" title="Observable &amp; Observer"></a>Observable &amp; Observer</h3><p>在RxSwift的世界中，Observable表示被观察者，Observer表示观察者。</p>
 <p>首先确定你已经了解了Swift中的序列(sequence)，一个Observable的实例可以理解成就是一个序列。<br>而一个Observable序列比Swift中的序列强大之处在于它能够异步接收数据。这是RxSwift的精髓。其他所有都是基于这一概念拓展而来的。</p>
 <p>Observable有一个函数表示被订阅，即subscribe(_:) ，调用了之后它发送任何数据都能被接收到。</p>
+<p>什么是订阅呢？你正在看博客，肯定知道神马叫订阅博客，一个意思。</p>
 <p>创建一个Observable对象，此时它还只是拥有被观察的能力，并没有发挥出来，直到被调用了订阅函数subscribe(_:)，在哪个对象中调用的这个函数，哪个对象即是Observer。</p>
 <p>当一个Observable被一个Observer订阅时，可以认为在两者之间建立起了一条管道，Observable可以源源不断的向Observer发送数据，直到管道被销毁。但是要注意，这是一条很窄的管道，窄到一次只能通过一条数据。如果将一条数据理解成一个球，那么通俗的说就是一个球发送完再发送另一个球，而绝不能同时发送两个球。</p>
 <h3 id="Event"><a href="#Event" class="headerlink" title="Event"></a>Event</h3><p>刚才提到Observable可以对外发送数据，那应用什么样的载体来装这些数据呢？在什么样的时机来发送这些数据呢？答案是事件。那什么是事件呢，我举几个例子，一个文本框内容改变是事件，一个按钮被点击是事件，一个列表被滑动是事件，一个网络请求被触发是事件，一个数据库被修改还是事件。</p>
@@ -884,8 +885,12 @@ Observable.of(1, 2, 3)
 </code></pre><p>观察打印结果可以发现：</p>
 <p>源序列发送三个值，经过<code>map</code>之后仍然是三个值，也就是说<code>map</code>只是改变了每一个值的内容，并不会改变数量。</p>
 <h4 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h4><p>在介绍flatMap之前，首先看一下下面的例子：</p>
-<p>let disposeBag = DisposeBag()<br>    Observable.of(1, 2, 3)<br>        .map { Observable.just($0) }<br>        .subscribe(onNext: { print($0) })<br>        .disposed(by: disposeBag)</p>
-<p>输出结果是：</p>
+<pre><code>let disposeBag = DisposeBag()
+Observable.of(1, 2, 3)
+    .map { Observable.just($0) }
+    .subscribe(onNext: { print($0) })
+    .disposed(by: disposeBag)
+</code></pre><p>输出结果是：</p>
 <pre><code>RxSwift.Just&lt;Swift.Int&gt;
 RxSwift.Just&lt;Swift.Int&gt;
 RxSwift.Just&lt;Swift.Int&gt;
@@ -1491,8 +1496,10 @@ Error: test
 next(😊)
 </code></pre><h4 id="retry"><a href="#retry" class="headerlink" title="retry"></a>retry</h4><p>遇到错误事件时重新订阅此Observable序列。</p>
 <p>举个🌰：</p>
-<p>let disposeBag = DisposeBag()<br>    var count = 1</p>
-<pre><code>let sequenceThatErrors = Observable&lt;String&gt;.create { observer in
+<pre><code>let disposeBag = DisposeBag()
+var count = 1
+
+let sequenceThatErrors = Observable&lt;String&gt;.create { observer in
 
     observer.onNext(&quot;🍎&quot;)
     observer.onNext(&quot;🍐&quot;)
