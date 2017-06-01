@@ -94,7 +94,7 @@
 仍然先来一张图镇帖。">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-second-lesson.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-second-lesson.png">
-<meta property="og:updated_time" content="2017-05-31T17:40:52.000Z">
+<meta property="og:updated_time" content="2017-06-01T02:10:03.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RxSwift进阶，细节与UI绑定">
 <meta name="twitter:description" content="上一篇主要是一些基础概念，这篇来涉及些稍微深奥难懂的。
@@ -505,14 +505,14 @@ Receiving 🍐 in thread : &lt;NSThread: 0x600000076c80&gt;{number = 1, name = m
     .subscribe (onNext: { print($0) })
     .disposed(by: disposeBag)
 </code></pre><p>实现固定时间间隔发送一个事件（在这里是一个整数）的功能，值得注意的是<code>interval</code>操作符也要传入一个<code>Scheduler</code>对象，意思和上面例子中一样，相信你已经理解了。</p>
-<h2 id="Cold-amp-Hot"><a href="#Cold-amp-Hot" class="headerlink" title="Cold &amp; Hot"></a>Cold &amp; Hot</h2><p>在swift语言上另一个非常强大的FRP框架RAC中和RxSwift中Observable相对应的概念是signal，翻译过来就是信号。RAC中明确将信号分为两种，即：冷信号和热信号，它们是两种不同的类型。那么在RxSwift中有没有<code>Cold Observable</code> 和 <code>Hot Observable</code>之分呢？其实也是有的。</p>
+<h2 id="Cold-amp-Hot"><a href="#Cold-amp-Hot" class="headerlink" title="Cold &amp; Hot"></a>Cold &amp; Hot</h2><p>在swift语言上另一个非常强大的FRP框架RAC中和RxSwift中Observable相对应的概念是signal，翻译过来就是信号。RAC中明确将信号分为两种，即：冷信号和热信号，它们是两种不同的类型。那么在RxSwift中有没有Cold Observable 和 Hot Observable之分呢？其实也是有的。</p>
 <p>在<a href="http://reactivex.io/documentation/observable.html" target="_blank" rel="external">ReactiveX.io</a>中有如下一段说明文字：</p>
 <blockquote>
 <p>“Hot” and “Cold” Observables</p>
 <p>When does an Observable begin emitting its sequence of items? It depends on the Observable. A “hot” Observable may begin emitting items as soon as it is created, and so any observer who later subscribes to that Observable may start observing the sequence somewhere in the middle. A “cold” Observable, on the other hand, waits until an observer subscribes to it before it begins to emit items, and so such an observer is guaranteed to see the whole sequence from the beginning.</p>
 <p>In some implementations of ReactiveX, there is also something called a “Connectable” Observable. Such an Observable does not begin emitting items until its Connect method is called, whether or not any observers have subscribed to it.</p>
 </blockquote>
-<p>关键区别点在于<code>Observable</code>开始发送事件的时机。如果它被创建后无论有没有被订阅都立即发送那么它就是一个热的<code>Observable</code>，如果只有被订阅后才开始发送那么它就是一个冷的<code>Observable</code>。而这其实会引申出另一个更重要的问题：不同订阅者在不同时间点订阅同一个源<code>Observable</code>，它们接收到的是否是这个源<code>Observable</code>发送的全部事件。新的订阅者订阅了一个热的<code>Observable</code>后只会接收到之后发出的事件，也就是说不同订阅者之间共享同一个源<code>Observable</code>；而订阅了一个冷的<code>Observable</code>后会完整接收到发出的全部事件，也就是说每一个订阅者对应着一个单独的源<code>Observable</code>。</p>
+<p>关键区别点在于Observable开始发送事件的时机。如果它被创建后无论有没有被订阅都立即发送那么它就是一个热的Observable，如果只有被订阅后才开始发送那么它就是一个冷的Observable。而这其实会引申出另一个更重要的问题：不同订阅者在不同时间点订阅同一个源Observable，它们接收到的是否是这个源Observable发送的全部事件。新的订阅者订阅了一个热的Observable后只会接收到之后发出的事件，也就是说不同订阅者之间共享同一个源Observable；而订阅了一个冷的Observable后会完整接收到发出的全部事件，也就是说每一个订阅者对应着一个单独的源Observable。</p>
 <p>举个不是十分恰当的例子：它们之间有点像火车和出租车的关系，一列火车出发的时间点以及经过哪些站都是提前就定好了的（忽略晚点及其他特殊情况），它不会因有没有乘客有多少乘客而改变，所有乘客共享这一列火车，一个乘客若上一站没有赶上则只能去下一站上车了；而出租车呢，任何一定时间内对于一个乘客而言都是一一对应的（暂不考虑多人共打一辆车的情况），A想从海淀去朝阳需要打一辆车，B也想从海淀去朝阳则需要打另外一辆车，它们彼此之间相互独立，也就是不共享。</p>
 <p>核心关键就是一个词：共享。</p>
 <p>还记得上一篇介绍可连接的<code>Observable</code>时涉及到的连接操作符么，尤其是<code>replay</code>，忘了的话翻回去复习一遍，对接下来的理解很有帮助。</p>
@@ -599,8 +599,8 @@ Ended ----
 <li><code>Subscribed</code> 和 <code>Disposed</code>分别都被打印了两次，证明源<code>observable</code>内部的创建流程也走了两次 ；</li>
 <li>订阅者2在2s后才订阅也是从0开始接收到数据，证明每一个订阅者都对应一个源<code>observable</code>。</li>
 </ol>
-<p>这就是一种典型的<code>Cold Observable</code>的使用方式。那么到底这种方式有什么弊端或者说不满足什么情况呢？</p>
-<p>一切取决于<code>observable</code>内部发送事件的机制，像上面例子中只是间隔固定时间发送一个整形数，对外界并不会产生任何影响，所以并没有问题。但是考虑这么一种情况：源<code>observable</code>被订阅后会触发一个网络请求，然后根据请求结果决定对外发送的数据，两个订阅者分别是两个UI控件，它们等待源<code>observable</code>发出数据进行刷新。那么用上面这种方式会导致网络请求发送两次，从而有可能造成UI刷新不一致，浪费流量，数据统计错误等一系列问题。有些文章中会说这是一种“副作用”，叫什么名字无所谓，领会精神就好。</p>
+<p>这就是一种典型的Cold Observable的使用方式。那么到底这种方式有什么弊端或者说不满足什么情况呢？</p>
+<p>一切取决于observable内部发送事件的机制，像上面例子中只是间隔固定时间发送一个整形数，对外界并不会产生任何影响，所以并没有问题。但是考虑这么一种情况：源observable被订阅后会触发一个网络请求，然后根据请求结果决定对外发送的数据，两个订阅者分别是两个UI控件，它们等待源observable发出数据进行刷新。那么用上面这种方式会导致网络请求发送两次，从而有可能造成UI刷新不一致，浪费流量，数据统计错误等一系列问题。有些文章中会说这是一种“副作用”，叫什么名字无所谓，领会精神就好。</p>
 <p>那么问题来了，怎么样解决这种问题呢？答案很简单，有一个新的操作符是：<a href="http://reactivex.io/documentation/operators/replay.html" target="_blank" rel="external">shareReplay()</a>。</p>
 <h3 id="shareReplay"><a href="#shareReplay" class="headerlink" title="shareReplay"></a>shareReplay</h3><p>来看下面的🌰2:</p>
 <pre><code>let observable = myInterval(1).shareReplay(1)  // 1
@@ -661,7 +661,7 @@ Ended ----
 <li>订阅者2在收到1之后又和订阅者1同时陆续收到了整数2，3，4，证明和两个订阅者之间确实共享着同一个源<code>Observable</code>。</li>
 </ol>
 <p>建议读者再向<code>shareReplay()</code>中分别传入0和2对比观察一下输出结果。</p>
-<p>可见，通过使用<code>shareReplay()</code>使得多个订阅者之间共享同一个源<code>Observable</code>就完美的解决了上面例子中使用<code>Cold Observable</code>所带来的问题，此时就变成了<code>Hot Observable</code>。</p>
+<p>可见，通过使用<code>shareReplay()</code>使得多个订阅者之间共享同一个源Observable就完美的解决了上面例子中使用Cold Observable所带来的问题，此时就变成了Hot Observable。</p>
 <h3 id="shareReplayLatestWhileConnected"><a href="#shareReplayLatestWhileConnected" class="headerlink" title="shareReplayLatestWhileConnected"></a>shareReplayLatestWhileConnected</h3><p><code>shareReplay</code> 还有一个兄弟操作符叫做 <code>shareReplayLatestWhileConnected</code>，两者之间只有一个非常小的区别。</p>
 <p>🌰3:</p>
 <pre><code>let observable = myInterval(1).shareReplay(1)
@@ -993,7 +993,7 @@ protocol ControlPropertyType : ObservableType, ObserverType
  * ensures binding is performed on main thread
 </code></pre><p>拿刚才的标签举例子，一个标签的<code>text</code>值是一个<code>UIBindingObserver</code>的实例，那么：</p>
 <ol>
-<li>因为标签的text属性对应的只能是有效的字符串，那么如果绑定一个会发送错误事件的Observable，接收到错误事件时无法处理了；</li>
+<li>因为标签的<code>text</code>属性对应的只能是有效的字符串，那么如果绑定一个会发送错误事件的<code>Observable</code>，接收到错误事件时无法处理了；</li>
 <li>既然是标签就属于UIKit库，也就被限制住只能在主线程操作，既然只能在主线程接收值，那么也就限制了只能在主线程绑定值。</li>
 </ol>
 <p>一句话总结就是，这是一个只能在主线程进行绑定的<code>Observer</code>。</p>
