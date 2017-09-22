@@ -92,8 +92,9 @@
 <meta property="og:description" content="前几个月一直在学习RxSwift，确实相当酷的一个开源库，受益匪浅。在未来学习swift版本（ReactiveSwift）RAC（ReactiveCocoa）之前特意花了3天回顾了一下OC版本（ReactiveObjC）。而之所以愿意写下本篇，是因为这3天中有1天半是在仔细阅读官方文档。官方文档理解之后再去看之前看过的一些他人写的博客，发现质量良莠不齐，真正值得一读的屈指可数。不禁想到原来居然走了">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-first-lesson.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACEvent.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/subsciber-full-process.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-first-lesson.png">
-<meta property="og:updated_time" content="2017-09-22T03:52:32.000Z">
+<meta property="og:updated_time" content="2017-09-22T16:49:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ReactiveObjC基本概念与简单使用">
 <meta name="twitter:description" content="前几个月一直在学习RxSwift，确实相当酷的一个开源库，受益匪浅。在未来学习swift版本（ReactiveSwift）RAC（ReactiveCocoa）之前特意花了3天回顾了一下OC版本（ReactiveObjC）。而之所以愿意写下本篇，是因为这3天中有1天半是在仔细阅读官方文档。官方文档理解之后再去看之前看过的一些他人写的博客，发现质量良莠不齐，真正值得一读的屈指可数。不禁想到原来居然走了">
@@ -329,7 +330,7 @@
         <p>前几个月一直在学习RxSwift，确实相当酷的一个开源库，受益匪浅。在未来学习swift版本（ReactiveSwift）RAC（ReactiveCocoa）之前特意花了3天回顾了一下OC版本（ReactiveObjC）。而之所以愿意写下本篇，是因为这3天中有1天半是在仔细阅读官方文档。官方文档理解之后再去看之前看过的一些他人写的博客，发现质量良莠不齐，真正值得一读的屈指可数。不禁想到原来居然走了那么多弯路。万维刚说：只有学习了“学习的方法”之后才能快速进步。所以学会了哪个开源库不重要，重要的是怎么学会的。越是复杂的开源库，越是要仔细阅读官方文档，之后遇到困惑的地方再找博客对比查证一番，事半功倍。</p>
 <p>言归正传，本篇文章主要分为三个部分：ReactiveObjC简介，ReactiveObjC中的基本概念与简单使用，ReactiveObjC中丰富而神奇的操作符。</p>
 <p>按照惯例，先来一张图镇帖。</p>
-<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-first-lesson.png" alt="1"></p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-first-lesson.png" alt=""></p>
 <a id="more"></a>
 <p>继续阅读之前，强烈建议读者先去了解或者重温一遍官方文档<a href="https://github.com/ReactiveCocoa/ReactiveObjC#introduction" target="_blank" rel="external">Introduction</a>和<a href="https://github.com/ReactiveCocoa/ReactiveObjC/tree/master/Documentation" target="_blank" rel="external">Documentation</a>，对于接下来的理解会很有帮助。</p>
 <h2 id="ReactiveObjC简介"><a href="#ReactiveObjC简介" class="headerlink" title="ReactiveObjC简介"></a>ReactiveObjC简介</h2><p>ReactiveCocoa-简称为RAC，现在可分为OC版本-ReactiveObjC和swift版本-ReactiveSwift。本篇文章仅介绍ReactiveObjC，之后会有介绍ReactiveSwift的。</p>
@@ -354,13 +355,13 @@
 <h3 id="响应式编程"><a href="#响应式编程" class="headerlink" title="响应式编程"></a>响应式编程</h3><p><a href="https://baike.baidu.com/item/%E5%93%8D%E5%BA%94%E5%BC%8F%E7%BC%96%E7%A8%8B/15549849?fr=aladdin" target="_blank" rel="external">响应式编程</a>是一种面向数据流和变化传播的编程范式。这意味着可以在编程语言中很方便地表达静态或动态的数据流，而相关的计算模型会自动将变化的值通过数据流进行传播。</p>
 <p>来看下面一小段代码：</p>
 <pre><code>NSInteger a = 3;
-   NSInteger b = 4;
-   NSInteger c = a + b;
-   NSLog(@&quot;c is %ld&quot;,c);
+NSInteger b = 4;
+NSInteger c = a + b;
+NSLog(@&quot;c is %ld&quot;,c);
 
-   a = 5;
-   b = 6;
-   NSLog(@&quot;c is %ld&quot;,c);
+a = 5;
+b = 6;
+NSLog(@&quot;c is %ld&quot;,c);
 </code></pre><p>初始化c时其值等于a和b的总和，当a或者b或者a与b同时改变时，若想让c的值仍然等于a和b的总和，若是命令式代码需要重写一遍<code>c = a + b</code>;而若是响应式则完全不需要。</p>
 <p>iOS中其实也有响应式编程的典型例子：Autolayout。</p>
 <p>举个实际些的🌰：</p>
@@ -374,7 +375,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeRegisterButtonEnableState) name:UITextFieldTextDidChangeNotification object:nil];
 }
 - (void)changeRegisterButtonEnableState {
-        self.registerButton.enabled = [self isInfomationValid];
+    self.registerButton.enabled = [self isInfomationValid];
 }
 - (BOOL)isInfomationValid {
     return self.usernameTextField.text.length &gt; 0 &amp;&amp; self.passwordTextField.text.length &gt; 0 &amp;&amp; [self.passwordTextField.text isEqualToString:self.confirmTextField.text];
@@ -389,7 +390,6 @@
     reduce:^(NSString *username, NSString *password, NSString *confirm){
         return @(username.length &gt; 0 &amp;&amp; password.length &gt; 0 &amp;&amp; [password isEqualToString:confirm]);
     }];
-
     RAC(self.registerButton, enabled) = validSignal;
 }
 </code></pre><p>可以看出，此时一个完整的逻辑会被聚合在一块儿，非常清晰，可读性也非常强。</p>
@@ -434,22 +434,22 @@
 </ol>
 <p>理论上来说，通过上面这种方式一个类中只要有一个方法就够了，虽然现实中没有人会这样。</p>
 <h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><h4 id="RACEvent"><a href="#RACEvent" class="headerlink" title="RACEvent"></a>RACEvent</h4><p>上面提到，响应式编程可以将变化的值通过数据流进行传播。为此，RAC中定义了一个事件的概念。即：<code>RACEvent</code>。</p>
-<p>事件分三种类型：Next类型，Completed类型和Error类型。其中Next类型事件和Error类型事件内部可以承载数据，而Completed类型并没有。</p>
+<p>事件分三种类型：Next类型，Completed类型和Error类型。其中Next类型和Error类型事件内部可以承载数据，而Completed类型并不承载任何数据。</p>
 <h4 id="RACSignal"><a href="#RACSignal" class="headerlink" title="RACSignal"></a>RACSignal</h4><p>这是RAC中最基本的一个概念，中文名叫做“信号”，搞懂了这个类，就可以用RAC去玩耍了。</p>
-<p>信号代表的是一个随时间而改变的值流。作为一个流，可以将不断变化的值（或者说数据）向外进行传播。想获取一个信号中的数据，需要订阅它。什么是订阅呢？和订阅博客，订报纸，订牛奶一个意思。但前提是这个信号是存在的，所以想要订阅必先创建。反过来说，创建了一个信号但是并没有订阅它，也不能获取其内部的数据。（这种情况下RACSignal信号根本就不会向外发送数据，下一篇中会详细讲，暂时可忽略）。当一个已经订阅了的信号不想订阅了或者已经不会再发送新的数据了，为了回收资源需要将其销毁。综上，一个信号完整的生命周期应该是被创建，被订阅，被销毁。</p>
-<p>信号向外传播数据的载体就是事件。其中Next类型事件可以承载任意类型数据-即id，甚至可以是nil，但一般不用来承载错误类型数据，因为有Error类型事件单独做这件事。Completed类型事件仅作为一个完成的标志，不需要携带任何数据。</p>
-<p>当一个信号被订阅了之后，可以认为在源信号和订阅者之间建立起了一座桥，通过这座桥，信号源源不断的向订阅者发送最新数据，直到桥被销毁。但是要注意，这是一条很窄而且承重很差的桥，以至于一次只能通过一条数据。如果将一条数据理解成一个人，那么通俗的说就是一个人通过了另一个人再过，而绝不能同时两个人走上桥。</p>
-<p>在一个信号从无到有的的生命周期中，可以发送任意多个Next事件（当然可以是0），直到发送了一个Completed事件或者一个Error事件，这两个事件都标志着结束，区别在于Completed事件表示正常结束，而Error事件表示因为某种错误而结束。只要两者之一被发送了，这个信号就要被销毁了。</p>
-<p>根据是否会发送代表一个结束事件信号其实可以分两类。举2个具体的例子，网络请求作为一个信号，去订阅它，调用API得到结果后，若成功将获得数据通过Next事件发出，然后跟一个Completed事件，结束；反之将错误原因通过一个Error事件发送，仍然结束。此时这个API调用完成，此信号的使命完成了，可以被销毁了；按钮作为另一个信号，去订阅它，之后按钮被点击时都会发出一个Next事件，但是无论它被销毁与否，都不会发送Completed事件或Error事件。</p>
+<p>信号代表的是一个随时间而改变的值流。作为一个流，可以将不断变化的值（或者说数据）向外进行传播。想获取一个信号中的数据，需要订阅它。什么是订阅呢？和订阅博客，订报纸，订牛奶一个意思。但前提是这个信号是存在的，所以想要订阅必先创建。反过来说，创建了一个信号但是并没有订阅它，也获取不到其内部的数据。（这种情况下RACSignal信号根本就不会向外发送数据，下一篇中会详细介绍，暂时忽略）。可以订阅当然就可以取消订阅，当一个信号被取消订阅时，为了回收资源需要将其销毁，同时做一些清理工作（如有必要）。综上，一个信号完整的生命周期应该是被创建，被订阅，被销毁。</p>
+<p>信号向外传播数据的载体就是事件。其中Next类型事件可以承载任意类型数据-即id，甚至可以是nil。但一般不用来承载错误类型数据，因为有Error类型事件单独做这件事。Completed类型事件仅作为一个正常完成的标志，不需要携带任何数据。</p>
+<p>当一个信号被订阅了之后，可以认为在源信号和订阅者之间建立起了一座桥，通过这座桥，信号源源不断的向订阅者发送最新数据，直到桥被销毁。但是要注意，这是一条很窄而且承重很差的桥，以至于一次只能通过一条数据。如果将一条数据理解成一个人，那么通俗的说就是只有一个人通过了另一个人再能继续过，而绝不能同时两个人走上桥。</p>
+<p>在一个信号从无到有的的生命周期中，可以发送任意多个Next事件（当然可以是0），直到发送了一个Completed事件或者一个Error事件，这两个事件都标志着结束，区别在于Completed事件表示正常结束，而Error事件表示因为某种错误而结束。只要两者之一被发送了，整个订阅过程就结束了。</p>
+<p>根据是否会发送代表一个结束事件信号其实可以分两类。举2个具体的例子，网络请求作为一个信号，去订阅它，调用API得到结果后，若成功则将获得的数据通过Next事件发出，然后跟一个Completed事件，结束；反之则将错误原因通过一个Error事件发送，仍然结束。此时这个API调用完成，整个订阅过程结束。此信号的使命完成了，可以被销毁了；按钮作为另一个信号，去订阅它，之后每当按钮被点击时都会发出一个Next事件，但是在它的整个生命周期中甚至被销毁时，都不会发送Completed事件或Error事件。</p>
 <p>看一下下面的简单示意图：</p>
 <p>–1–2–3–4–5–6–|—-&gt; // “|” = 正常结束：发送一个Completed事件</p>
 <p>–a–b–c–d–e–f–X—-&gt; // “X” = 异常结束：发送一个Error事件</p>
 <p>–tap–tap———-tap–&gt; // “|” = 一直发送Next事件</p>
 <p>三种类型事件关系如下图：</p>
-<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACEvent.png" alt="2"></p>
-<h4 id="RACSubscriber"><a href="#RACSubscriber" class="headerlink" title="RACSubscriber"></a>RACSubscriber</h4><p>前面提到了订阅，订阅了信号的对象就是订阅者。信号为了实现向外发送数据，内部还需要一个发送者。为此，RAC中定义了一个实现了<code>RACSubscriber</code>协议的<code>RACSubscriber</code>类。这个名字其实中文翻译成“订阅者”，但是为了区分，我还是习惯叫它“发送者”。那订阅者是啥，RAC中并没有为其定义一个名字，但是从官方介绍文档中可以发现，和subscriber相对应的是subscription。所以，有两种理解方式：或者一个是“发送者”，一个是“订阅者”；或者一个是“内部订阅者”，一个是“外部订阅者”。总之，一个是用于将信号中的最新值向外发送的对象，一个是订阅了信号的对象。</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACEvent.png" alt=""></p>
+<h4 id="RACSubscriber"><a href="#RACSubscriber" class="headerlink" title="RACSubscriber"></a>RACSubscriber</h4><p>前面提到了订阅，订阅了信号的对象就是订阅者。注意，信号<code>RACSignal</code>本身是没有发送事件能力的。为了实现向外发送事件，内部还需要一个发送者。为此，RAC中定义了一个实现了<code>RACSubscriber</code>协议的<code>RACSubscriber</code>类。这个类名其实中文要翻译成“订阅者”，但是为了区分，我还是习惯叫它“发送者”。那订阅者是啥，RAC中并没有为其定义一个名字，但是从官方介绍文档中可以发现，和subscriber相对应的是subscription。所以，有两种理解方式：或者一个是“发送者”，一个是“订阅者”；或者一个是“内部订阅者”，一个是“外部订阅者”。总之，一个是用于将信号中的最新值向外发送的对象，一个是订阅了信号的对象。</p>
 <p>举个🌰：</p>
-<p>当你订阅了每天一次的牛奶时，你就是一个订阅者：subscription，而每天负责向你送牛奶的牛奶工，就是一个发送者：subscriber。</p>
+<p>当你订阅了每天一次的牛奶时，你就是一个订阅者：subscription，而每天负责向你送牛奶的送奶工，就是一个发送者：subscriber。</p>
 <h4 id="RACDisposable"><a href="#RACDisposable" class="headerlink" title="RACDisposable"></a>RACDisposable</h4><p>前面还提到了销毁，为此，RAC定义了一个<code>RACDisposable</code>类，用于回收资源。</p>
 <p>综上，RAC最核心最基本的概念就是这些，四个名词类：RACEvent（事件），RACSignal（信号），RACSubscriber（发送者），RACDisposable（清理者）；三个动词：创建（create），订阅（subscribe），销毁（dispose）。</p>
 <h3 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h3><h4 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h4><p>创建一个信号非常简单，<code>RACSignal</code>定义了一个类方法如下：</p>
@@ -488,22 +488,24 @@
     NSLog(@&quot;接收到completed类型事件，不包含任何数据&quot;);
 }];
 </code></pre><p>此时，<code>sourceSignal</code>发送任何数据都能被接收到。</p>
-<h4 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h4><p>注意上面<code>createSignal</code>方法中的block返回了一个<code>RACDisposable</code>类型对象，<code>subscribe</code>方法仍然返回一个<code>RACDisposable</code>类型对象，这是什么鬼？一个信号使用完了总要进行回收吧，要不多浪费资源。它就是做这个用的。</p>
+<h4 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h4><p>注意上面<code>createSignal</code>方法中的block返回了一个<code>RACDisposable</code>类型对象，<code>subscribe</code>方法仍然返回了一个<code>RACDisposable</code>类型对象，这是什么鬼？一个信号被取消订阅或者订阅结束后总要进行一些清理工作吧。它就是做这个用的。</p>
 <p><code>RACDisposable</code>类有一个类方法：</p>
 <pre><code>+ (instancetype)disposableWithBlock:(void (^)(void))block;
-</code></pre><p>也就是上面展示过的，使用它就创建了一个disposable对象。当信号被销毁时可以做一些资源回收和垃圾清理的工作。比如如果是一个网络请求就取消这个请求，如果是打开一个文件就关闭这个文件等。</p>
+</code></pre><p>也就是上面展示过的，使用它就创建了一个disposable对象。当订阅流程结束时可以做一些资源回收和垃圾清理的工作。比如如果是一个网络请求就取消这个请求，如果是打开一个文件就关闭这个文件等。</p>
 <p>销毁分两种类型，自动销毁和手动销毁，分别对应完成订阅和取消订阅。</p>
-<p>自动销毁非常简单，当发送完所有的next事件后，发送一个completed或error事件，这时一次完整的订阅过程就圆满结束了。此时信号会自动进行销毁，使用者完全不需要操心。</p>
+<p>自动销毁非常简单，当源信号发送完所有的next事件后，发送一个completed或error事件，这时一次完整的订阅过程就圆满结束了。此时信号会自动被销毁，使用者完全不需要操心。</p>
 <p>手动销毁是指源信号还没有发送结束事件时订阅者表示不想再继续订阅了的情况。</p>
 <p><code>RACDisposable</code>类定义了一个方法：</p>
 <pre><code>- (void)dispose;
-</code></pre><p>顾名思义，表示取消订阅，销毁资源。</p>
+</code></pre><p>顾名思义，表示取消订阅，清理资源。</p>
 <p>举个🌰：</p>
 <pre><code>RACDisposable *disposable = [sourceSignal subscribeNext:^(id x) {
     NSLog(@&quot;接收到next类型事件：%@&quot;,x);
 }];
 [disposable dispose];
 </code></pre><p>通常来说应用自动销毁的方式比较多。</p>
+<p>订阅过程如下图：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/subsciber-full-process.png" alt=""></p>
 <p>下面来看一个完整的流程：</p>
 <p>发送next类型事件以completed结束时：</p>
 <pre><code>// 1 信号未被创建
@@ -512,7 +514,7 @@ RACSignal *sourceSignal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubs
     [subscriber sendNext:@&quot;👦🏻&quot;];
     [subscriber sendCompleted];
     return [RACDisposable disposableWithBlock:^{
-        // 6 信号被销毁
+        // 6 订阅流程结束，可清理资源
     }];
 }];
 // 2 信号已被创建，未被订阅（未激活）
@@ -535,7 +537,7 @@ RACSignal *sourceSignal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubs
     // 3 信号被激活，开始发送事件
     [subscriber sendError:[NSError errorWithDomain:@&quot;www.reactivecocoademo.com&quot; code:202 userInfo:nil]];
     return [RACDisposable disposableWithBlock:^{
-        // 5 信号被销毁
+        // 5 订阅流程结束，可清理资源
     }];
 }];
 // 2 信号已被创建，未被订阅（未激活）
@@ -560,7 +562,7 @@ RACSignal *sourceSignal = [[[[RACSignal createSignal:^RACDisposable *(id&lt;RACS
     [subscriber sendNext:@&quot;👧🏼&quot;];
     [subscriber sendCompleted];
     return [RACDisposable disposableWithBlock:^{
-        // 8 信号被销毁
+        // 8 订阅流程结束，可清理资源
     }];
 }] doNext:^(id x) {
     // 4 信号被激活，next类型事件已发送，before接收到
@@ -590,7 +592,7 @@ RACSignal *sourceSignal = [[[[RACSignal createSignal:^RACDisposable *(id&lt;RACS
     // 3 信号被激活，开始发送事件
     [subscriber sendError:[NSError errorWithDomain:@&quot;www.reactivecocoademo.com&quot; code:202 userInfo:nil]];
     return [RACDisposable disposableWithBlock:^{
-        // 6 信号被销毁
+        // 6 订阅流程结束，可清理资源
     }];
 }] doNext:^(id x) {
     // 仅发送error类型事件时，此处不会走到
@@ -615,7 +617,7 @@ RACSignal *sourceSignal = [[[[RACSignal createSignal:^RACDisposable *(id&lt;RACS
 </code></pre><p>See? 就是这么简单。</p>
 <h2 id="种类丰富而神奇的操作符"><a href="#种类丰富而神奇的操作符" class="headerlink" title="种类丰富而神奇的操作符"></a>种类丰富而神奇的操作符</h2><p>RAC定义了一系列用来组合，转换，过滤值流的操作符，熟练使用它们可以大幅度减化代码复杂度，从而提高开发效率。</p>
 <p>举两个例子：</p>
-<p>🌰1: 一个页面的数据来源于三个接口，且这三个接口必须顺序请求，也就是有一个严格的依赖关系。都调用之后一次性去刷新页面。</p>
+<p>🌰 1: 一个页面的数据来源于三个接口，且这三个接口必须顺序请求，也就是有一个严格的依赖关系。都调用之后一次性去刷新页面。</p>
 <p>应用RAC定义的操作符号可类似如下实现：</p>
 <pre><code>[[[[self asyncDataRequest1]
    then:^RACSignal *{
@@ -627,7 +629,7 @@ RACSignal *sourceSignal = [[[[RACSignal createSignal:^RACDisposable *(id&lt;RACS
 } error:^(NSError *error) {
     [self showError:error];
 }];
-</code></pre><p>🌰2: 一个<code>label</code>的数据仍然来源于三个接口，但这三个接口可并发请求。都调用之后一次性去刷新<code>label</code>。</p>
+</code></pre><p>🌰 2: 一个<code>label</code>的数据仍然来源于三个接口，但这三个接口可并发请求。都调用之后一次性去刷新<code>label</code>。</p>
 <p>应用RAC定义的操作符号可类似如下实现：</p>
 <pre><code>[[RACSignal combineLatest:@[[self asyncDataRequest1], [self asyncDataRequest2], [self asyncDataRequest3]] reduce:^(id data1, id data2, id data3){
    return [NSString stringWithFormat:@&quot;data1:%@ data2:%@ data3:%@&quot;,(NSString *)data1,(NSString *)data2,(NSString *)data3];
@@ -1008,7 +1010,7 @@ RACSignal *flattenSignal = [signalB flatten];
 <pre><code>🍉
 </code></pre><p>当然，这里只是一部分。实际开发过程中，需求多种多样，经常会出现一个功能因为对信号的不同组合和链式操作使得有多种实现方式的情况，尤其是相对复杂的需求。因此RAC非常适合发挥想象力。</p>
 <p>最后，再来看一眼文章开头出现过的图片，有没有感觉豁然开朗？</p>
-<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-first-lesson.png" alt="1"></p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-first-lesson.png" alt=""></p>
 <p>参考链接</p>
 <p>官方文档：</p>
 <p><a href="https://github.com/ReactiveCocoa/ReactiveObjC#introduction" target="_blank" rel="external">https://github.com/ReactiveCocoa/ReactiveObjC#introduction</a><br><a href="https://github.com/ReactiveCocoa/ReactiveObjC/tree/master/Documentation" target="_blank" rel="external">https://github.com/ReactiveCocoa/ReactiveObjC/tree/master/Documentation</a></p>
@@ -1016,9 +1018,9 @@ RACSignal *flattenSignal = [signalB flatten];
 <p><a href="http://nshipster.cn/reactivecocoa/" target="_blank" rel="external">http://nshipster.cn/reactivecocoa/</a></p>
 <p>入门经典：</p>
 <p><a href="https://www.raywenderlich.com/62699/reactivecocoa-tutorial-pt1" target="_blank" rel="external">https://www.raywenderlich.com/62699/reactivecocoa-tutorial-pt1</a><br><a href="https://www.raywenderlich.com/62796/reactivecocoa-tutorial-pt2" target="_blank" rel="external">https://www.raywenderlich.com/62796/reactivecocoa-tutorial-pt2</a></p>
-<p>两篇罕见的国人写的高质量文章：</p>
+<p>罕见的国人写的高质量文章：</p>
 <p><a href="http://williamzang.com/blog/2016/06/27/ios-kai-fa-xia-de-han-shu-xiang-ying-shi-bian-cheng/" target="_blank" rel="external">http://williamzang.com/blog/2016/06/27/ios-kai-fa-xia-de-han-shu-xiang-ying-shi-bian-cheng/</a><br><a href="http://blog.leichunfeng.com/blog/2015/12/25/reactivecocoa-v2-dot-5-yuan-ma-jie-xi-zhi-jia-gou-zong-lan/" target="_blank" rel="external">http://blog.leichunfeng.com/blog/2015/12/25/reactivecocoa-v2-dot-5-yuan-ma-jie-xi-zhi-jia-gou-zong-lan/</a></p>
-<p>我之前的分享：</p>
+<p>我之前写的：</p>
 <p><a href="https://github.com/kaisayoung/ReactiveCocoaDemo" target="_blank" rel="external">https://github.com/kaisayoung/ReactiveCocoaDemo</a><br><a href="https://kaisayoung.github.io/2017/04/21/RxSwift-from-zero-to-one-first-lesson/" target="_blank" rel="external">https://kaisayoung.github.io/2017/04/21/RxSwift-from-zero-to-one-first-lesson/</a></p>
 
       
