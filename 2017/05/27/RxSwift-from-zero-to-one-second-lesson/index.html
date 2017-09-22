@@ -94,7 +94,7 @@
 仍然先来一张图镇帖。">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-second-lesson.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-second-lesson.png">
-<meta property="og:updated_time" content="2017-06-01T02:10:03.000Z">
+<meta property="og:updated_time" content="2017-06-04T10:41:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RxSwift进阶，细节与UI绑定">
 <meta name="twitter:description" content="上一篇主要是一些基础概念，这篇来涉及些稍微深奥难懂的。
@@ -1046,7 +1046,7 @@ extension Reactive where Base: UILabel {
     }
 }
 </code></pre><p>通过使用这个拓展，可以做到同时修改标签的内容及颜色。</p>
-<h2 id="Driver"><a href="#Driver" class="headerlink" title="Driver"></a>Driver</h2><p>到目前为止，对RxSwift也介绍了不少内容了，但是最核心的其实就是四个概念，两个名词：<code>被观察者</code>（<code>Observable</code>）和<code>观察者</code>（<code>Observer</code>）；两个动词：<code>订阅</code>（<code>subscribe</code>）和<code>绑定</code>（<code>bind</code>）。接下来终于要轮到第五个也是最后一个了，它就是 – <code>驱动</code>（<code>driver</code>）。</p>
+<h2 id="Driver"><a href="#Driver" class="headerlink" title="Driver"></a>Driver</h2><p>到目前为止，对RxSwift也介绍了不少内容了，但是最核心的其实就是四个概念，两个名词：<code>被观察者</code>（<code>Observable</code>）和<code>观察者</code>（<code>Observer</code>）；两个动词：<code>订阅</code>（<code>subscribe</code>）和<code>绑定</code>（<code>bind</code>）。接下来终于要轮到第五个也是最后一个了，它就是 – <code>驱动</code>（<code>drive</code>）。</p>
 <p>事实上，它是专为UI层绑定方便而创造出的一个概念，也就是说当在UI层做绑定时它并不是必须的，但是应用它会使得事情更加简单。</p>
 <h3 id="UI层的订阅和绑定"><a href="#UI层的订阅和绑定" class="headerlink" title="UI层的订阅和绑定"></a>UI层的订阅和绑定</h3><p>既然说到UI层，特意说明一下：在UI层做绑定所使用的<code>Observable</code>其实是必须要满足于以下三个条件的。</p>
 <h4 id="主线程"><a href="#主线程" class="headerlink" title="主线程"></a>主线程</h4><p>所有系统提供的UI控件全部在UIKit框架中，而这个框架只能在主线程中被使用，否则不知道会发生什么。当然这一点你肯定是知道的，那么相对应的在主线程中绑定使用的<code>Observable</code>也就只能在主线程中发送数据，所以通常也就会调用一下操作符：<code>observeOn()</code>，然后传入<code>MainScheduler.instance</code>。</p>
@@ -1110,8 +1110,8 @@ results
 <p>那么问题又来了，上面代码有什么问题（或者缺陷）？</p>
 <p>答案是稍微有点麻烦。因为可以想像这三个操作符会大量重复使用。</p>
 <p>那么有没有更好的方式呢？</p>
-<p>答案当然是肯定的，也就是应用本小节的主角-<code>driver</code>。</p>
-<p>完美的版本：</p>
+<p>答案当然是肯定的，也就是应用本小节的主角-<code>drive</code>。</p>
+<p>优秀的版本：</p>
 <pre><code>let results = searchText.rx.text.asDriver() 
     .throttle(0.3, scheduler: MainScheduler.instance)
     .distinctUntilChanged()
@@ -1147,7 +1147,7 @@ results
       .catchErrorJustReturn(onErrorJustReturn) // can&apos;t error out
       .shareReplayLatestWhileConnected()       // side effects sharing
 return Driver(raw: safeObservable)           // wrap it up
-</code></pre><p>总结一下：凡是在UI层做绑定的地方全部换成<code>drive</code>操作符没毛病。</p>
+</code></pre><p>总结一下：凡是在UI层做绑定的地方将<code>bind</code>全部换成<code>drive</code>操作符没毛病。</p>
 <p>最后再看一眼最开始出现过的图片。</p>
 <p><img src="http://ocepn6hgq.bkt.clouddn.com/RxSwift-from-zero-to-one-second-lesson.png" alt="1"></p>
 
@@ -1188,6 +1188,10 @@ return Driver(raw: safeObservable)           // wrap it up
           </div>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/19/ReactiveObjC-from-zero-to-one-first-lesson/" rel="prev" title="ReactiveObjC基本概念与简单使用">
+                ReactiveObjC基本概念与简单使用 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -1259,7 +1263,7 @@ return Driver(raw: safeObservable)           // wrap it up
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-count">17</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1276,7 +1280,7 @@ return Driver(raw: safeObservable)           // wrap it up
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
