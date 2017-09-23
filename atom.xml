@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-09-22T17:18:00.000Z</updated>
+  <updated>2017-09-23T13:51:55.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yoursite.com/2017/09/19/ReactiveObjC-from-zero-to-one-first-lesson/"/>
     <id>http://yoursite.com/2017/09/19/ReactiveObjC-from-zero-to-one-first-lesson/</id>
     <published>2017-09-19T08:41:31.000Z</published>
-    <updated>2017-09-22T17:18:00.000Z</updated>
+    <updated>2017-09-23T13:51:55.000Z</updated>
     
     <content type="html"><![CDATA[<p>前几个月一直在学习RxSwift，确实相当酷的一个开源库，受益匪浅。在未来学习swift版本（ReactiveSwift）RAC（ReactiveCocoa）之前特意花了3天回顾了一下OC版本（ReactiveObjC）。而之所以愿意写下本篇，是因为这3天中有1天半是在仔细阅读官方文档。官方文档理解之后再去看之前看过的一些他人写的博客，发现质量良莠不齐，真正值得一读的屈指可数。不禁想到原来居然走了那么多弯路。万维刚说：只有学习了“学习的方法”之后才能快速进步。所以学会了哪个开源库不重要，重要的是怎么学会的。越是复杂的开源库，越是要仔细阅读官方文档，之后遇到困惑的地方再找博客对比查证一番，事半功倍。</p>
 <p>言归正传，本篇文章主要分为三个部分：ReactiveObjC简介，ReactiveObjC中的基本概念与简单使用，ReactiveObjC中丰富而神奇的操作符。</p>
@@ -131,9 +131,9 @@ NSLog(@&quot;c is %ld&quot;,c);
 <h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><h4 id="RACEvent"><a href="#RACEvent" class="headerlink" title="RACEvent"></a>RACEvent</h4><p>上面提到，响应式编程可以将变化的值通过数据流进行传播。为此，RAC中定义了一个事件的概念。即：<code>RACEvent</code>。</p>
 <p>事件分三种类型：Next类型，Completed类型和Error类型。其中Next类型和Error类型事件内部可以承载数据，而Completed类型并不承载任何数据。</p>
 <h4 id="RACSignal"><a href="#RACSignal" class="headerlink" title="RACSignal"></a>RACSignal</h4><p>这是RAC中最基本的一个概念，中文名叫做“信号”，搞懂了这个类，就可以用RAC去玩耍了。</p>
-<p>信号代表的是一个随时间而改变的值流。作为一个流，可以将不断变化的值（或者说数据）向外进行传播。想获取一个信号中的数据，需要订阅它。什么是订阅呢？和订阅博客，订报纸，订牛奶一个意思。但前提是这个信号是存在的，所以想要订阅必先创建。反过来说，创建了一个信号但是并没有订阅它，也获取不到其内部的数据。（这种情况下RACSignal信号根本就不会向外发送数据，下一篇中会详细介绍，暂时忽略）。可以订阅当然就可以取消订阅，当一个信号停止被订阅时，为了回收资源需要将其销毁，同时如有必要做一些清理工作。综上，一个信号完整的生命周期应该是被创建，被订阅，被销毁。</p>
+<p>信号代表的是一个随时间而改变的值流。作为一个流，可以将不断变化的值（或者说数据）向外进行传播。想获取一个信号中的数据，需要订阅它。什么是订阅呢？和订阅博客，订报纸，订牛奶一个意思。但前提是这个信号是存在的，所以想要订阅必先创建。反过来说，创建了一个信号但是并没有订阅它，也获取不到其内部的数据。（这种情况下RACSignal信号根本就不会向外发送数据，下一篇中会详细介绍，暂时忽略）。当一个信号停止被订阅时，为了回收资源需要将其销毁，同时如有必要去做一些清理工作。综上，一个信号完整的生命周期应该是被创建，被订阅，被销毁。</p>
 <p>信号向外传播数据的载体就是事件。其中Next类型事件可以承载任意类型数据-即id，甚至可以是nil。但一般不用来承载错误类型数据，因为有Error类型事件单独做这件事。Completed类型事件仅作为一个正常完成的标志，不需要携带任何数据。</p>
-<p>当一个信号被订阅了之后，可以认为在源信号和订阅者之间建立起了一座桥，通过这座桥，信号源源不断的向订阅者发送最新数据，直到桥被销毁。但是要注意，这是一条很窄而且承重很差的桥，以至于一次只能通过一条数据。如果将一条数据理解成一个人，那么通俗的说就是只有一个人通过了另一个人再能继续过，而绝不能同时两个人走上桥。</p>
+<p>当一个信号被订阅了之后，可以认为在信号源和订阅者之间建立起了一座桥，通过这座桥，信号源源不断的向订阅者发送最新数据，直到桥被销毁。但是要注意，这是一条很窄而且承重很差的桥，以至于一次只能通过一条数据。如果将一条数据理解成一个人，那么通俗的说就是只有一个人通过了另一个人再能继续过，而绝不能同时两个人走上桥。</p>
 <p>在一个信号从无到有的的生命周期中，可以发送任意多个Next事件（当然可以是0），直到发送了一个Completed事件或者一个Error事件，这两个事件都标志着结束，区别在于Completed事件表示正常结束，而Error事件表示因为某种错误而结束。只要两者之一被发送了，整个订阅过程就结束了。</p>
 <p>根据是否会发送一个表示结束的事件信号其实可以分两类。举2个具体的例子，网络请求作为一个信号，去订阅它，调用API得到结果后，若成功则将获得的数据通过Next事件发出，然后跟一个Completed事件；反之则将错误原因通过一个Error事件发出。此时这个API都调用完成，整个订阅过程结束。按钮作为另一个信号，去订阅它，之后每当按钮被点击时都会发出一个Next事件，但是在它的整个生命周期中，都不会发送Completed事件或Error事件。</p>
 <p>看一下下面的简单示意图：</p>
@@ -142,10 +142,10 @@ NSLog(@&quot;c is %ld&quot;,c);
 <p>–tap–tap———-tap–&gt; // “|” = 一直发送Next事件</p>
 <p>三种类型事件关系如下图：</p>
 <p><img src="http://ocepn6hgq.bkt.clouddn.com/RACEvent.png" alt=""></p>
-<h4 id="RACSubscriber"><a href="#RACSubscriber" class="headerlink" title="RACSubscriber"></a>RACSubscriber</h4><p>前面提到了订阅，订阅了信号的对象就是订阅者。注意，信号<code>RACSignal</code>本身是没有发送事件能力的。为了实现向外发送事件，内部还需要一个发送者。为此，RAC中定义了一个实现了<code>RACSubscriber</code>协议的<code>RACSubscriber</code>类。这个类名其实中文要翻译成“订阅者”，但是为了区分，我还是习惯叫它“发送者”。那订阅者是啥，RAC中并没有为其定义一个名字，但是从官方介绍文档中可以发现，和subscriber相对应的是subscription。所以，有两种理解方式：或者一个是“发送者”，一个是“订阅者”；或者一个是“内部订阅者”，一个是“外部订阅者”。总之，一个是用于将信号中的最新值向外发送的对象，一个是订阅了信号的对象。</p>
+<h4 id="RACSubscriber"><a href="#RACSubscriber" class="headerlink" title="RACSubscriber"></a>RACSubscriber</h4><p>信号可以被订阅，订阅了信号的对象就是订阅者。注意，信号<code>RACSignal</code>本身是没有发送事件能力的。为了实现向外发送事件，内部还需要一个发送者。为此，RAC中定义了一个实现了<code>RACSubscriber</code>协议的<code>RACSubscriber</code>类。这个类名其实中文要翻译成“订阅者”，但是为了区分，我还是习惯叫它“发送者”。那订阅者是啥，RAC中并没有为其定义一个名字，但是从官方介绍文档中可以发现，和subscriber相对应的是subscription。所以，有两种理解方式：或者一个是“发送者”，一个是“订阅者”；或者一个是“内部订阅者”，一个是“外部订阅者”。总之，一个是用于将信号中的最新值向外发送的对象，一个是订阅了信号的对象。</p>
 <p>举个🌰：</p>
 <p>当你订阅了每天一次的牛奶时，你就是一个订阅者：subscription，而每天负责向你送牛奶的送奶工，就是一个发送者：subscriber。</p>
-<h4 id="RACDisposable"><a href="#RACDisposable" class="headerlink" title="RACDisposable"></a>RACDisposable</h4><p>前面还提到了当一个信号被取消订阅时，如有必要需要做一些清理工作，为此，RAC定义了一个<code>RACDisposable</code>类，用于回收资源。</p>
+<h4 id="RACDisposable"><a href="#RACDisposable" class="headerlink" title="RACDisposable"></a>RACDisposable</h4><p>前面提到，当一个信号停止被订阅时，如有必要去做一些清理工作，为此，RAC定义了一个<code>RACDisposable</code>类，中文可以叫做“清理者”。</p>
 <p>综上，RAC最核心最基本的概念就是这些，四个名词类：RACEvent（事件），RACSignal（信号），RACSubscriber（发送者），RACDisposable（清理者）；三个动词：创建（create），订阅（subscribe），清理（dispose）。</p>
 <h3 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h3><h4 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h4><p>创建一个信号非常简单，<code>RACSignal</code>定义了一个类方法如下：</p>
 <pre><code>+ (RACSignal *)createSignal:(RACDisposable * (^)(id&lt;RACSubscriber&gt; subscriber))didSubscribe;
@@ -183,23 +183,30 @@ NSLog(@&quot;c is %ld&quot;,c);
     NSLog(@&quot;接收到completed类型事件，不包含任何数据&quot;);
 }];
 </code></pre><p>此时，<code>sourceSignal</code>发送任何数据都能被接收到。</p>
-<h4 id="清理"><a href="#清理" class="headerlink" title="清理"></a>清理</h4><p>注意上面<code>createSignal</code>方法中的block返回了一个<code>RACDisposable</code>类型对象，<code>subscribe</code>方法仍然返回了一个<code>RACDisposable</code>类型对象，这是什么鬼？一个信号停止被订阅时总要进行一些清理工作吧。它就是做这个用的。</p>
+<h4 id="清理"><a href="#清理" class="headerlink" title="清理"></a>清理</h4><p>注意上面<code>createSignal</code>方法中的<code>block</code>返回的是一个<code>RACDisposable</code>类型对象，<code>subscribe</code>方法返回的也是一个<code>RACDisposable</code>类型对象。下面就来说说这个类怎么用。</p>
 <p><code>RACDisposable</code>类有一个类方法：</p>
 <pre><code>+ (instancetype)disposableWithBlock:(void (^)(void))block;
-</code></pre><p>也就是上面展示过的，使用它就创建了一个disposable对象。当订阅流程结束时做一些资源回收和垃圾清理的工作。比如如果是一个网络请求就取消这个请求，如果是打开一个文件就关闭这个文件等。</p>
-<p>清理分两种类型，自动清理和手动清理，分别对应正常完成订阅和中途取消订阅。</p>
-<p>自动清理非常简单，当源信号发送完所有的next事件后，发送一个completed或error事件，这时一次完整的订阅过程就正常结束了。此时信号会自动被销毁，使用者完全不需要操心。直接去清理资源即可。</p>
-<p>手动清理对应的是源信号还没有发送结束事件时订阅者表示不想再继续订阅了的情况。此时首先要取消订阅，然后去清理资源。</p>
-<p><code>RACDisposable</code>类定义了一个方法：</p>
+</code></pre><p>就像上面展示过的，使用它就创建了一个<code>disposable</code>对象。<code>block</code>中可以写一些资源回收和垃圾清理的代码。比如如果是一个网络请求就取消这个请求，如果是打开一个文件就关闭这个文件等。</p>
+<p>当信号停止被订阅时，<code>block</code>中的代码会自动执行。</p>
+<p>当然，有时不需要任何清理，那么<code>block</code>中就是空的。这种情况也可以不返回一个<code>RACDisposable</code>类型对象而是直接返回一个<code>nil</code>。</p>
+<p>举个🌰：</p>
+<pre><code>RACSignal *sourceSignal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+    [subscriber sendNext:@&quot;👦🏻&quot;];
+    [subscriber sendCompleted];
+    return nil;
+}];
+</code></pre><p>那信号如何停止被订阅呢？这里分两种情况，分别是订阅正常结束而停止和订阅中途被取消而停止。</p>
+<p>订阅正常结束是指当信号源发送完所有的next事件后，发送一个completed或error事件。订阅中途被取消是指信号源还没有发送结束事件时订阅者不再继续订阅了。</p>
+<p>RAC中并没有明确定义一个取消订阅的方法，但是<code>RACDisposable</code>类中定义了如下一个方法：</p>
 <pre><code>- (void)dispose;
-</code></pre><p>顾名思义，表示取消订阅，清理资源。</p>
+</code></pre><p>调用这个方法就表示不再订阅（也就是取消订阅）可以直接去清理资源了。</p>
 <p>举个🌰：</p>
 <pre><code>RACDisposable *disposable = [sourceSignal subscribeNext:^(id x) {
     NSLog(@&quot;接收到next类型事件：%@&quot;,x);
 }];
 [disposable dispose];
-</code></pre><p>通常来说应用手动清理方式的情况非常少。</p>
-<p>订阅过程如下图：</p>
+</code></pre><p>通常来说应用这种方式的情况非常少。</p>
+<p>综上，订阅过程如下图：</p>
 <p><img src="http://ocepn6hgq.bkt.clouddn.com/subsciber-full-process.png" alt=""></p>
 <p>下面来看一个完整的流程：</p>
 <p>发送next类型事件以completed结束时：</p>
