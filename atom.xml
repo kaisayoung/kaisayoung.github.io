@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-09-23T13:51:55.000Z</updated>
+  <updated>2017-10-15T05:29:10.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yoursite.com/2017/09/19/ReactiveObjC-from-zero-to-one-first-lesson/"/>
     <id>http://yoursite.com/2017/09/19/ReactiveObjC-from-zero-to-one-first-lesson/</id>
     <published>2017-09-19T08:41:31.000Z</published>
-    <updated>2017-09-23T13:51:55.000Z</updated>
+    <updated>2017-10-15T05:29:10.000Z</updated>
     
     <content type="html"><![CDATA[<p>前几个月一直在学习RxSwift，确实相当酷的一个开源库，受益匪浅。在未来学习swift版本（ReactiveSwift）RAC（ReactiveCocoa）之前特意花了3天回顾了一下OC版本（ReactiveObjC）。而之所以愿意写下本篇，是因为这3天中有1天半是在仔细阅读官方文档。官方文档理解之后再去看之前看过的一些他人写的博客，发现质量良莠不齐，真正值得一读的屈指可数。不禁想到原来居然走了那么多弯路。万维刚说：只有学习了“学习的方法”之后才能快速进步。所以学会了哪个开源库不重要，重要的是怎么学会的。越是复杂的开源库，越是要仔细阅读官方文档，之后遇到困惑的地方再找博客对比查证一番，事半功倍。</p>
 <p>言归正传，本篇文章主要分为三个部分：ReactiveObjC简介，ReactiveObjC中的基本概念与简单使用，ReactiveObjC中丰富而神奇的操作符。</p>
@@ -134,7 +134,7 @@ NSLog(@&quot;c is %ld&quot;,c);
 <p>信号代表的是一个随时间而改变的值流。作为一个流，可以将不断变化的值（或者说数据）向外进行传播。想获取一个信号中的数据，需要订阅它。什么是订阅呢？和订阅博客，订报纸，订牛奶一个意思。但前提是这个信号是存在的，所以想要订阅必先创建。反过来说，创建了一个信号但是并没有订阅它，也获取不到其内部的数据。（这种情况下RACSignal信号根本就不会向外发送数据，下一篇中会详细介绍，暂时忽略）。当一个信号停止被订阅时，为了回收资源需要将其销毁，同时如有必要去做一些清理工作。综上，一个信号完整的生命周期应该是被创建，被订阅，被销毁。</p>
 <p>信号向外传播数据的载体就是事件。其中Next类型事件可以承载任意类型数据-即id，甚至可以是nil。但一般不用来承载错误类型数据，因为有Error类型事件单独做这件事。Completed类型事件仅作为一个正常完成的标志，不需要携带任何数据。</p>
 <p>当一个信号被订阅了之后，可以认为在信号源和订阅者之间建立起了一座桥，通过这座桥，信号源源不断的向订阅者发送最新数据，直到桥被销毁。但是要注意，这是一条很窄而且承重很差的桥，以至于一次只能通过一条数据。如果将一条数据理解成一个人，那么通俗的说就是只有一个人通过了另一个人再能继续过，而绝不能同时两个人走上桥。</p>
-<p>在一个信号从无到有的的生命周期中，可以发送任意多个Next事件（当然可以是0），直到发送了一个Completed事件或者一个Error事件，这两个事件都标志着结束，区别在于Completed事件表示正常结束，而Error事件表示因为某种错误而结束。只要两者之一被发送了，整个订阅过程就结束了。</p>
+<p>一个信号被订阅了之后，可以发送任意多个Next事件（当然可以是0），直到发送了一个Completed事件或者一个Error事件，这两个事件都标志着结束，区别在于Completed事件表示正常结束，而Error事件表示因为某种错误而结束。只要两者之一被发送了，整个订阅过程就结束了。</p>
 <p>根据是否会发送一个表示结束的事件信号其实可以分两类。举2个具体的例子，网络请求作为一个信号，去订阅它，调用API得到结果后，若成功则将获得的数据通过Next事件发出，然后跟一个Completed事件；反之则将错误原因通过一个Error事件发出。此时这个API都调用完成，整个订阅过程结束。按钮作为另一个信号，去订阅它，之后每当按钮被点击时都会发出一个Next事件，但是在它的整个生命周期中，都不会发送Completed事件或Error事件。</p>
 <p>看一下下面的简单示意图：</p>
 <p>–1–2–3–4–5–6–|—-&gt; // “|” = 正常结束：发送一个Completed事件</p>
@@ -344,7 +344,17 @@ RACSignal *sourceSignal = [[[[RACSignal createSignal:^RACDisposable *(id&lt;RACS
 <p>言归正传，根据是否作用于数据本身操作符可分为两大类型，此处仅涉及是的情况，下一篇中会介绍一些其他的。</p>
 <p>正式介绍操作符之前先介绍另一个基础的概念-元组，方便后面理解。</p>
 <h3 id="RACTuple"><a href="#RACTuple" class="headerlink" title="RACTuple"></a>RACTuple</h3><p>你一定为当跨方法传多个值时是选择每个值作为一个参数还是选择传一个字典而纠结过。第一种方法可能会令方法名特别长，第二种方法根本不知道字典里面都有哪些key。为了避免陷入此尴尬，RAC定义了一个<code>RACTuple</code>类。它可以包含多个对象。酷毙了！</p>
-<h3 id="组合操作符"><a href="#组合操作符" class="headerlink" title="组合操作符"></a>组合操作符</h3><p>将多个信号组合成一个信号。</p>
+<p>为了简化使用，RAC额外又定义了两个宏：<code>RACTuplePack(...)</code>和<code>RACTupleUnpack(...)</code>，分别用来“装包”和“拆包”。</p>
+<p>举个🌰：</p>
+<pre><code>NSString *when = @&quot;2017-09-19&quot;;
+NSString *where = @&quot;Beijing&quot;;
+NSString *who = @&quot;ZhouXingXing&quot;;
+RACTuple *tuple = RACTuplePack(when, where, who);
+RACTupleUnpack(NSString *time, NSString *place, NSString *person) = tuple;
+NSLog(@&quot;Three element are : %@, %@, %@&quot;,time,place,person);
+</code></pre><p>结果是：</p>
+<pre><code>Three element are : 2017-09-19, Beijing, ZhouXingXing
+</code></pre><h3 id="组合操作符"><a href="#组合操作符" class="headerlink" title="组合操作符"></a>组合操作符</h3><p>将多个信号组合成一个信号。</p>
 <h4 id="concat"><a href="#concat" class="headerlink" title="concat"></a>concat</h4><p>按顺序拼接信号，订阅者依次接收每个信号发出的值。</p>
 <p>举个🌰：</p>
 <pre><code>RACSignal *signalA = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
