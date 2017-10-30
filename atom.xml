@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-10-15T05:29:10.000Z</updated>
+  <updated>2017-10-30T03:13:39.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -16,11 +16,639 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>ReactiveObjC中的冷热信号与命令</title>
+    <link href="http://yoursite.com/2017/10/30/ReactiveObjC-from-zero-to-one-second-lesson/"/>
+    <id>http://yoursite.com/2017/10/30/ReactiveObjC-from-zero-to-one-second-lesson/</id>
+    <published>2017-10-30T02:32:01.000Z</published>
+    <updated>2017-10-30T03:13:39.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>按照惯例，先来一张图镇帖。</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-second-newlesson.png" alt=""></p>
+<a id="more"></a>
+<h2 id="冷热信号"><a href="#冷热信号" class="headerlink" title="冷热信号"></a>冷热信号</h2><p>首先来复习一下标准的信号订阅流程：</p>
+<pre><code>RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+    NSLog(@&quot;Signal begin sending.&quot;);
+    [subscriber sendNext:@&quot;🐱&quot;];
+    [subscriber sendNext:@&quot;🐶&quot;];
+    [subscriber sendNext:@&quot;🐰&quot;];
+    [subscriber sendCompleted];
+    return nil;
+}];
+NSLog(@&quot;Signal was created.&quot;);
+[[RACScheduler mainThreadScheduler] afterDelay:0.2 schedule:^{
+    // Subscription 1
+    [signal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 1 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:1 schedule:^{
+    // Subscription 2
+    [signal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 2 recveive: %@&quot;, x);
+    }];
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0      Signal was created.
+0.2      Signal begin sending.
+0.2      Subscription 1 recveive: 🐱
+0.2      Subscription 1 recveive: 🐶
+0.2      Subscription 1 recveive: 🐰
+1.0      Signal begin sending.
+1.0      Subscription 2 recveive: 🐱
+1.0      Subscription 2 recveive: 🐶
+1.0      Subscription 2 recveive: 🐰
+</code></pre><p>解释一下：</p>
+<ol>
+<li><code>[RACScheduler mainThreadScheduler] afterDelay:1 schedule:...</code> 是RAC中负责线程管理、延时执行的类和方法。下篇文章会详细介绍，暂时先忽略，如果觉得奇怪完全可以用GCD替换；</li>
+<li>打印结果前面的数字代表的是此行代码执行距离最初代码执行所经历过的时间差；</li>
+<li>延时执行代码的意义主要是为了使执行结果更加清晰，方便解释与理解；</li>
+</ol>
+<p>观察结果可以发现：</p>
+<ol>
+<li>只有当信号被订阅之后创建信号时block中的代码段才会被执行；</li>
+<li>同一个信号先后被多个<code>Subscription</code>订阅后，信号创建时block中的代码段会执行多次，也就是会多次发送完整信息流；</li>
+<li>每个订阅者彼此独立，互不影响，只要订阅了源信号，就会完整接收到其发送的整个信息流；</li>
+</ol>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACSignal-process.png" alt=""></p>
+<p>那么问题来了，这种方式有什么弊端或者说在什么情况下不合适呢？</p>
+<p>一切取决于信号发送事件的机制，上面例子中只是发送几个字符串，对外界并不会产生影响，所以没什么问题。但是考虑这么一种情况：信号被订阅后会触发一个网络请求，然后根据请求结果决定对外发送的数据，两个订阅者分别是两个UI控件，它们等待信号发出数据然后进行刷新。此时用上面这种方式就会使网络请求发生两次，从而造成流量浪费，统计错误，甚至UI刷新不一致等一系列问题。</p>
+<p>怎么样解决呢？这就引出了本节的主角——“RACSubject”。</p>
+<h3 id="RACSubject"><a href="#RACSubject" class="headerlink" title="RACSubject"></a>RACSubject</h3><p>首先来看一下定义：</p>
+<pre><code>RACSubject : RACSignal &lt;RACSubscriber&gt;
+</code></pre><p>首先，它是<code>RACSignal</code>的子类，所以归根结底也是一个信号；同时实现了<code>RACSubscriber</code>协议，所以本身具有发送事件的能力。</p>
+<p>如何初始化呢？也很简单：</p>
+<pre><code>+ (instancetype)subject;
+</code></pre><p>直接看代码：</p>
+<pre><code>RACSubject *subject = [RACSubject subject];
+NSLog(@&quot;Subject was created.&quot;);
+[[RACScheduler mainThreadScheduler] afterDelay:0.2 schedule:^{
+    // Subscription 1
+    [subject subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 1 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:1 schedule:^{
+    NSLog(@&quot;Subject begin sending first value.&quot;);
+    [subject sendNext:@&quot;🐸&quot;];
+    [subject sendNext:@&quot;🐟&quot;];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:1.2 schedule:^{
+    // Subscription 2
+    [subject subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 2 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:2 schedule:^{
+    NSLog(@&quot;Subject begin sending second value.&quot;);
+    [subject sendNext:@&quot;🐍&quot;];
+}];
+</code></pre><p>结果是：    </p>
+<pre><code>0.0      Subject was created.
+1.0      Subject begin sending first value.
+1.0      Subscription 1 recveive: 🐸
+1.0      Subscription 1 recveive: 🐟
+2.0      Subject begin sending second value.
+2.0      Subscription 1 recveive: 🐍
+2.0      Subscription 2 recveive: 🐍 // 第一波没赶上，只能等第二波
+</code></pre><p>解释一下：</p>
+<ol>
+<li>调用类方法<code>subject</code>创建一个<code>RACSubject</code>类的实例对象<code>subject</code>；</li>
+<li><code>subject</code>是一个signal，所以可以被订阅；</li>
+<li><code>subject</code>实现了<code>RACSubscriber</code>协议，所以可以调用<code>sendNext:</code>等方法发送事件；</li>
+</ol>
+<p>观察结果可以发现：</p>
+<ol>
+<li>两个订阅者分别在0.2s和1.2s订阅了源信号<code>subject</code>，<code>subject</code>分别在1s和2s发送事件，其中1s时发送2个，2s时发送1个；</li>
+<li>订阅者1在三个值发送之前就已经订阅了，所以3个值全部接收到，而订阅者2在前两个值发送之后才开始订阅，所以只接收到最后一个值；</li>
+<li>源信号<code>subject</code>发送事件与否与有没有订阅者、有多少订阅者完全无关，并且发送事件次数与订阅者个数也无关；</li>
+</ol>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACSubject-process.png" alt=""><br>上面两段代码以及执行结果进行对比可以发现RACSignal和RACSubject的区别：</p>
+<ol>
+<li>同为信号，RACSignal不具有发送事件的能力，而RACSubject有；</li>
+<li>RACSignal只有被订阅后才能发送事件，而RACSubject不受此限制；</li>
+<li>订阅RACSignal的不同订阅者之间是彼此独立的，都能接收到源RACSignal发送的完整信息流；而订阅RACSubject的不同订阅者之间是彼此共享的，共同接收一个信息流。</li>
+</ol>
+<h4 id="什么是冷信号与热信号"><a href="#什么是冷信号与热信号" class="headerlink" title="什么是冷信号与热信号"></a>什么是冷信号与热信号</h4><p>下面说一个在RAC中被广泛讨论的问题，什么是冷信号与热信号？</p>
+<p>冷热信号的概念源于.NET框架<a href="https://msdn.microsoft.com/en-us/library/hh242977(v=vs.103" target="_blank" rel="external">Reactive Extensions</a>.aspx)中的Hot Observable和Cold Observable：</p>
+<blockquote>
+<p>Cold vs. Hot Observables</p>
+<p>Cold observables start running upon subscription, i.e., the observable sequence only starts pushing values to the observers when Subscribe is called. Values are also not shared among subscribers. This is different from hot observables such as mouse move events or stock tickers which are already producing values even before a subscription is active. When an observer subscribes to a hot observable sequence, it will get the current value in the stream. The hot observable sequence is shared among all subscribers, and each subscriber is pushed the next value in the sequence. </p>
+</blockquote>
+<p>读了这段说明再去看一下上面提到的RACSignal和RACSubject两者间的区别就会发现：RACSignal对应上面的“Cold observable”（也就是冷信号），而RACSubject对应上面的“Hot observable”（也就是热信号）。两者最核心的区别在于——是否“共享”（信息流）。</p>
+<p>举个不是十分恰当的例子：它们之间有点像火车和出租车的关系。一列火车出发的时间点以及经过哪些站都是提前就定好了的（忽略晚点及其他特殊情况），它不会因有没有乘客有多少乘客而改变，所有乘客共享这一列火车，一个乘客若上一站没有赶上则只能去下一站上车了；而出租车呢，任何一定时间内对于一个乘客而言都是唯一的（暂不考虑多人共打一辆车的情况），A想从海淀去朝阳需要打一辆车，B也想从海淀去朝阳则需要打另外一辆车，它们彼此之间相互独立，不共享。</p>
+<p>很自然会想到一个新问题，为什么要区分冷热信号？</p>
+<p>这要从函数式编程（FR）说起，上一篇文章中写过这么一句话：</p>
+<blockquote>
+<p>其中每一个函数都是稳定无副作用的，表现在：在任意时刻输入相同的值，内部经过运算后都会输出相同的值，不会对外界产生任何影响。</p>
+</blockquote>
+<p>这句话现在可以详细讲一讲了。</p>
+<p>FP中有个非常重要的概念——<a href="https://en.wikipedia.org/wiki/Pure_function" target="_blank" rel="external">纯函数</a>。所谓纯函数就是返回值只由输入值决定、而且没有可见<a href="https://en.wikipedia.org/wiki/Side_effect_%28computer_science%29" target="_blank" rel="external">副作用</a>的函数。</p>
+<p>什么是副作用呢？就是函数内部对外界产生的影响。举几个iOS中常见的🌰：</p>
+<p>修改全局变量，修改静态变量，修改对象的成员变量，发送通知，将数据写入文件，触发网络请求等等。</p>
+<p>你会发现之前的编程中充满了各种各样的副作用，而这就就是OOP的特点。</p>
+<p>产生副作用是好的，但产生多次副作用可能就是坏的了。</p>
+<p>此外，纯函数当中还有一个概念——引用透明，是指在相同参数条件下第二次及以后获取返回值纯函数不需要进行重复计算。这主要是为了性能考虑。</p>
+<p>综合这两个因素，为了解决上面提到的“共享”难题，冷热信号应运而生。</p>
+<p>其实，只要清楚RACSignal和RACSubject各自的特点和区别，冷热信号的概念即使不完全清楚依然不影响使用。</p>
+<h4 id="RACSubject两个常用子类"><a href="#RACSubject两个常用子类" class="headerlink" title="RACSubject两个常用子类"></a>RACSubject两个常用子类</h4><p>另外，<code>RACSubject</code>有两个常用的子类，分别是 <code>RACReplaySubject</code> 和 <code>RACBehaviorSubject</code>，简单介绍下。</p>
+<h5 id="RACReplaySubject"><a href="#RACReplaySubject" class="headerlink" title="RACReplaySubject"></a>RACReplaySubject</h5><p>来看一下初始化方法：</p>
+<pre><code>+ (instancetype)replaySubjectWithCapacity:(NSUInteger)capacity;
+</code></pre><p>直接看代码：</p>
+<pre><code>RACReplaySubject *replaySubject = [RACReplaySubject replaySubjectWithCapacity:RACReplaySubjectUnlimitedCapacity];
+NSLog(@&quot;ReplaySubject was created.&quot;);
+[[RACScheduler mainThreadScheduler] afterDelay:0.2 schedule:^{
+    // Subscription 1
+    [replaySubject subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 1 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:1 schedule:^{
+    NSLog(@&quot;ReplaySubject begin sending first value.&quot;);
+    [replaySubject sendNext:@&quot;🐸&quot;];
+    [replaySubject sendNext:@&quot;🐟&quot;];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:1.2 schedule:^{
+    // Subscription 2
+    [replaySubject subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 2 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:2 schedule:^{
+    NSLog(@&quot;ReplaySubject begin sending second value.&quot;);
+    [replaySubject sendNext:@&quot;🐍&quot;];
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0      ReplaySubject was created.
+1.0      ReplaySubject begin sending first value.
+1.0      Subscription 1 recveive: 🐸
+1.0      Subscription 1 recveive: 🐟
+1.2      Subscription 2 recveive: 🐸  // 第一波虽然没赶上，但是也能收到
+1.2      Subscription 2 recveive: 🐟  // 。。。
+2.0      ReplaySubject begin sending second value.
+2.0      Subscription 1 recveive: 🐍
+2.0      Subscription 2 recveive: 🐍
+</code></pre><p>解释一下：</p>
+<ol>
+<li>调用类方法<code>replaySubjectWithCapacity:</code>创建一个<code>RACReplaySubject</code>类的实例对象<code>replaySubject</code>，参数指的是当有新的订阅者订阅时重复发送的历史事件的个数，<code>RACReplaySubjectUnlimitedCapacity</code>代表无穷大；</li>
+</ol>
+<p>观察结果可以发现：</p>
+<ol>
+<li>两个订阅者分别在0.2s和1.2s订阅了源信号<code>replaySubject</code>，<code>replaySubject</code>分别在1s和2s发送事件，其中1s时发送2个，2s时发送1个，和上面一样；</li>
+<li>订阅者1在三个值发送之前就已经订阅了，所以3个值全部接收到，很好理解；</li>
+<li>订阅者2在前两个值发送之后才开始订阅，但是订阅后却立刻收到了这两个值，这也就是“replay”的含义；</li>
+<li>最后一个值在订阅者2订阅后才发送，所以订阅者2可以正常实时接收到；</li>
+</ol>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACReplaySubject-process.png" alt=""></p>
+<h5 id="RACBehaviorSubject"><a href="#RACBehaviorSubject" class="headerlink" title="RACBehaviorSubject"></a>RACBehaviorSubject</h5><p>来看一下初始化方法：</p>
+<pre><code>+ (instancetype)behaviorSubjectWithDefaultValue:(id)value;
+</code></pre><p>直接看代码：</p>
+<pre><code>RACBehaviorSubject *behaviorSubject = [RACBehaviorSubject behaviorSubjectWithDefaultValue:@&quot;🐢&quot;];
+NSLog(@&quot;BehaviorSubject was created.&quot;);
+[[RACScheduler mainThreadScheduler] afterDelay:0.2 schedule:^{
+    // Subscription 1
+    [behaviorSubject subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 1 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:1 schedule:^{
+    NSLog(@&quot;ReplaySubject begin sending first value.&quot;);
+    [behaviorSubject sendNext:@&quot;🐸&quot;];
+    [behaviorSubject sendNext:@&quot;🐟&quot;];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:1.2 schedule:^{
+    // Subscription 2
+    [behaviorSubject subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 2 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:2 schedule:^{
+    NSLog(@&quot;ReplaySubject begin sending second value.&quot;);
+    [behaviorSubject sendNext:@&quot;🐍&quot;];
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0      BehaviorSubject was created.
+0.2      Subscription 1 recveive: 🐢  // 收到初始化值
+1.0      ReplaySubject begin sending first value.
+1.0      Subscription 1 recveive: 🐸
+1.0      Subscription 1 recveive: 🐟
+1.2      Subscription 2 recveive: 🐟  // 第一波没赶上，但是能收到最后一个
+2.0      ReplaySubject begin sending second value.
+2.0      Subscription 1 recveive: 🐍
+2.0      Subscription 2 recveive: 🐍
+</code></pre><p>解释一下：</p>
+<ol>
+<li>调用类方法<code>behaviorSubjectWithDefaultValue:</code>创建一个<code>RACBehaviorSubject</code>类的实例对象<code>behaviorSubject</code>，顾名思义，参数指的是默认值，当其被订阅时首先会发送这个默认值（若没有发送过其它数据）；</li>
+</ol>
+<p>观察结果可以发现：</p>
+<ol>
+<li>两个订阅者分别在0.2s和1.2s订阅了源信号<code>behaviorSubject</code>，<code>behaviorSubject</code>分别在1s和2s发送事件，其中1s时发送2个，2s时发送1个，仍然和上面一样；</li>
+<li>订阅者1在信号还未发送过任何事件时就订阅了，却立刻收到了信号初始化时传入的默认值；</li>
+<li>之后正常实时接收到信号发送的3个值，就和上面一样了，很好理解；</li>
+<li>订阅者2在前两个值发送之后才开始订阅，但是订阅后却立刻收到了之前发送过的最后一个值；</li>
+<li>最后一个值在订阅者2订阅后才发送，所以订阅者2可以正常实时接收到；</li>
+</ol>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACBehaviorSubject-process.png" alt=""></p>
+<p>两者对比：</p>
+<p><code>RACBehaviorSubject</code>和<code>RACReplaySubject</code>其实非常像，区别就在于：<code>RACBehaviorSubject</code>可以设置重复发送事件的数量，而<code>RACReplaySubject</code>只能重复发送一个，但<code>RACReplaySubject</code>可以设置一个初始值。</p>
+<p>顺便提一下，RAC官方在文档中说明不推荐使用RACSubject，因为它过于灵活，滥用的话很容易导致复杂度的增加。</p>
+<h3 id="RACMulticastConnection"><a href="#RACMulticastConnection" class="headerlink" title="RACMulticastConnection"></a>RACMulticastConnection</h3><p>有的博客中会提出这么一个问题：如何将一个冷信号转化成热信号？在我看来，这其实就是个伪命题。正确的问题应该是：如何让多个订阅者共享的订阅一个冷信号？</p>
+<p>这就引出了一个新类——“RACMulticastConnection”。</p>
+<p>其实非常简单，创建一个RACSubject的实例对象subject，用此subject去订阅源冷信号RACSignal的实例对象signal，signal发出的每一个事件通过subject再发送出去，而外界只需要订阅这个subject。需要注意的就是要保证subject对signal的订阅次数不超过一次。</p>
+<p>原理如图所示：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/subscibe-connection-process.png" alt=""></p>
+<p>所以我才说“将一个冷信号转化成热信号”是伪命题，因为从始至终源冷信号RACSignal都是冷信号，没变过，何谈转换？移花接木不等于改头换面。</p>
+<p>来看看怎么使用，首先看定义：</p>
+<p>一个属性</p>
+<pre><code>@property (nonatomic, strong, readonly) RACSignal *signal;
+</code></pre><p>两个方法</p>
+<pre><code>- (RACDisposable *)connect;
+- (RACSignal *)autoconnect;
+</code></pre><p>注意并没有初始化方法！！！</p>
+<p>那如何创建一个<code>RACMulticastConnection</code>的实例对象呢？为此，<code>RACSignal</code>中定义了如下两个方法：</p>
+<pre><code>- (RACMulticastConnection *)multicast:(RACSubject *)subject;
+- (RACMulticastConnection *)publish;
+</code></pre><p>下面详细介绍一下。</p>
+<p>首先，定义一个辅助方法以方便使用。</p>
+<pre><code>- (RACSignal *)sourceColdSignal {
+    RACSignal *coldSignal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+        NSLog(@&quot;Cold signal be subscribed.&quot;);
+        [[RACScheduler mainThreadScheduler] afterDelay:1 schedule:^{
+            [subscriber sendNext:@&quot;🦅&quot;];
+        }];
+        [[RACScheduler mainThreadScheduler] afterDelay:2 schedule:^{
+            [subscriber sendNext:@&quot;🐊&quot;];
+        }];
+        [[RACScheduler mainThreadScheduler] afterDelay:3 schedule:^{
+            [subscriber sendNext:@&quot;🐺&quot;];
+            [subscriber sendCompleted];
+        }];
+        return nil;
+    }];
+    return coldSignal;
+}
+</code></pre><p>就是简单创建一个<code>signal</code>，当被订阅后，间隔1s，2s，3s分别发送一个值。</p>
+<h4 id="multicast"><a href="#multicast" class="headerlink" title="multicast"></a>multicast</h4><p>直接看代码：</p>
+<pre><code>RACMulticastConnection *connection = [[self sourceColdSignal] multicast:[RACSubject subject]];
+</code></pre><p>解释一下：</p>
+<ol>
+<li>调用上面的辅助方法得到一个冷信号<code>coldSignal</code>；</li>
+<li>对冷信号<code>coldSignal</code>调用方法<code>multicast:</code>可创建一个<code>RACMulticastConnection</code>类的实例对象，其中参数是一个<code>RACSubject</code>类型的对象；</li>
+<li>上面方法中使用的是<code>RACSubject</code>类的对象，当然也可以使用<code>RACBehaviorSubject</code>或<code>RACReplaySubject</code>的对象；</li>
+</ol>
+<h4 id="publish"><a href="#publish" class="headerlink" title="publish"></a>publish</h4><p>直接看代码：</p>
+<pre><code>RACMulticastConnection *connection = [[self sourceColdSignal] publish];
+</code></pre><p>解释一下：</p>
+<ol>
+<li>同样调用上面的辅助方法得到一个冷信号<code>coldSignal</code>；</li>
+<li>对冷信号<code>coldSignal</code>调用方法<code>publish</code>可创建一个<code>RACMulticastConnection</code>类的实例对象，不需要传参数；</li>
+<li><code>publish</code>方法内部会创建一个<code>RACSubject</code>类的对象，然后调用<code>multicast:</code>方法，所以上面这两个方法其实是等价的；</li>
+</ol>
+<p>下面介绍一个属性和两个方法如何使用。</p>
+<h4 id="connect"><a href="#connect" class="headerlink" title="connect"></a>connect</h4><p>直接看代码：</p>
+<pre><code>RACMulticastConnection *connection = [[self sourceColdSignal] publish];
+NSLog(@&quot;MulticastConnection was created.&quot;);
+RACSignal *hotSignal = connection.signal;
+NSLog(@&quot;Hot Signal was got.&quot;);
+[[RACScheduler mainThreadScheduler] afterDelay:0.2 schedule:^{
+    [connection connect];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:1.0 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 1 recieve: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:2.0 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 2 recieve: %@&quot;, x);
+    }];
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0      MulticastConnection was created.
+0.0      Hot Signal was got.
+0.2      Cold signal be subscribed.
+1.2      Subscription 1 recieve: 🦅
+2.2      Subscription 1 recieve: 🐊
+2.2      Subscription 2 recieve: 🐊
+3.2      Subscription 1 recieve: 🐺
+3.2      Subscription 2 recieve: 🐺   
+</code></pre><p>解释一下：</p>
+<ol>
+<li>调用<code>connection</code>的<code>signal</code>属性得到一个热信号<code>hotSignal</code>，供订阅者去订阅；</li>
+<li>调用<code>connection</code>的<code>connect</code>方法去激活源冷信号；</li>
+</ol>
+<p>观察结果可以发现：</p>
+<ol>
+<li><code>connection</code>对象在0.2s时调用了<code>connect</code>方法，两个订阅者分别在1.0s和2.0s时订阅了热信号<code>hotSignal</code>；</li>
+<li>源冷信号<code>coldSignal</code>创建时block中的代码段不会执行直到<code>connection</code>调用了<code>connect</code>方法，并且和订阅者数量无关，从始至终只执行了一遍；</li>
+<li>订阅者1在三个值发送之前就已经订阅了，所以3个值全部实时接收到，而订阅者2在第一个值发送之后才订阅，所以从第二个值开始接收；</li>
+</ol>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACConnection-connect-process.png" alt=""></p>
+<h4 id="autoconnect"><a href="#autoconnect" class="headerlink" title="autoconnect"></a>autoconnect</h4><p>直接看代码：</p>
+<pre><code>RACMulticastConnection *connection = [[self sourceColdSignal] publish];
+NSLog(@&quot;MulticastConnection was created.&quot;);
+RACSignal *hotSignal = [connection autoconnect];
+NSLog(@&quot;Hot Signal was got.&quot;);
+[[RACScheduler mainThreadScheduler] afterDelay:1.0 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 1 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:2.5 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 2 recveive: %@&quot;, x);
+    }];
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0      MulticastConnection was created.
+0.0      Hot Signal was got.
+1.0      Cold signal be subscribed.
+2.0      Subscription 1 recveive: 🦅
+3.0      Subscription 1 recveive: 🐊
+3.0      Subscription 2 recveive: 🐊
+4.0      Subscription 1 recveive: 🐺
+4.0      Subscription 2 recveive: 🐺
+</code></pre><p>解释一下：</p>
+<ol>
+<li>调用<code>connection</code>的<code>autoconnect</code>方法直接得到一个热信号<code>hotSignal</code>，供订阅者去订阅；</li>
+</ol>
+<p>观察结果可以发现：</p>
+<ol>
+<li><code>connection</code>对象创建之后立刻调用<code>autoconnect</code>方法得到一个热信号<code>hotSignal</code>，两个订阅者分别在1.0s和2.5s时订阅了它；</li>
+<li>源冷信号<code>coldSignal</code>创建时block中的代码段不会执行直到第一次被订阅，并且和订阅者数量无关，从始至终只执行了一遍；</li>
+<li>订阅者1在三个值发送之前就已经订阅了，所以3个值全部实时接收到，而订阅者2在第一个值发送之后才订阅，所以从第二个值开始接收，和上面一样；</li>
+</ol>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACConnection-autoconnect-process.png" alt=""></p>
+<h3 id="三个简化使用操作符"><a href="#三个简化使用操作符" class="headerlink" title="三个简化使用操作符"></a>三个简化使用操作符</h3><p>如果你觉得上面做法很麻烦，那么恭喜你，说明你已经懂了！有没有更简单的使用方式呢？那绝对是当然的。<code>RACSignal</code>中还定义了如下三个操作符：</p>
+<pre><code>- (RACSignal *)replay;
+- (RACSignal *)replayLast;
+- (RACSignal *)replayLazily;
+</code></pre><p>首先，还是定义一个辅助方法。</p>
+<pre><code>- (RACSignal *)sourceColdSignal2 {
+    RACSignal *coldSignal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+        NSLog(@&quot;Cold signal be subscribed.&quot;);
+        [[RACScheduler mainThreadScheduler] afterDelay:1 schedule:^{
+            [subscriber sendNext:@&quot;🐊&quot;];
+            [subscriber sendNext:@&quot;🐬&quot;];
+        }];
+        [[RACScheduler mainThreadScheduler] afterDelay:2 schedule:^{
+            [subscriber sendNext:@&quot;🦈&quot;];
+            [subscriber sendCompleted];
+        }];
+        return nil;
+    }];
+    return coldSignal;
+}
+</code></pre><p>还是简单创建一个<code>signal</code>，当被订阅后，间隔1s发送两个值，2s发送一个值。</p>
+<h4 id="replay"><a href="#replay" class="headerlink" title="replay"></a>replay</h4><p>直接看代码：</p>
+<pre><code>RACSignal *coldSignal = [self sourceColdSignal2];
+NSLog(@&quot;Cold Signal was created.&quot;);
+RACSignal *hotSignal = [coldSignal replay]; // 立刻connect
+NSLog(@&quot;Hot Signal was got.&quot;);
+[[RACScheduler mainThreadScheduler] afterDelay:1.2 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 1 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:2.2 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 2 recveive: %@&quot;, x);
+    }];
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0      Cold Signal was created.
+0.0      Cold signal be subscribed.
+0.0      Hot Signal was got.
+1.2      Subscription 1 recveive: 🐊
+1.2      Subscription 1 recveive: 🐬
+2.0      Subscription 1 recveive: 🦈 // ✨只有这个是实时收到的，其余几个全是收到的历史值
+2.2      Subscription 2 recveive: 🐊
+2.2      Subscription 2 recveive: 🐬
+2.2      Subscription 2 recveive: 🦈   
+</code></pre><h4 id="replayLast"><a href="#replayLast" class="headerlink" title="replayLast"></a>replayLast</h4><p>直接看代码：</p>
+<pre><code>RACSignal *coldSignal = [self sourceColdSignal2];
+NSLog(@&quot;Cold Signal was created.&quot;);
+RACSignal *hotSignal = [coldSignal replayLast]; // 立刻connect
+NSLog(@&quot;Hot Signal was got.&quot;);
+[[RACScheduler mainThreadScheduler] afterDelay:1.2 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 1 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:2.2 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 2 recveive: %@&quot;, x);
+    }];
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0      Cold Signal was created.
+0.0      Cold signal be subscribed.
+0.0      Hot Signal was got.
+1.2      Subscription 1 recveive: 🐬
+2.0      Subscription 1 recveive: 🦈 // ✨这个是实时收到，剩下两个是历史值；注意数量区别
+2.2      Subscription 2 recveive: 🦈
+</code></pre><h4 id="replayLazily"><a href="#replayLazily" class="headerlink" title="replayLazily"></a>replayLazily</h4><p>直接看代码：</p>
+<pre><code>RACSignal *coldSignal = [self sourceColdSignal2];
+NSLog(@&quot;Cold Signal was created.&quot;);
+RACSignal *hotSignal = [coldSignal replayLazily]; // 延迟connect
+NSLog(@&quot;Hot Signal was got.&quot;);
+[[RACScheduler mainThreadScheduler] afterDelay:1.2 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 1 recveive: %@&quot;, x);
+    }];
+}];
+[[RACScheduler mainThreadScheduler] afterDelay:2.4 schedule:^{
+    [hotSignal subscribeNext:^(id x) {
+        NSLog(@&quot;Subscription 2 recveive: %@&quot;, x);
+    }];
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0      Cold Signal was created.
+0.0      Hot Signal was got.
+1.2      Cold signal be subscribed.  // ✨ 首次订阅之后才会connect    
+2.2      Subscription 1 recveive: 🐊
+2.2      Subscription 1 recveive: 🐬
+2.4      Subscription 2 recveive: 🐊 // 历史值
+2.4      Subscription 2 recveive: 🐬 // 历史值
+3.2      Subscription 1 recveive: 🦈
+3.2      Subscription 2 recveive: 🦈
+</code></pre><p>所谓万变不离其宗，相信聪明的你已经了然于胸，就不过多解释了。</p>
+<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>命令——RACCommand，通常用来表示某个Action的执行，比如点击一个Button。合理使用的话可以很大程度上提高代码的可读性与健壮性。</p>
+<p>头文件中有如下内容：</p>
+<p>属性：</p>
+<pre><code>@property (nonatomic, strong, readonly) RACSignal *executionSignals;
+@property (nonatomic, strong, readonly) RACSignal *executing;
+@property (nonatomic, strong, readonly) RACSignal *errors;
+</code></pre><p>初始化方法：</p>
+<pre><code>- (id)initWithSignalBlock:(RACSignal * (^)(id input))signalBlock;
+- (id)initWithEnabled:(RACSignal *)enabledSignal signalBlock:(RACSignal * (^)(id input))signalBlock;
+</code></pre><p>执行方法：</p>
+<pre><code>- (RACSignal *)execute:(id)input;
+</code></pre><p>直接解释略显生硬，还是先来看一个完整的例子：</p>
+<pre><code>@property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
+@property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
+@property (weak, nonatomic) IBOutlet UIButton *loginButton;
+@property (weak, nonatomic) IBOutlet UILabel *hintInfoLabel;
+
+@property (nonatomic, strong) RACCommand *loginCommand;
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @&quot;RACCommand Use Demo&quot;;
+
+    RACSignal *usernameValidSignal = [self.usernameTextField.rac_textSignal map:^id(NSString *text) {
+        return @([text isValidUsername]);
+    }];
+    RACSignal *passwordValidSignal = [self.passwordTextField.rac_textSignal map:^id(NSString *text) {
+        return @([text isValidPassword]);
+    }];
+    RACSignal *loginEnableSignal = [RACSignal combineLatest:@[usernameValidSignal, passwordValidSignal]
+                                                     reduce:^id(NSNumber *usernameValid, NSNumber *passwordValid){
+                                                         return @([usernameValid boolValue] &amp;&amp; [passwordValid boolValue]);
+                                   }];
+
+    RAC(self.usernameTextField, backgroundColor) = [usernameValidSignal map:^id(NSNumber *valid) {
+        return [valid boolValue] ? [UIColor clearColor] : [UIColor yellowColor];
+    }];
+    RAC(self.passwordTextField, backgroundColor) = [passwordValidSignal map:^id(NSNumber *valid) {
+        return [valid boolValue] ? [UIColor clearColor] : [UIColor yellowColor];
+    }];
+    RAC(self.loginButton, enabled) = loginEnableSignal;
+
+    @weakify(self);
+    // 执行登录的信号
+    RACSignal *loginSignal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+        @strongify(self);
+        [LoginService loginWithUsername:self.usernameTextField.text password:self.passwordTextField.text result:^(NSString *nickname, NSError *error) {
+            if (!error) {
+                [subscriber sendNext:nickname];
+                [subscriber sendCompleted];
+            }
+            else {
+                [subscriber sendError:error];
+            }
+        }];
+        return nil;
+    }];
+    // 初始化的时候创建一个用于执行的信号，同时还可以传入一个用于控制是否允许执行的信号（非必需）
+    RACCommand *loginCommand = [[RACCommand alloc] initWithEnabled:loginEnableSignal signalBlock:^RACSignal *(id input) {
+        NSLog(@&quot;get input value is %@&quot;,input);
+        // 创建信号的时候可以使用调用执行方法时传来的参数：input
+        return loginSignal;
+    }];
+    // 这里仅处理命令是否正在执行的回调
+    [[loginCommand.executing skip:1] subscribeNext:^(id x) {
+        if ([x boolValue] == YES) {
+            [SVProgressHUD show];
+        } else {
+            [SVProgressHUD dismiss];
+        }
+    }];
+    // 这里仅处理命令执行成功的回调
+    [loginCommand.executionSignals.switchToLatest subscribeNext:^(NSString *nickname) {
+        @strongify(self);
+        self.hintInfoLabel.text = [NSString stringWithFormat:@&quot;%@，欢迎回来！&quot;,nickname];
+        self.loginButton.enabled = YES;
+    }];
+    // 这里仅处理命令执行失败的回调
+    [loginCommand.errors subscribeNext:^(NSError *error) {
+        @strongify(self);
+        self.hintInfoLabel.text = [NSString stringWithFormat:@&quot;%@&quot;,[error.userInfo objectForKey:@&quot;hint&quot;]];
+        self.loginButton.enabled = YES;
+    }];
+    self.loginCommand = loginCommand;
+
+    [[[self.loginButton rac_signalForControlEvents:UIControlEventTouchUpInside]
+      doNext:^(id x) {
+          @strongify(self);
+          [self.view endEditing:YES];
+          self.loginButton.enabled = NO;
+          self.hintInfoLabel.text = @&quot;&quot;;
+      }]
+      subscribeNext:^(id x) {
+          @strongify(self);
+          // 触发执行的时候可以传入一个对象
+          [self.loginCommand execute:@&quot;🍎&quot;];
+     }];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.view endEditing:YES];
+}
+
+- (void)touchesEnded:(NSSet&lt;UITouch *&gt; *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
+}
+</code></pre><p>解释一下：</p>
+<ol>
+<li>模拟一个最简单的登录页面，两个输入框分别用来输入用户名和密码，均验证通过后下面登录按钮才可点击，点击会触发登录请求，根据请求结果不同按钮下面会显示不同的提示文案；</li>
+<li>5个属性：其中4个UI控件，1个<code>RACCommand</code>的实例对象；三个方法：后两个都是为了控制键盘适时收起，可以忽略。所以只需要重点看<code>viewDidLoad</code>一个方法；</li>
+<li>首先创建3个用于后续判断的信号，然后分别设置3个UI控件的属性值。其中<code>rac_textSignal</code>信号是RAC为<code>UITextField</code>类所做的拓展属性，<code>RAC(TARGET, ...)</code>是RAC为了简化赋值操作所创造的宏定义；</li>
+<li><code>@weakify(self)</code>和<code>@strongify(self)</code>搭配使用是为了避免循环引用；</li>
+<li>创建一个用于登录的信号实例<code>loginSignal</code>，内部“包裹”着一个网络请求，成功则送出登录用户的昵称，否则送出错误原因； </li>
+<li>创建一个用于执行登录命令的<code>RACCommand</code>实例<code>loginCommand</code>，这里选择的是复杂的初始化方法，第一个参数用于控制这个命令是否满足条件去执行，第二个参数是一个返回信号的<code>block</code>，这个信号就是命令的内容（可以理解成一个命令内部“包裹”着一个信号），需要注意的是<code>block</code>有一个入参<code>input</code>可以供创建信号时使用；</li>
+<li><code>executing</code>属性仅对外发送此命令是否正在执行，因为默认值是NO，所以实际订阅时可以<code>skip</code>一下；</li>
+<li><code>executionSignals</code>属性仅在命令执行成功时对外发送事件，需要注意的是事件本身也是一个信号，也就是信号中的信号（signalOfSignal），所以使用时需要调用<code>switchToLatest</code>操作符一下，取得实际想要的值；</li>
+<li><code>errors</code>属性仅在命令执行失败时对外发送事件，需要注意的是虽然是<code>NSError</code>类型的数据发送的却是Next类型事件；</li>
+<li>调用<code>loginCommand</code>的<code>execute:</code>方法去执行这个命令，需要注意的是此时可以传入一个对象；</li>
+<li><code>execute:</code>方法的返回值也是一个信号，所以当然也可以直接订阅它，不过一般不这么干，有兴趣的可以去订阅一下，将其发送的值和三个属性信号发送的值对比一下；</li>
+</ol>
+<p>来看一下执行过程，初始状态：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-default.png" alt=""></p>
+<p>点击登录按钮后：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-executing.png" alt=""></p>
+<p>登录成功后：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-success.png" alt=""></p>
+<p>登录失败后：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-fail.png" alt=""></p>
+<p>总结：将一个表示行为的信号signal放到一个命令command中，提前设置好分别订阅此command的三个属性信号以应对执行过程与结果，调用<code>execute</code>方法去执行此command。通过这种方式代码变得相当清晰有木有？！</p>
+<p>另外，RAC为<code>UIButton</code>类也拓展了一个信号属性<code>rac_command</code>，对于某些情况还可以直接将command实例赋值给<code>UIButton</code>对象的<code>rac_command</code>属性，这样<code>enable</code>状态，以及点击时触发执行就都不用管了，相当方便，下篇文章会详细介绍。</p>
+<p>顺便提一下，<code>RACCommand</code>类其实还有两个属性如下：</p>
+<pre><code>@property (nonatomic, strong, readonly) RACSignal *enabled;
+
+@property (atomic, assign) BOOL allowsConcurrentExecution;
+</code></pre><p>顾名思义，就不过多解释了。</p>
+<p>最后说一下，上面的例子只是展示了<code>RACCommand</code>类的使用方法与优点，谈不上多高端，因为对几个属性信号订阅的回调block中都引用了外部对象，也就是会引起“副作用”，如果能尽量避免就会更加符合函数式编程的思想。</p>
+<p>最后，再来看一眼文章开头出现过的图片，有没有感觉融会贯通？</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-second-newlesson.png" alt=""></p>
+<p>参考链接</p>
+<p>官方文档：</p>
+<p><a href="https://github.com/ReactiveCocoa/ReactiveObjC/blob/master/Documentation/DesignGuidelines.md" target="_blank" rel="external">DesignGuidelines</a><br><a href="https://github.com/ReactiveCocoa/ReactiveCocoa/blob/v2.5/Documentation/FrameworkOverview.md" target="_blank" rel="external">FrameworkOverview</a></p>
+<p>冷热信号：</p>
+<p><a href="https://tech.meituan.com/talk-about-reactivecocoas-cold-signal-and-hot-signal-part-1.html" target="_blank" rel="external">细说ReactiveCocoa的冷信号与热信号（一）</a><br><a href="https://tech.meituan.com/talk-about-reactivecocoas-cold-signal-and-hot-signal-part-2.html" target="_blank" rel="external">细说ReactiveCocoa的冷信号与热信号（二）：为什么要区分冷热信号</a><br><a href="https://tech.meituan.com/talk-about-reactivecocoas-cold-signal-and-hot-signal-part-3.html" target="_blank" rel="external">细说ReactiveCocoa的冷信号与热信号（三）：怎么处理冷信号与热信号</a><br><a href="https://spin.atomicobject.com/2014/06/29/replay-replaylast-replaylazily/" target="_blank" rel="external">Comparing replay, replayLast, and replayLazily</a></p>
+<p>命令：</p>
+<p><a href="http://codeblog.shape.dk/blog/2013/12/05/reactivecocoa-essentials-understanding-and-using-raccommand/" target="_blank" rel="external">ReactiveCocoa Essentials: Understanding and Using RACCommand</a></p>
+<p>我之前写的：</p>
+<p><a href="https://github.com/kaisayoung/ReactiveCocoaDemo" target="_blank" rel="external">ReactiveCocoaDemo</a><br><a href="https://kaisayoung.github.io/2017/04/21/RxSwift-from-zero-to-one-first-lesson/" target="_blank" rel="external">RxSwift基本概念与使用</a><br><a href="https://kaisayoung.github.io/2017/05/27/RxSwift-from-zero-to-one-second-lesson/" target="_blank" rel="external">RxSwift进阶，细节与UI绑定</a><br><a href="https://kaisayoung.github.io/2017/09/19/ReactiveObjC-from-zero-to-one-first-lesson/" target="_blank" rel="external">ReactiveObjC基本概念与简单使用</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;按照惯例，先来一张图镇帖。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-second-newlesson.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="FRP" scheme="http://yoursite.com/categories/FRP/"/>
+    
+    
+      <category term="RAC" scheme="http://yoursite.com/tags/RAC/"/>
+    
+  </entry>
+  
+  <entry>
     <title>ReactiveObjC基本概念与简单使用</title>
     <link href="http://yoursite.com/2017/09/19/ReactiveObjC-from-zero-to-one-first-lesson/"/>
     <id>http://yoursite.com/2017/09/19/ReactiveObjC-from-zero-to-one-first-lesson/</id>
     <published>2017-09-19T08:41:31.000Z</published>
-    <updated>2017-10-15T05:29:10.000Z</updated>
+    <updated>2017-10-29T13:59:20.000Z</updated>
     
     <content type="html"><![CDATA[<p>前几个月一直在学习RxSwift，确实相当酷的一个开源库，受益匪浅。在未来学习swift版本（ReactiveSwift）RAC（ReactiveCocoa）之前特意花了3天回顾了一下OC版本（ReactiveObjC）。而之所以愿意写下本篇，是因为这3天中有1天半是在仔细阅读官方文档。官方文档理解之后再去看之前看过的一些他人写的博客，发现质量良莠不齐，真正值得一读的屈指可数。不禁想到原来居然走了那么多弯路。万维刚说：只有学习了“学习的方法”之后才能快速进步。所以学会了哪个开源库不重要，重要的是怎么学会的。越是复杂的开源库，越是要仔细阅读官方文档，之后遇到困惑的地方再找博客对比查证一番，事半功倍。</p>
 <p>言归正传，本篇文章主要分为三个部分：ReactiveObjC简介，ReactiveObjC中的基本概念与简单使用，ReactiveObjC中丰富而神奇的操作符。</p>
@@ -568,35 +1196,15 @@ RACSignal *reduceSignal = [RACSignal combineLatest:@[signalA,signalB,signalC] re
     return nil;
 }] flattenMap:^RACStream *(id value) {
     return [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
-            [subscriber sendNext:@&quot;🎾&quot;];
-            [subscriber sendCompleted];
-            return nil;
+             [subscriber sendNext:@&quot;🎾&quot;];
+             [subscriber sendCompleted];
+             return nil;
     }];
 }] subscribeNext:^(id x) {
     NSLog(@&quot;%@&quot;,x);
 }];
 </code></pre><p>结果是：</p>
 <pre><code>🎾
-</code></pre><h4 id="flatten"><a href="#flatten" class="headerlink" title="flatten"></a>flatten</h4><p>取得源信号中发出的next事件中的子信号中发出的next事件中的值。</p>
-<p>举个🌰：</p>
-<pre><code>RACSignal *signalA = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
-    [subscriber sendNext:@&quot;⚽️&quot;];
-    [subscriber sendNext:@&quot;🏀&quot;];
-    [subscriber sendCompleted];
-    return nil;
-}];
-RACSignal *signalB = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
-    [subscriber sendNext:signalA];
-    [subscriber sendCompleted];
-    return nil;
-}];
-RACSignal *flattenSignal = [signalB flatten];
-[flattenSignal subscribeNext:^(id x) {
-    NSLog(@&quot;%@&quot;,x);
-}];
-</code></pre><p>结果是：</p>
-<pre><code>⚽️
-🏀         
 </code></pre><h3 id="过滤和条件操作符"><a href="#过滤和条件操作符" class="headerlink" title="过滤和条件操作符"></a>过滤和条件操作符</h3><p>过滤或筛选掉源信号发出的一些事件。</p>
 <h4 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h4><p>过滤掉一些不满足条件的值。</p>
 <p>举个🌰：</p>
