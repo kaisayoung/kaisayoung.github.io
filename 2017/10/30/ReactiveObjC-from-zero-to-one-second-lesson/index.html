@@ -103,7 +103,7 @@
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-success.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-fail.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-second-newlesson.png">
-<meta property="og:updated_time" content="2017-10-30T03:13:39.000Z">
+<meta property="og:updated_time" content="2017-10-31T12:45:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ReactiveObjC中的冷热信号与命令">
 <meta name="twitter:description" content="按照惯例，先来一张图镇帖。">
@@ -567,7 +567,7 @@ NSLog(@&quot;BehaviorSubject was created.&quot;);
 <p>示意图如下：</p>
 <p><img src="http://ocepn6hgq.bkt.clouddn.com/RACBehaviorSubject-process.png" alt=""></p>
 <p>两者对比：</p>
-<p><code>RACBehaviorSubject</code>和<code>RACReplaySubject</code>其实非常像，区别就在于：<code>RACBehaviorSubject</code>可以设置重复发送事件的数量，而<code>RACReplaySubject</code>只能重复发送一个，但<code>RACReplaySubject</code>可以设置一个初始值。</p>
+<p><code>RACBehaviorSubject</code>和<code>RACReplaySubject</code>其实非常像，区别就在于：<code>RACReplaySubject</code>可以设置重复发送事件的数量，而<code>RACBehaviorSubject</code>只能重复发送一个，但<code>RACBehaviorSubject</code>可以设置一个初始值。</p>
 <p>顺便提一下，RAC官方在文档中说明不推荐使用RACSubject，因为它过于灵活，滥用的话很容易导致复杂度的增加。</p>
 <h3 id="RACMulticastConnection"><a href="#RACMulticastConnection" class="headerlink" title="RACMulticastConnection"></a>RACMulticastConnection</h3><p>有的博客中会提出这么一个问题：如何将一个冷信号转化成热信号？在我看来，这其实就是个伪命题。正确的问题应该是：如何让多个订阅者共享的订阅一个冷信号？</p>
 <p>这就引出了一个新类——“RACMulticastConnection”。</p>
