@@ -84,13 +84,15 @@
 
 
 
-<meta name="description" content="按照惯例，先来一张图镇帖。">
+<meta name="description" content="一如标题，本篇主要介绍ReactiveObjC中的冷热信号与命令。
+按照惯例，先来一张图镇帖。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ReactiveObjC中的冷热信号与命令">
 <meta property="og:url" content="http://yoursite.com/2017/10/30/ReactiveObjC-from-zero-to-one-second-lesson/index.html">
 <meta property="og:site_name" content="一直在路上">
-<meta property="og:description" content="按照惯例，先来一张图镇帖。">
-<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-second-newlesson.png">
+<meta property="og:description" content="一如标题，本篇主要介绍ReactiveObjC中的冷热信号与命令。
+按照惯例，先来一张图镇帖。">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-second-lesson.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACSignal-process.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACSubject-process.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACReplaySubject-process.png">
@@ -102,12 +104,13 @@
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-executing.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-success.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-fail.png">
-<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-second-newlesson.png">
-<meta property="og:updated_time" content="2017-10-31T12:45:17.000Z">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-second-lesson.png">
+<meta property="og:updated_time" content="2017-11-21T12:17:25.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ReactiveObjC中的冷热信号与命令">
-<meta name="twitter:description" content="按照惯例，先来一张图镇帖。">
-<meta name="twitter:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-second-newlesson.png">
+<meta name="twitter:description" content="一如标题，本篇主要介绍ReactiveObjC中的冷热信号与命令。
+按照惯例，先来一张图镇帖。">
+<meta name="twitter:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-second-lesson.png">
 
 
 
@@ -336,8 +339,9 @@
       
 
       
-        <p>按照惯例，先来一张图镇帖。</p>
-<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-second-newlesson.png" alt=""></p>
+        <p>一如标题，本篇主要介绍ReactiveObjC中的冷热信号与命令。</p>
+<p>按照惯例，先来一张图镇帖。</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-second-lesson.png" alt=""></p>
 <a id="more"></a>
 <h2 id="冷热信号"><a href="#冷热信号" class="headerlink" title="冷热信号"></a>冷热信号</h2><p>首先来复习一下标准的信号订阅流程：</p>
 <pre><code>RACSignal *signal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
@@ -450,7 +454,7 @@ NSLog(@&quot;Subject was created.&quot;);
 <p>Cold vs. Hot Observables</p>
 <p>Cold observables start running upon subscription, i.e., the observable sequence only starts pushing values to the observers when Subscribe is called. Values are also not shared among subscribers. This is different from hot observables such as mouse move events or stock tickers which are already producing values even before a subscription is active. When an observer subscribes to a hot observable sequence, it will get the current value in the stream. The hot observable sequence is shared among all subscribers, and each subscriber is pushed the next value in the sequence. </p>
 </blockquote>
-<p>读了这段说明再去看一下上面提到的RACSignal和RACSubject两者间的区别就会发现：RACSignal对应上面的“Cold observable”（也就是冷信号），而RACSubject对应上面的“Hot observable”（也就是热信号）。两者最核心的区别在于——是否“共享”（信息流）。</p>
+<p>读了这段说明再去看一下上面提到的RACSignal和RACSubject两者间的区别就会发现：RACSignal对应上面的“Cold observable”（也就是冷信号），而RACSubject对应上面的“Hot observable”（也就是热信号）。如果把能否发送事件作为一个信号是否被激活的判断标准，那么一个冷信号刚被创建时还是冷却状态，只有被订阅后才会被激活；而一个热信号创建之初就是激活状态。两者最核心的区别在于——是否“共享”（信息流）。</p>
 <p>举个不是十分恰当的例子：它们之间有点像火车和出租车的关系。一列火车出发的时间点以及经过哪些站都是提前就定好了的（忽略晚点及其他特殊情况），它不会因有没有乘客有多少乘客而改变，所有乘客共享这一列火车，一个乘客若上一站没有赶上则只能去下一站上车了；而出租车呢，任何一定时间内对于一个乘客而言都是唯一的（暂不考虑多人共打一辆车的情况），A想从海淀去朝阳需要打一辆车，B也想从海淀去朝阳则需要打另外一辆车，它们彼此之间相互独立，不共享。</p>
 <p>很自然会想到一个新问题，为什么要区分冷热信号？</p>
 <p>这要从函数式编程（FR）说起，上一篇文章中写过这么一句话：</p>
@@ -904,7 +908,7 @@ NSLog(@&quot;Hot Signal was got.&quot;);
 <ol>
 <li>模拟一个最简单的登录页面，两个输入框分别用来输入用户名和密码，均验证通过后下面登录按钮才可点击，点击会触发登录请求，根据请求结果不同按钮下面会显示不同的提示文案；</li>
 <li>5个属性：其中4个UI控件，1个<code>RACCommand</code>的实例对象；三个方法：后两个都是为了控制键盘适时收起，可以忽略。所以只需要重点看<code>viewDidLoad</code>一个方法；</li>
-<li>首先创建3个用于后续判断的信号，然后分别设置3个UI控件的属性值。其中<code>rac_textSignal</code>信号是RAC为<code>UITextField</code>类所做的拓展属性，<code>RAC(TARGET, ...)</code>是RAC为了简化赋值操作所创造的宏定义；</li>
+<li>首先创建3个用于后续判断的信号，然后分别设置3个UI控件的属性值。其中<code>rac_textSignal</code>信号是RAC为<code>UITextField</code>类所做的拓展属性，<code>RAC(TARGET, KEYPATH)</code>是RAC为了简化赋值操作所创造的宏定义；</li>
 <li><code>@weakify(self)</code>和<code>@strongify(self)</code>搭配使用是为了避免循环引用；</li>
 <li>创建一个用于登录的信号实例<code>loginSignal</code>，内部“包裹”着一个网络请求，成功则送出登录用户的昵称，否则送出错误原因； </li>
 <li>创建一个用于执行登录命令的<code>RACCommand</code>实例<code>loginCommand</code>，这里选择的是复杂的初始化方法，第一个参数用于控制这个命令是否满足条件去执行，第二个参数是一个返回信号的<code>block</code>，这个信号就是命令的内容（可以理解成一个命令内部“包裹”着一个信号），需要注意的是<code>block</code>有一个入参<code>input</code>可以供创建信号时使用；</li>
@@ -931,7 +935,7 @@ NSLog(@&quot;Hot Signal was got.&quot;);
 </code></pre><p>顾名思义，就不过多解释了。</p>
 <p>最后说一下，上面的例子只是展示了<code>RACCommand</code>类的使用方法与优点，谈不上多高端，因为对几个属性信号订阅的回调block中都引用了外部对象，也就是会引起“副作用”，如果能尽量避免就会更加符合函数式编程的思想。</p>
 <p>最后，再来看一眼文章开头出现过的图片，有没有感觉融会贯通？</p>
-<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-second-newlesson.png" alt=""></p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-second-lesson.png" alt=""></p>
 <p>参考链接</p>
 <p>官方文档：</p>
 <p><a href="https://github.com/ReactiveCocoa/ReactiveObjC/blob/master/Documentation/DesignGuidelines.md" target="_blank" rel="external">DesignGuidelines</a><br><a href="https://github.com/ReactiveCocoa/ReactiveCocoa/blob/v2.5/Documentation/FrameworkOverview.md" target="_blank" rel="external">FrameworkOverview</a></p>
