@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-11-30T15:56:50.000Z</updated>
+  <updated>2017-11-30T16:00:43.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -16,11 +16,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>ReactiveObjC中的多线程与核心绑定</title>
+    <title>ReactiveObjC中的多线程与绑定</title>
     <link href="http://yoursite.com/2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/"/>
     <id>http://yoursite.com/2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/</id>
     <published>2017-11-30T03:42:01.000Z</published>
-    <updated>2017-11-30T15:56:50.000Z</updated>
+    <updated>2017-11-30T16:00:43.000Z</updated>
     
     <content type="html"><![CDATA[<p>本篇主要介绍ReactiveObjC中的多线程与绑定，顺便总结一下常用的宏定义与Cagegory。</p>
 <p>按照惯例，先来一张图镇帖。</p>
