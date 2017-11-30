@@ -1,0 +1,1143 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="RAC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="本篇主要介绍ReactiveObjC中的多线程与绑定，顺便总结一下常用的宏定义与Cagegory。
+按照惯例，先来一张图镇帖。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ReactiveObjC中的多线程与核心绑定">
+<meta property="og:url" content="http://yoursite.com/2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/index.html">
+<meta property="og:site_name" content="一直在路上">
+<meta property="og:description" content="本篇主要介绍ReactiveObjC中的多线程与绑定，顺便总结一下常用的宏定义与Cagegory。
+按照惯例，先来一张图镇帖。">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-third-lesson.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RAC-one-direction-binding.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RAC-common-four-Macro.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RAC-bi-direction-binding.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RAC-RACChannel-bi-direction-binding.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RAC-RACChannelTerminal-bi-direction-binding.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RAC-RACChannelTo-data-binding.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACChannelTo-use-demo-1.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACChannelTo-use-demo-2.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RAC-bi-direction-binding-data-flow.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RAC-Common-UIKit-Category.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RAC-Common-Foundation-Category.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-third-lesson.png">
+<meta property="og:updated_time" content="2017-11-30T15:56:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ReactiveObjC中的多线程与核心绑定">
+<meta name="twitter:description" content="本篇主要介绍ReactiveObjC中的多线程与绑定，顺便总结一下常用的宏定义与Cagegory。
+按照惯例，先来一张图镇帖。">
+<meta name="twitter:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-third-lesson.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6321865863578256000,
+      author: '主编大人'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/"/>
+
+  <title> ReactiveObjC中的多线程与核心绑定 | 一直在路上 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?d9a1587ce4c6042894f106ae7486a3ce";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一直在路上</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ReactiveObjC中的多线程与核心绑定
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-11-30T11:42:01+08:00" content="2017-11-30">
+              2017-11-30
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/FRP/" itemprop="url" rel="index">
+                    <span itemprop="name">FRP</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本篇主要介绍ReactiveObjC中的多线程与绑定，顺便总结一下常用的宏定义与Cagegory。</p>
+<p>按照惯例，先来一张图镇帖。</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-third-lesson.png" alt=""></p>
+<a id="more"></a>
+<h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><p>RACScheduler是RAC中和多线程相关的类，很多中文博客将其翻译成“调度器”，总之就是为了控制一个任务何时何地以何种方式被执行。RACScheduler内部并没有用到NSOperationQueue和NSRunloop等技术，而仅仅是对GCD中串行队列的简单封装，所以任务会按顺序执行，并且通过RACDisposable又支持取消。</p>
+<p>可以简单的理解成一个RACScheduler的实例代表一个GCD中的队列。</p>
+<h3 id="获取／创建"><a href="#获取／创建" class="headerlink" title="获取／创建"></a>获取／创建</h3><p>几个主要的获取／创建队列的类方法：</p>
+<pre><code>+ (RACScheduler *)immediateScheduler;
++ (RACScheduler *)mainThreadScheduler;
++ (RACScheduler *)schedulerWithPriority:(RACSchedulerPriority)priority;
++ (RACScheduler *)scheduler;
++ (RACScheduler *)currentScheduler;
+</code></pre><p>顾名思义，看一眼就能知道是什么意思，不解释了。其中，<code>RACSchedulerPriority</code>是一个枚举值，定义如下</p>
+<pre><code>typedef enum : long {
+    RACSchedulerPriorityHigh = DISPATCH_QUEUE_PRIORITY_HIGH,
+    RACSchedulerPriorityDefault = DISPATCH_QUEUE_PRIORITY_DEFAULT,
+    RACSchedulerPriorityLow = DISPATCH_QUEUE_PRIORITY_LOW,
+    RACSchedulerPriorityBackground = DISPATCH_QUEUE_PRIORITY_BACKGROUND,
+} RACSchedulerPriority;
+</code></pre><p>可见，就是和GCD中的四个队列优先级一毛一样。</p>
+<h3 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h3><p>几个执行任务的实例方法：</p>
+<pre><code>- (RACDisposable *)schedule:(void (^)(void))block;
+- (RACDisposable *)after:(NSDate *)date schedule:(void (^)(void))block;
+- (RACDisposable *)afterDelay:(NSTimeInterval)delay schedule:(void (^)(void))block;
+</code></pre><p>其中第一个是立即执行，后两个是延迟执行，也很简单，不多解释了。</p>
+<p>下面重点介绍一下和RACScheduler相关的几个操作符。</p>
+<h3 id="何地"><a href="#何地" class="headerlink" title="何地"></a>何地</h3><p>控制代码在何地（哪个线程中）执行。</p>
+<pre><code>- (RACSignal *)deliverOn:(RACScheduler *)scheduler;
+- (RACSignal *)subscribeOn:(RACScheduler *)scheduler;
+</code></pre><p>为了区分这两个操作符，首先定义一个辅助方法：</p>
+<pre><code>- (RACSignal *)bgThreadSendEventSignal {
+    NSLog(@&quot;Create signal in thread : %@&quot;,[NSThread currentThread]);
+    return [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+        [[RACScheduler schedulerWithPriority:RACSchedulerPriorityBackground] schedule:^{
+            NSLog(@&quot;Emit data in thread : %@&quot;,[NSThread currentThread]);
+            [subscriber sendNext:@&quot;🍎&quot;];
+            [subscriber sendCompleted];
+        }];
+        return nil;
+    }];
+}
+</code></pre><p>未应用这两个操作符的情况下：</p>
+<pre><code>NSLog(@&quot;Subscribe signal in thread : %@&quot;,[NSThread currentThread]);
+[[[[self bgThreadSendEventSignal] doNext:^(id x) {
+   NSLog(@&quot;Intercept %@ in thread : %@&quot;,x,[NSThread currentThread]);
+}] map:^id(id value) {
+   NSLog(@&quot;Map %@ in thread : %@&quot;,value,[NSThread currentThread]);
+   return @&quot;🍉&quot;;
+}] subscribeNext:^(id x) {
+   NSLog(@&quot;Receive %@ in thread : %@&quot;,x,[NSThread currentThread]);
+}];
+</code></pre><p>结果是：</p>
+<pre><code>Subscribe signal in thread : &lt;NSThread: 0x600000066c00&gt;{number = 1, name = main}
+Create signal in thread : &lt;NSThread: 0x600000066c00&gt;{number = 1, name = main}
+Emit data in thread : &lt;NSThread: 0x60000046bcc0&gt;{number = 3, name = (null)}
+Intercept 🍎 in thread : &lt;NSThread: 0x60000046bcc0&gt;{number = 3, name = (null)}
+Map 🍎 in thread : &lt;NSThread: 0x60000046bcc0&gt;{number = 3, name = (null)}
+Receive 🍉 in thread : &lt;NSThread: 0x60000046bcc0&gt;{number = 3, name = (null)}    
+</code></pre><p>观察结果可以发现：</p>
+<p>一个信号被创建和订阅之后事件（数据）流经历了四个过程：发送-拦截-转换-接收；而它们都发生在同一个线程中，也就是最初发送事件所在的线程。</p>
+<h4 id="deliverOn"><a href="#deliverOn" class="headerlink" title="deliverOn"></a>deliverOn</h4><p>看代码：</p>
+<pre><code>NSLog(@&quot;Subscribe signal in thread : %@&quot;,[NSThread currentThread]);
+[[[[[[self bgThreadSendEventSignal] deliverOn:[RACScheduler schedulerWithPriority:RACSchedulerPriorityBackground]] doNext:^(id x) {
+    NSLog(@&quot;Intercept %@ in thread : %@&quot;,x,[NSThread currentThread]);
+}] map:^id(id value) {
+    NSLog(@&quot;Map %@ in thread : %@&quot;,value,[NSThread currentThread]);
+    return @&quot;🍉&quot;;
+}] deliverOn:[RACScheduler mainThreadScheduler]] subscribeNext:^(id x) {
+    NSLog(@&quot;Receive %@ in thread : %@&quot;,x,[NSThread currentThread]);
+}];
+</code></pre><p>结果是：</p>
+<pre><code>Subscribe signal in thread : &lt;NSThread: 0x6040000628c0&gt;{number = 1, name = main}
+Create signal in thread : &lt;NSThread: 0x6040000628c0&gt;{number = 1, name = main}
+Emit data in thread : &lt;NSThread: 0x60000007e500&gt;{number = 3, name = (null)}
+Intercept 🍎 in thread : &lt;NSThread: 0x600000261600&gt;{number = 4, name = (null)}
+Map 🍎 in thread : &lt;NSThread: 0x600000261600&gt;{number = 4, name = (null)}
+Receive 🍉 in thread : &lt;NSThread: 0x6040000628c0&gt;{number = 1, name = main}
+</code></pre><p>观察结果可以发现：</p>
+<p><code>deliverOn</code>操作符可以改变之后事件流传递所在的线程；多次使用均有效。</p>
+<h4 id="subscribeOn"><a href="#subscribeOn" class="headerlink" title="subscribeOn"></a>subscribeOn</h4><p>看代码：</p>
+<pre><code>NSLog(@&quot;Subscribe signal in thread : %@&quot;,[NSThread currentThread]);
+[[[[[[self bgThreadSendEventSignal] subscribeOn:[RACScheduler schedulerWithPriority:RACSchedulerPriorityBackground]] doNext:^(id x) {
+   NSLog(@&quot;Intercept %@ in thread : %@&quot;,x,[NSThread currentThread]);
+}] map:^id(id value) {
+   NSLog(@&quot;Map %@ in thread : %@&quot;,value,[NSThread currentThread]);
+   return @&quot;🍉&quot;;
+}] subscribeOn:[RACScheduler mainThreadScheduler]] subscribeNext:^(id x) {
+   NSLog(@&quot;Receive %@ in thread : %@&quot;,x,[NSThread currentThread]);
+}];
+</code></pre><p>结果是：</p>
+<pre><code>Subscribe signal in thread : &lt;NSThread: 0x60000006bc40&gt;{number = 1, name = main}
+Create signal in thread : &lt;NSThread: 0x60000006bc40&gt;{number = 1, name = main}
+Emit data in thread : &lt;NSThread: 0x600000462bc0&gt;{number = 4, name = (null)}
+Intercept 🍎 in thread : &lt;NSThread: 0x600000462bc0&gt;{number = 4, name = (null)}
+Map 🍎 in thread : &lt;NSThread: 0x600000462bc0&gt;{number = 4, name = (null)}
+Receive 🍉 in thread : &lt;NSThread: 0x600000462bc0&gt;{number = 4, name = (null)}
+</code></pre><p>观察结果可以发现：</p>
+<p><code>subscribeOn</code>操作符可以从源头改变事件流传递所在的线程；仅第一次使用有效。</p>
+<p>总结：<code>deliverOn</code>比<code>subscribeOn</code>更加常用，并且当然了两者可混合使用。</p>
+<p>顺便说一下：<code>deliverOn:[RACScheduler mainThreadScheduler]</code>还可以用<code>deliverOnMainThread</code>这个操作符代替。</p>
+<h3 id="何时"><a href="#何时" class="headerlink" title="何时"></a>何时</h3><p>控制代码在何时执行。</p>
+<pre><code>- (RACSignal *)delay:(NSTimeInterval)interval;
+- (RACSignal *)bufferWithTime:(NSTimeInterval)interval onScheduler:(RACScheduler *)scheduler;
+- (RACSignal *)timeout:(NSTimeInterval)interval onScheduler:(RACScheduler *)scheduler;
++ (RACSignal *)interval:(NSTimeInterval)interval onScheduler:(RACScheduler *)scheduler;
+</code></pre><p>非常简单，看例子就能懂。</p>
+<h4 id="delay"><a href="#delay" class="headerlink" title="delay"></a>delay</h4><p>看代码：</p>
+<pre><code>NSLog(@&quot;Create signal&quot;);
+[[[RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+   NSLog(@&quot;Emit data&quot;);
+   [subscriber sendNext:@&quot;🍎&quot;];
+   [subscriber sendNext:@&quot;🍐&quot;];
+   [subscriber sendCompleted];
+   return nil;
+}] delay:2.0] subscribeNext:^(id x) {
+   NSLog(@&quot;Receive data: %@&quot;,x);
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0 Create signal
+0.0 Emit data
+2.0 Receive data: 🍎
+2.0 Receive data: 🍐
+</code></pre><h4 id="bufferWithTime-onScheduler"><a href="#bufferWithTime-onScheduler" class="headerlink" title="bufferWithTime: onScheduler:"></a>bufferWithTime: onScheduler:</h4><p>看代码：</p>
+<pre><code>NSLog(@&quot;Create signal&quot;);
+[[[RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+   NSLog(@&quot;Emit data&quot;);
+   [subscriber sendNext:@&quot;🍎&quot;];
+   [subscriber sendNext:@&quot;🍐&quot;];
+   return nil;
+}] bufferWithTime:2.0 onScheduler:[RACScheduler currentScheduler]] subscribeNext:^(id x) {
+   RACTupleUnpack(NSString *value1, NSString *value2) = (RACTuple *)x;
+   NSLog(@&quot;Receive data: %@,%@&quot;,value1,value2);
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0 Create signal
+0.0 Emit data
+2.0 Receive data: 🍎,🍐
+</code></pre><h4 id="timeout-onScheduler"><a href="#timeout-onScheduler" class="headerlink" title="timeout: onScheduler:"></a>timeout: onScheduler:</h4><p>看代码：</p>
+<pre><code>NSLog(@&quot;Create signal&quot;);
+[[[RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+   NSLog(@&quot;Emit data&quot;);
+   [subscriber sendNext:@&quot;🍎&quot;];
+   return nil;
+}] timeout:2.0 onScheduler:[RACScheduler scheduler]] subscribeNext:^(id x) {
+   NSLog(@&quot;Receive data: %@&quot;,x);
+} error:^(NSError *error) {
+   NSLog(@&quot;Receive error: %@ in thread: %@&quot;,error,[NSThread currentThread]);
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0 Create signal
+0.0 Emit data
+0.0 Receive data: 🍎
+2.0 Receive error: Error Domain=RACSignalErrorDomain Code=1 &quot;(null)&quot; in thread: &lt;NSThread: 0x604000463c80&gt;{number = 3, name = (null)}
+</code></pre><h4 id="interval-onScheduler"><a href="#interval-onScheduler" class="headerlink" title="interval: onScheduler:"></a>interval: onScheduler:</h4><p>看代码：</p>
+<pre><code>NSLog(@&quot;Create signal&quot;);
+[[RACSignal interval:1.0 onScheduler:[RACScheduler mainThreadScheduler]] subscribeNext:^(id x) {
+   NSLog(@&quot;Receive data: %@&quot;,x);
+}];
+</code></pre><p>结果是：</p>
+<pre><code>0.0 Create signal
+1.0 Receive data: Wed Nov  8 20:33:07 2017
+2.0 Receive data: Wed Nov  8 20:33:08 2017
+3.0 Receive data: Wed Nov  8 20:33:09 2017
+...
+</code></pre><h2 id="绑定"><a href="#绑定" class="headerlink" title="绑定"></a>绑定</h2><p>Duang！划重点！这是整个RAC库甚至响应式编程中最重要的概念，没有之一。RAC虽然号称是函数响应式编程库，但是从名称（无论是全称ReactiveCocoa还是仅针对OC版本的ReactiveObjC）上看貌似更加强调的是响应式编程。所以学习RAC库之后如果只记住一个概念，那就是–“绑定”。</p>
+<h3 id="单向绑定"><a href="#单向绑定" class="headerlink" title="单向绑定"></a>单向绑定</h3><p>单向绑定是指将一个对象的属性值绑定到另一个对象的属性值上。</p>
+<p>举个🌰：将ObjA的propertyA绑定到ObjB的propertyB后，propertyB的值在任意时刻都会等于propertyA的值。当propertyA的值改变时，无需对propertyB重新赋值。</p>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-one-direction-binding.png" alt=""></p>
+<p>在介绍如何进行单向绑定之前首先介绍另一个常用的宏定义：</p>
+<p><code>RACObserve(TARGET, KEYPATH)</code></p>
+<p>用于监听某个对象的某个属性的变化，返回值是一个信号。可以代替原生的KVO，一如之前展示过的。使用方法非常简单：</p>
+<pre><code>[RACObserve(self.userModel, starCount) subscribeNext:^(id x) { 
+    // do something
+}]; 
+</code></pre><p>注意两点：</p>
+<p>1 RACObserve的内部实现是基于KVO的，所以并不是所有的property都可以被RACObserve，可以的前提是该property必须支持KVO。</p>
+<p>2 如果监听的TARGET涉及到<code>self</code>，同时block内部也使用了<code>self</code>的话，需要使用<code>@weakify(self)</code>和<code>@strongify(self)</code>两个宏定义来避免循环引用：</p>
+<pre><code>@weakify(self);
+[RACObserve(self.userModel, starCount) subscribeNext:^(id x) { 
+    @strongify(self);
+    self.starLabel.text = (NSString *)x;
+}];
+</code></pre><p>言归正传，进行单向绑定非常简单，也是一个宏定义：</p>
+<p><code>RAC(TARGET, [KEYPATH, [NIL_VALUE]])</code></p>
+<p>使用时将其放到 “=” 左边，右边是一个信号：</p>
+<pre><code>RAC(self.label, text) = self.textField.rac_textSignal;
+</code></pre><p>此时，<code>label</code>中的文字就会随着用户在文本框中的输入而自动改变。</p>
+<p>当然了，还可以在赋值前将原值进行转换或者过滤等等，一如之前展示过的：</p>
+<pre><code>RAC(self.usernameTextField, backgroundColor) = [usernameValidSignal map:^id(NSNumber *valid) {
+    return [valid boolValue] ? [UIColor clearColor] : [UIColor yellowColor];
+}];
+</code></pre><p>前方高能！还可以结合上面的<code>RACObserve</code>：</p>
+<pre><code>RAC(self.starLabel, text) = RACObserve(self.userModel, starCount);    
+</code></pre><p>简直炫酷有木有？！</p>
+<p>至此，最常用的宏定义就介绍完了，一张图总结：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-common-four-Macro.png" alt=""></p>
+<p>现在考虑这么一种情况，一个用户信息模型类当中有两个属性，分别是代表中文性别的<code>chineseSex</code>和英文性别的<code>englishSex</code>，中文性别可取值：男、女、未知，英文性别可取值：male、female、unknown。<br>现在要求两者时刻保持匹配。也就是当<code>chineseSex</code>属性变化时，<code>englishSex</code>要做出相应的改变，反过来亦然。</p>
+<p>应用上面的绑定知识很容易写出来类似下面的代码：</p>
+<pre><code>RAC(self.englishSexLabel, text) = RACObserve(self.userModel, englishSex);
+RAC(self.chineseSexLabel, text) = RACObserve(self.userModel, chineseSex);
+
+RAC(self.userModel, chineseSex) = [RACObserve(self.userModel, englishSex) map:^id(NSString *value) {
+   NSLog(@&quot;here set chineseSex value happen once&quot;);
+   if ([value isEqualToString:@&quot;male&quot;]) {
+       return @&quot;男&quot;;
+   }
+   else if ([value isEqualToString:@&quot;female&quot;]) {
+       return @&quot;女&quot;;
+   }
+   else {
+       return @&quot;未知&quot;;
+   }
+}];
+
+RAC(self.userModel, englishSex) = [RACObserve(self.userModel, chineseSex) map:^id(NSString *value) {
+   NSLog(@&quot;here set englishSex value happen once&quot;);
+   if ([value isEqualToString:@&quot;男&quot;]) {
+       return @&quot;male&quot;;
+   }
+   else if ([value isEqualToString:@&quot;女&quot;]) {
+       return @&quot;female&quot;;
+   }
+   else {
+       return @&quot;unknown&quot;;
+   }
+}];
+</code></pre><p>其中前两行只是为了直观的展示两个属性值，下面的才是绑定相关。实际运行你会发现，出现循环而导致崩溃了。怎么解决呢？这就引出来下面要介绍的–双向绑定。</p>
+<h3 id="双向绑定"><a href="#双向绑定" class="headerlink" title="双向绑定"></a>双向绑定</h3><p>双向绑定是指将一个对象的属性值与另一个对象的属性值互相绑定。区别于单向绑定中数据的单向流动，此时数据会双向流动。</p>
+<p>再举个🌰：将ObjA的propertyA与ObjB的propertyB互相绑定后，propertyA的值与propertyB的值在任意时刻都相等。当propertyA的值改变时，无需对propertyB重新赋值，同样，当propertyB的值改变时，也无需对propertyA重新赋值。同时还不会引发循环。</p>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-bi-direction-binding.png" alt=""></p>
+<p>可以理解，双向绑定比单向绑定功能更加强大，所以使用起来也相对困难很多。</p>
+<h4 id="RACChannel"><a href="#RACChannel" class="headerlink" title="RACChannel"></a>RACChannel</h4><p>怎么做呢？通过另一个类–RACChannel。</p>
+<p>通俗的说，就像是在需要进行绑定的两个对象的属性值之间搭建一个通道，通道上有两条方向相反互不干扰的管线，从而也就实现了数据可以在两个方向的流动。</p>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-RACChannel-bi-direction-binding.png" alt=""></p>
+<h5 id="RACChannelTerminal"><a href="#RACChannelTerminal" class="headerlink" title="RACChannelTerminal"></a>RACChannelTerminal</h5><p>看一下RACChannel类的头文件，发现异常简单，只有两个属性：</p>
+<pre><code>@property (nonatomic, strong, readonly) RACChannelTerminal *leadingTerminal;
+@property (nonatomic, strong, readonly) RACChannelTerminal *followingTerminal;
+</code></pre><p>所以，其实内部是靠这两个“终端”实现的。示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-RACChannelTerminal-bi-direction-binding.png" alt=""></p>
+<p>再看一下RACChannelTerminal：</p>
+<pre><code>RACChannelTerminal : RACSignal &lt;RACSubscriber&gt;
+</code></pre><p>可以发现，这其实也是一个信号，并且实现了RACSubscriber协议。和RACSubject有相似之处。</p>
+<p>你一定以为接下来我要介绍如何使用<code>RACChannel</code>了，那你可就错了。因为通常情况下不直接用它，而是用它的一个子类–RACKVOChannel。</p>
+<h5 id="RACKVOChannel"><a href="#RACKVOChannel" class="headerlink" title="RACKVOChannel"></a>RACKVOChannel</h5><p>那如何使用<code>RACKVOChannel</code>呢？看头文件只有一个初始化方法：</p>
+<pre><code>- (id)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath nilValue:(id)nilValue;
+</code></pre><p>通常也不直接使用这个方法🤦‍♂️，而是用另外一个宏定义：</p>
+<p><code>RACChannelTo(TARGET, KEYPATH, NILVALUE)</code></p>
+<p>传入相应的值会返回一个RACChannelTerminal类型的实例对象，同时内部会实现对相应对象属性值的监听值变化与赋新值。</p>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-RACChannelTo-data-binding.png" alt=""></p>
+<h4 id="双向绑定的两种方法"><a href="#双向绑定的两种方法" class="headerlink" title="双向绑定的两种方法"></a>双向绑定的两种方法</h4><h5 id="（宏定义）直接赋值法"><a href="#（宏定义）直接赋值法" class="headerlink" title="（宏定义）直接赋值法"></a>（宏定义）直接赋值法</h5><p>在对两个支持KVO的属性值进行原值（不需要中途进行转换）绑定时，一个“=”就搞定。</p>
+<p>举个非常简单的例子：假设有两个View，<code>redView</code>&amp;<code>greenView</code>，其中<code>redView</code>的<code>alpha</code>初始值为0.5而<code>greenView</code>的<code>alpha</code>初始值为1.0，现在要绑定它们的<code>alpha</code>值，就是一行代码的事：</p>
+<pre><code>RACChannelTo(self.redView, alpha) = RACChannelTo(self.greenView, alpha);
+</code></pre><p>运行初始状态如下图：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACChannelTo-use-demo-1.png" alt=""></p>
+<p>将“=”左右的内容对调：</p>
+<pre><code>RACChannelTo(self.greenView, alpha) = RACChannelTo(self.redView, alpha);
+</code></pre><p>运行初始状态如下图：    </p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RACChannelTo-use-demo-2.png" alt=""></p>
+<p>对比可以发现，“=”左边的属性值会从右边的属性值取得初始值。所以，使用哪个属性的初始值哪个属性就在“=”的右边。比如，将一个View和一个Model进行双向绑定时，通常都是View在左边，Model在右边。之后双方就平等了，每当一方被赋新值另一方都会自动改变，保持“同调”。</p>
+<h5 id="（终端）双订阅法"><a href="#（终端）双订阅法" class="headerlink" title="（终端）双订阅法"></a>（终端）双订阅法</h5><p>直接赋值法虽然足够简单，但是仅适合一小部分情况，更多的还是应用–（终端）双订阅法。</p>
+<p>回到上面提到的需要保持代表中文性别的<code>chineseSex</code>属性和英文性别的<code>englishSex</code>属性时刻匹配的例子，可以解决如下：</p>
+<pre><code>// 1
+RAC(self.englishSexLabel, text) = RACObserve(self.userModel, englishSex);
+RAC(self.chineseSexLabel, text) = RACObserve(self.userModel, chineseSex);
+
+// 2
+RACChannelTerminal *channelEnglish = RACChannelTo(self.userModel, englishSex);
+RACChannelTerminal *channelChinese = RACChannelTo(self.userModel, chineseSex);
+
+// 3
+[[chineseChannelT map:^id(NSString *value) {
+    NSLog(@&quot;here set englishSex happen once&quot;);
+    if ([value isEqualToString:@&quot;男&quot;]) {
+        return @&quot;male&quot;;
+    }
+    else if ([value isEqualToString:@&quot;女&quot;]) {
+        return @&quot;female&quot;;
+    }
+    else {
+        return @&quot;unknown&quot;;
+    }
+}] subscribe:englishChannelT];
+
+// 4
+[[[englishChannelT skip:1] map:^id(NSString *value) {
+    NSLog(@&quot;here set chineseSex happen once&quot;);
+    if ([value isEqualToString:@&quot;male&quot;]) {
+        return @&quot;男&quot;;
+    }
+    else if ([value isEqualToString:@&quot;female&quot;]) {
+        return @&quot;女&quot;;
+    }
+    else {
+        return @&quot;未知&quot;;
+    }
+}] subscribe:chineseChannelT];
+</code></pre><p>解释一下：</p>
+<ol>
+<li>仍然仅仅为了展示，与绑定无关，不变；</li>
+<li>使用宏定义得到两个<code>RACChannelTerminal</code>类型的实例对象；</li>
+<li>在两个终端之间搭建一条管线供数据流动，并且数据流动过程中会进行转换；</li>
+<li>抛弃<code>englishSex</code>的初始值，使用<code>chineseSex</code>的初始值，所以有<code>skip:1</code>的操作，可以等价理解成在“=”前面。</li>
+</ol>
+<p>实际运行一下，完美的实现了需求。Perfect!</p>
+<h4 id="获得RACChannelTerminal类型对象的三种方法"><a href="#获得RACChannelTerminal类型对象的三种方法" class="headerlink" title="获得RACChannelTerminal类型对象的三种方法"></a>获得RACChannelTerminal类型对象的三种方法</h4><p>方法一：就是上面展示的直接使用<code>RACChannelTo</code>宏定义。</p>
+<p>方法二：<code>RACChannelTo</code>宏定义存在的意义是为了简化<code>RACKVOChannel</code>类的使用方式，所以也可以直接使用这个类。</p>
+<p>举个🌰：</p>
+<pre><code>RACChannelTo(view, property) = RACChannelTo(model, property);
+</code></pre><p>完全等价于</p>
+<pre><code>[[RACKVOChannel alloc] initWithTarget:view keyPath:@&quot;property&quot; nilValue:nil][@&quot;followingTerminal&quot;] = 
+[[RACKVOChannel alloc] initWithTarget:model keyPath:@&quot;property&quot; nilValue:nil][@&quot;followingTerminal&quot;];
+</code></pre><p>方法三：RAC库为一些系统UI控件拓展了属性或者方法可以得到RACChannelTerminal类型对象。</p>
+<p>随便举几个例子：</p>
+<p>对<code>UITextField</code>的拓展：</p>
+<p><code>- (RACChannelTerminal *)rac_newTextChannel;</code></p>
+<p>对<code>UISwitch</code>的拓展：</p>
+<p><code>- (RACChannelTerminal *)rac_newOnChannel;</code></p>
+<p><code>UIControl</code>的拓展：</p>
+<p><code>- (RACChannelTerminal *)rac_channelForControlEvents:(UIControlEvents)controlEvents key:(NSString *)key nilValue:(id)nilValue;</code></p>
+<p>再举个绑定View(UITextField)和Model的例子：</p>
+<pre><code>RACChannelTerminal *textFieldChannelT = self.textField.rac_newTextChannel;
+RACChannelTerminal *modelChannelT = RACChannelTo(self.userModel, starCount);
+[modelChannelT subscribe:textFieldChannelT];
+[[textFieldChannelT skip:1] subscribe:modelChannelT];
+</code></pre><p>或：</p>
+<pre><code>RACChannelTerminal *textFieldChannelT = self.textField.rac_newTextChannel;
+RAC(self.userModel, starCount) = [textFieldChannelT skip:1];
+[RACObserve(self.userModel, starCount) subscribe:textFieldChannelT];
+</code></pre><p>数据流向如下图：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-bi-direction-binding-data-flow.png" alt=""></p>
+<p>虽然大多数情况下，双向绑定都是为了连接一个View和一个Model，但是其实无论是同一个对象的两个不同属性，或是两个不同对象之间的属性，两个对象是两个Model还是两个View还是一个Model一个View，这些都是表象，归根结底连接的都是两个不同的属性。</p>
+<h2 id="常用Category"><a href="#常用Category" class="headerlink" title="常用Category"></a>常用Category</h2><p>上面已经或多或少的提到了RAC为系统类创建的一些category，这大大方便了使用者。下面总结一下我认为最常用的。</p>
+<h3 id="UIKit-Category"><a href="#UIKit-Category" class="headerlink" title="UIKit Category"></a>UIKit Category</h3><p>对UI库中文件的拓展。</p>
+<h4 id="rac-textSignal"><a href="#rac-textSignal" class="headerlink" title="rac_textSignal"></a>rac_textSignal</h4><p>前面用过太多次，相信已不再需要解释了。</p>
+<pre><code>[self.textField.rac_textSignal subscribeNext:^(id x) {
+    NSLog(@&quot;x is: %@&quot;,x);
+}];
+</code></pre><p>当在输入框中输入“I am just look look.”这样一段字符串的过程中，输出结果是： </p>
+<pre><code>x is:
+x is: I
+x is: I
+x is: I a
+x is: I am
+x is: I am
+x is: I am j
+x is: I am ju
+x is: I am jus
+x is: I am just
+x is: I am just
+x is: I am just l
+x is: I am just lo
+x is: I am just loo
+x is: I am just look
+x is: I am just look
+x is: I am just look l
+x is: I am just look lo
+x is: I am just look loo
+x is: I am just look look
+x is: I am just look look.    
+</code></pre><h4 id="rac-signalForControlEvents"><a href="#rac-signalForControlEvents" class="headerlink" title="rac_signalForControlEvents:"></a>rac_signalForControlEvents:</h4><pre><code>[[self.button rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
+    NSLog(@&quot;按钮被点击了，爱干点啥儿干点啥儿&quot;);
+}];
+</code></pre><p>应用这种方式，按钮点击的处理可以和按钮创建在一块儿，不必跨方法了。点击时输出结果是： </p>
+<pre><code>按钮被点击了，爱干点啥儿干点啥儿
+</code></pre><h4 id="rac-prepareForReuseSignal"><a href="#rac-prepareForReuseSignal" class="headerlink" title="rac_prepareForReuseSignal"></a>rac_prepareForReuseSignal</h4><p>无需多言，通常搭配<code>takeUntil</code>操作符使用。</p>
+<h4 id="rac-command"><a href="#rac-command" class="headerlink" title="rac_command"></a>rac_command</h4><pre><code>// 为了模拟，简陋了一些，领会精神
+RACSignal *executeSignal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+    [[RACScheduler mainThreadScheduler] afterDelay:1.0 schedule:^{
+        [subscriber sendNext:@&quot;🍎&quot;];
+        [subscriber sendCompleted];
+    }];
+    return nil;
+}];
+RACCommand *executeCommand = [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id input) {
+    NSLog(@&quot;get input value is: %@&quot;,input);
+    return executeSignal;
+}];
+// 赋给属性值
+self.button.rac_command = executeCommand;
+// 余下使用方式不变
+[executeCommand.executionSignals.switchToLatest subscribeNext:^(id x) {
+    NSLog(@&quot;get result value is: %@&quot;,x);
+}];
+</code></pre><p>按钮被点击时输出结果是：</p>
+<pre><code>get input value is: &lt;UIButton: 0x7f970dc1c690; ... &gt;
+get result value is: 🍎
+</code></pre><p>一张图总结：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-Common-UIKit-Category.png" alt=""></p>
+<h3 id="Foundation-Category"><a href="#Foundation-Category" class="headerlink" title="Foundation Category"></a>Foundation Category</h3><p>对Foundation库中文件的拓展。</p>
+<h4 id="rac-willDeallocSignal"><a href="#rac-willDeallocSignal" class="headerlink" title="rac_willDeallocSignal"></a>rac_willDeallocSignal</h4><p>同样，无需多言，通常搭配<code>takeUntil</code>操作符使用。</p>
+<h4 id="rac-signalForSelector"><a href="#rac-signalForSelector" class="headerlink" title="rac_signalForSelector:"></a>rac_signalForSelector:</h4><p>直接看一个例子：</p>
+<pre><code>- (void)viewDidLoad {
+    [super viewDidLoad];
+    [[self rac_signalForSelector:@selector(viewWillAppear:)] subscribeNext:^(RACTuple *args) {
+        NSLog(@&quot;viewWillAppear method in signal happen animated: %@&quot;,args.first);
+    }];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    NSLog(@&quot;viewWillAppear method happen animated: %d&quot;,animated);
+}
+</code></pre><p>输出结果是：</p>
+<pre><code>viewWillAppear method happen animated: 1
+viewWillAppear method in signal happen animated: 1
+</code></pre><p>解释一下：可以将任意方法转化成一个信号，然后去订阅它。这样跨方法执行的代码就处在同一个上下文环境中，省去了将一些共用参数传来传去的烦恼。</p>
+<p>这是原方法实现了的情况，其实还可以仅让原方法做声明，不实现。</p>
+<p>看另一个例子：</p>
+<p>在.h文件中声明一个方法：</p>
+<pre><code>- (void)demoMethodWithParam:(id)value;
+</code></pre><p>在.m文件中：</p>
+<pre><code>- (void)viewDidLoad {
+    [super viewDidLoad];
+    [[self rac_signalForSelector:@selector(demoMethodWithParam:)] subscribeNext:^(RACTuple *args) {
+        NSLog(@&quot;demoMethodWithParam in signal happen param is: %@&quot;, args.first);
+    }];
+    [self demoMethodWithParam:@&quot;我就是个🌰&quot;];
+}
+</code></pre><p>输出结果是：</p>
+<pre><code>demoMethodWithParam in signal happen param is: 我就是个🌰
+</code></pre><p>解释一下：这种原方法未做实现的情况能正常运行需要满足两个条件：1 无返回值；2 没有入参或者入参是id类型</p>
+<h4 id="rac-liftSelector-withSignals"><a href="#rac-liftSelector-withSignals" class="headerlink" title="rac_liftSelector:withSignals:"></a>rac_liftSelector:withSignals:</h4><p>RACSignal还有另外一种用法：</p>
+<pre><code>RACSignal *textColorSignal = [RACSignal return:[UIColor blueColor]];
+</code></pre><p>和下面这种写法几乎是等价的：</p>
+<pre><code>RACSignal *textColorSignal = [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) {
+    [subscriber sendNext:[UIColor blueColor]];
+    [subscriber sendCompleted];
+    return nil;
+}];
+</code></pre><p>于是可以用如下方式设置一个按钮的颜色值：</p>
+<pre><code>[self.button rac_liftSelector:@selector(setTitleColor:forState:) withSignals:textColorSignal, [RACSignal return:@(UIControlStateNormal)], nil];
+</code></pre><p>顺便提一下，<code>rac_liftSelector:withSignals:</code>返回值也是一个信号，当然也可以被订阅：</p>
+<pre><code>[[self.button rac_liftSelector:@selector(setTitleColor:forState:) withSignals:textColorSignal, [RACSignal return:@(UIControlStateNormal)], nil] subscribeNext:^(id x) {
+    NSLog(@&quot;lift selector return value is: %@&quot;,x); // RACUnit 代表RAC中的空值类型
+}];
+</code></pre><p>输出结果是：</p>
+<pre><code>lift selector return value is: &lt;RACUnit: 0x604000017270&gt;
+</code></pre><p>RACUnit是RAC中除RACEvent和RACTuple以外的第三种“值类型”，代表空。当<code>liftSelector</code>的<code>Selector</code>返回值是<code>void</code>类型时就会得到RACUnit类型的一个单例。</p>
+<h4 id="rac-sequence"><a href="#rac-sequence" class="headerlink" title="rac_sequence"></a>rac_sequence</h4><p>如果你用过swift，再回来用OC，那么一定会为Foundation库中没有map、filter、reduce等高级函数而感到不习惯。为了简化OC中的集合操作，RAC定义了另一个功能强大的类–RACSequence。它和RACSignal有很多相似之处，因为两者继承于同一个父类–RACStream。所以它能使用很多之前介绍的RACSignal可以使用的方法，比如map，filter、ignore、skip、take、concat等等；而且两者还可以相互转换。</p>
+<p>RAC为Foundation库中的集合类（如NSArray，NSDictionary，NSSet，NSString等）都拓展了一个RACSequence类型的属性叫做：<code>rac_sequence</code>。</p>
+<p>随便举个例子：</p>
+<pre><code>NSArray *array = @[@1, @2, @3, @4];
+NSArray *newArray = [array.rac_sequence map:^id(NSNumber *value) {
+    return @(100+value.integerValue);
+}].array;
+</code></pre><p>看着有没有舒服很多？</p>
+<p>RACSequence和RACSignal归根结底都是流，但两者间最大的不同在于前者是pull-driven类型的流，而后者是push-driven类型的流。 </p>
+<p>再多内容就不说了，推荐两篇写的不错的文章：</p>
+<p><a href="https://draveness.me/racsequence" target="_blank" rel="external">Pull-Driven 的数据流 RACSequence</a><br><a href="http://www.jianshu.com/p/5c2119b3f2eb" target="_blank" rel="external">ReactiveCocoa 中 集合类RACSequence 和 RACTuple底层实现分析</a></p>
+<p>一张图总结：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-Common-Foundation-Category.png" alt=""></p>
+<h2 id="MVVM"><a href="#MVVM" class="headerlink" title="MVVM"></a>MVVM</h2><p>RAC如何结合MVVM使用这个话题太大了，一两句话真是说不清楚。可以看下我之前翻译的两篇国外大神写的文章：</p>
+<p><a href="https://kaisayoung.github.io/2016/09/02/MVVM-Tutorial-with-ReactiveCocoa-Part-1-2%E3%80%90%E8%AF%91%E3%80%91/" target="_blank" rel="external">MVVM &amp; ReactiveCocoa入门教程－第一部分</a><br><a href="https://kaisayoung.github.io/2016/09/05/MVVM-Tutorial-with-ReactiveCocoa-Part-2-2%E3%80%90%E8%AF%91%E3%80%91/" target="_blank" rel="external">MVVM &amp; ReactiveCocoa入门教程－第二部分</a></p>
+<p>数据流向图可以看这篇：</p>
+<p><a href="http://williamzang.com/blog/2016/06/27/ios-kai-fa-xia-de-han-shu-xiang-ying-shi-bian-cheng/" target="_blank" rel="external">iOS开发下的函数响应式编程</a></p>
+<p>具体使用Demo可以看这个：</p>
+<p><a href="https://github.com/kaisayoung/ReactiveCocoaDemo" target="_blank" rel="external">ReactiveCocoaDemo</a></p>
+<p>总之两者搭配使用就像豆浆油条，简直绝配。</p>
+<p>最后，再来看一眼文章开头出现过的图片，有没有感觉不过如此？</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-third-lesson.png" alt=""></p>
+<p>至此，三篇使用教程（我的学习历程）就结束了，能读到这里相信你或多或少都有所收获。但是要注意这还仅仅是皮毛，想了解更多自己去实践吧哈哈。Have Fun！</p>
+<p>参考链接</p>
+<p>官方文档：</p>
+<p><a href="https://github.com/ReactiveCocoa/ReactiveObjC/blob/master/Documentation/DesignGuidelines.md" target="_blank" rel="external">DesignGuidelines</a><br><a href="https://github.com/ReactiveCocoa/ReactiveCocoa/blob/v2.5/Documentation/FrameworkOverview.md" target="_blank" rel="external">FrameworkOverview</a></p>
+<p>源码解析：</p>
+<p><a href="https://tech.meituan.com/RACSignalSubscription.html" target="_blank" rel="external">RACSignal的Subscription深入分析</a><br><a href="https://tech.meituan.com/ReactiveCocoaSignalFlow.html" target="_blank" rel="external">ReactiveCocoa核心元素与信号流</a>   </p>
+<p>多线程：</p>
+<p><a href="http://www.jianshu.com/p/980ffdf3ed8c" target="_blank" rel="external">ReactiveCocoa中RACScheduler是如何封装GCD的</a>  </p>
+<p>双向绑定：</p>
+<p><a href="https://draveness.me/racchannel" target="_blank" rel="external">RAC中的双向数据绑定RACChannel</a><br><a href="https://spin.atomicobject.com/2015/05/04/bi-directional-data-bindings-reactivecocoa/" target="_blank" rel="external">Bi-directional Data Bindings in ReactiveCocoa with RACChannel</a>  </p>
+<p>我之前写的：</p>
+<p><a href="https://github.com/kaisayoung/ReactiveCocoaDemo" target="_blank" rel="external">ReactiveCocoaDemo</a><br><a href="https://kaisayoung.github.io/2017/04/21/RxSwift-from-zero-to-one-first-lesson/" target="_blank" rel="external">RxSwift基本概念与使用</a><br><a href="https://kaisayoung.github.io/2017/05/27/RxSwift-from-zero-to-one-second-lesson/" target="_blank" rel="external">RxSwift进阶，细节与UI绑定</a><br><a href="https://kaisayoung.github.io/2017/09/19/ReactiveObjC-from-zero-to-one-first-lesson/" target="_blank" rel="external">ReactiveObjC基本概念与简单使用</a><br><a href="https://kaisayoung.github.io/2017/10/30/ReactiveObjC-from-zero-to-one-second-lesson/" target="_blank" rel="external">ReactiveObjC中的冷热信号与命令</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RAC/" rel="tag">#RAC</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/30/ReactiveObjC-from-zero-to-one-second-lesson/" rel="next" title="ReactiveObjC中的冷热信号与命令">
+                <i class="fa fa-chevron-left"></i> ReactiveObjC中的冷热信号与命令
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/"
+           data-title="ReactiveObjC中的多线程与核心绑定" data-url="http://yoursite.com/2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Kaisa" />
+          <p class="site-author-name" itemprop="name">Kaisa</p>
+          <p class="site-description motion-element" itemprop="description">心若不老，仍是少年</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/kaisayoung" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#多线程"><span class="nav-number">1.</span> <span class="nav-text">多线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#获取／创建"><span class="nav-number">1.1.</span> <span class="nav-text">获取／创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行"><span class="nav-number">1.2.</span> <span class="nav-text">执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#何地"><span class="nav-number">1.3.</span> <span class="nav-text">何地</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#deliverOn"><span class="nav-number">1.3.1.</span> <span class="nav-text">deliverOn</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#subscribeOn"><span class="nav-number">1.3.2.</span> <span class="nav-text">subscribeOn</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#何时"><span class="nav-number">1.4.</span> <span class="nav-text">何时</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#delay"><span class="nav-number">1.4.1.</span> <span class="nav-text">delay</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bufferWithTime-onScheduler"><span class="nav-number">1.4.2.</span> <span class="nav-text">bufferWithTime: onScheduler:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#timeout-onScheduler"><span class="nav-number">1.4.3.</span> <span class="nav-text">timeout: onScheduler:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#interval-onScheduler"><span class="nav-number">1.4.4.</span> <span class="nav-text">interval: onScheduler:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绑定"><span class="nav-number">2.</span> <span class="nav-text">绑定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单向绑定"><span class="nav-number">2.1.</span> <span class="nav-text">单向绑定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双向绑定"><span class="nav-number">2.2.</span> <span class="nav-text">双向绑定</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RACChannel"><span class="nav-number">2.2.1.</span> <span class="nav-text">RACChannel</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#RACChannelTerminal"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">RACChannelTerminal</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RACKVOChannel"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">RACKVOChannel</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#双向绑定的两种方法"><span class="nav-number">2.2.2.</span> <span class="nav-text">双向绑定的两种方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#（宏定义）直接赋值法"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">（宏定义）直接赋值法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#（终端）双订阅法"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">（终端）双订阅法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获得RACChannelTerminal类型对象的三种方法"><span class="nav-number">2.2.3.</span> <span class="nav-text">获得RACChannelTerminal类型对象的三种方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用Category"><span class="nav-number">3.</span> <span class="nav-text">常用Category</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UIKit-Category"><span class="nav-number">3.1.</span> <span class="nav-text">UIKit Category</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#rac-textSignal"><span class="nav-number">3.1.1.</span> <span class="nav-text">rac_textSignal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rac-signalForControlEvents"><span class="nav-number">3.1.2.</span> <span class="nav-text">rac_signalForControlEvents:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rac-prepareForReuseSignal"><span class="nav-number">3.1.3.</span> <span class="nav-text">rac_prepareForReuseSignal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rac-command"><span class="nav-number">3.1.4.</span> <span class="nav-text">rac_command</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Foundation-Category"><span class="nav-number">3.2.</span> <span class="nav-text">Foundation Category</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#rac-willDeallocSignal"><span class="nav-number">3.2.1.</span> <span class="nav-text">rac_willDeallocSignal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rac-signalForSelector"><span class="nav-number">3.2.2.</span> <span class="nav-text">rac_signalForSelector:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rac-liftSelector-withSignals"><span class="nav-number">3.2.3.</span> <span class="nav-text">rac_liftSelector:withSignals:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rac-sequence"><span class="nav-number">3.2.4.</span> <span class="nav-text">rac_sequence</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MVVM"><span class="nav-number">4.</span> <span class="nav-text">MVVM</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kaisa</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"kaisayoung"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
