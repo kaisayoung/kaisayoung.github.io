@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-11-30T16:00:43.000Z</updated>
+  <updated>2017-12-11T14:54:15.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yoursite.com/2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/"/>
     <id>http://yoursite.com/2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/</id>
     <published>2017-11-30T03:42:01.000Z</published>
-    <updated>2017-11-30T16:00:43.000Z</updated>
+    <updated>2017-12-11T14:54:15.000Z</updated>
     
     <content type="html"><![CDATA[<p>本篇主要介绍ReactiveObjC中的多线程与绑定，顺便总结一下常用的宏定义与Cagegory。</p>
 <p>按照惯例，先来一张图镇帖。</p>
@@ -217,8 +217,6 @@ Receive 🍉 in thread : &lt;NSThread: 0x600000462bc0&gt;{number = 4, name = (nu
 </code></pre><p>前方高能！还可以结合上面的<code>RACObserve</code>：</p>
 <pre><code>RAC(self.starLabel, text) = RACObserve(self.userModel, starCount);    
 </code></pre><p>简直炫酷有木有？！</p>
-<p>至此，最常用的宏定义就介绍完了，一张图总结：</p>
-<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-common-four-Macro.png" alt=""></p>
 <p>现在考虑这么一种情况，一个用户信息模型类当中有两个属性，分别是代表中文性别的<code>chineseSex</code>和英文性别的<code>englishSex</code>，中文性别可取值：男、女、未知，英文性别可取值：male、female、unknown。<br>现在要求两者时刻保持匹配。也就是当<code>chineseSex</code>属性变化时，<code>englishSex</code>要做出相应的改变，反过来亦然。</p>
 <p>应用上面的绑定知识很容易写出来类似下面的代码：</p>
 <pre><code>RAC(self.englishSexLabel, text) = RACObserve(self.userModel, englishSex);
@@ -270,7 +268,7 @@ RAC(self.userModel, englishSex) = [RACObserve(self.userModel, chineseSex) map:^i
 <p>你一定以为接下来我要介绍如何使用<code>RACChannel</code>了，那你可就错了。因为通常情况下不直接用它，而是用它的一个子类–RACKVOChannel。</p>
 <h5 id="RACKVOChannel"><a href="#RACKVOChannel" class="headerlink" title="RACKVOChannel"></a>RACKVOChannel</h5><p>那如何使用<code>RACKVOChannel</code>呢？看头文件只有一个初始化方法：</p>
 <pre><code>- (id)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath nilValue:(id)nilValue;
-</code></pre><p>通常也不直接使用这个方法🤦‍♂️，而是用另外一个宏定义：</p>
+</code></pre><p>通常也不直接使用这个方法，而是用另外一个宏定义：</p>
 <p><code>RACChannelTo(TARGET, KEYPATH, NILVALUE)</code></p>
 <p>传入相应的值会返回一个RACChannelTerminal类型的实例对象，同时内部会实现对相应对象属性值的监听值变化与赋新值。</p>
 <p>示意图如下：</p>
@@ -357,6 +355,8 @@ RAC(self.userModel, starCount) = [textFieldChannelT skip:1];
 </code></pre><p>数据流向如下图：</p>
 <p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-bi-direction-binding-data-flow.png" alt=""></p>
 <p>虽然大多数情况下，双向绑定都是为了连接一个View和一个Model，但是其实无论是同一个对象的两个不同属性，或是两个不同对象之间的属性，两个对象是两个Model还是两个View还是一个Model一个View，这些都是表象，归根结底连接的都是两个不同的属性。</p>
+<h2 id="常用宏定义"><a href="#常用宏定义" class="headerlink" title="常用宏定义"></a>常用宏定义</h2><p>上面都介绍了，一张图总结：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/RAC-common-four-Macro.png" alt=""></p>
 <h2 id="常用Category"><a href="#常用Category" class="headerlink" title="常用Category"></a>常用Category</h2><p>上面已经或多或少的提到了RAC为系统类创建的一些category，这大大方便了使用者。下面总结一下我认为最常用的。</p>
 <h3 id="UIKit-Category"><a href="#UIKit-Category" class="headerlink" title="UIKit Category"></a>UIKit Category</h3><p>对UI库中文件的拓展。</p>
 <h4 id="rac-textSignal"><a href="#rac-textSignal" class="headerlink" title="rac_textSignal"></a>rac_textSignal</h4><p>前面用过太多次，相信已不再需要解释了。</p>
