@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-success.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/RACCommand-use-demo-state-fail.png">
 <meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/ReactiveObjC-from-zero-to-one-real-second-lesson.png">
-<meta property="og:updated_time" content="2017-11-21T12:17:25.000Z">
+<meta property="og:updated_time" content="2017-12-18T11:58:48.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ReactiveObjC中的冷热信号与命令">
 <meta name="twitter:description" content="一如标题，本篇主要介绍ReactiveObjC中的冷热信号与命令。
@@ -384,7 +384,7 @@ NSLog(@&quot;Signal was created.&quot;);
 <p>观察结果可以发现：</p>
 <ol>
 <li>只有当信号被订阅之后创建信号时block中的代码段才会被执行；</li>
-<li>同一个信号先后被多个<code>Subscription</code>订阅后，信号创建时block中的代码段会执行多次，也就是会多次发送完整信息流；</li>
+<li>同一个信号先后被多次订阅后，信号创建时block中的代码段会执行多次，也就是会多次发送完整信息流；</li>
 <li>每个订阅者彼此独立，互不影响，只要订阅了源信号，就会完整接收到其发送的整个信息流；</li>
 </ol>
 <p>示意图如下：</p>
