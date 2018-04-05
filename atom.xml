@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-12-12T02:14:22.000Z</updated>
+  <updated>2018-04-05T14:42:01.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,105 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>ScrollView和TableView无缝拼接滑动实现方案</title>
+    <link href="http://yoursite.com/2018/04/05/ScrollViewAndTableViewConnect/"/>
+    <id>http://yoursite.com/2018/04/05/ScrollViewAndTableViewConnect/</id>
+    <published>2018-04-05T11:32:44.000Z</published>
+    <updated>2018-04-05T14:42:01.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近在做一个新需求：将原有的三个视图纵向拼接展示，超过屏幕高度时可滑动。</p>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/scroll-and-table-connect.png" alt=""> </p>
+<p>非常简单有木有，然而事情并没有想象的那么简单。</p>
+<a id="more"></a>
+<p>首先看一下三个view都是什么，View A 内部包含一个UIScrollView，高度不固定；View B 就是普通的视图，高度不超过屏幕高；View C 内部包含一个UITableView，高度也不固定。</p>
+<p>上面的示意图略有点丑，我找一个好看点的例子。PS：我不是美团的，就是用一下图哈哈。</p>
+<p>图1:</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-1.PNG" alt=""> </p>
+<p>图2:</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-2.PNG" alt=""> </p>
+<p>图3:</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-5.PNG" alt=""> </p>
+<p>图4:</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-6.PNG" alt=""> </p>
+<p>图1+图2和在一起可以理解成是上面的View A；图3中的一小条可以理解成是上面的View B；图4中的一些推荐可以理解成是上面的View C。</p>
+<p>所以能怎么做呢？最简单的方法就是用一个大的UITableView搞定（假设叫做fullTableView）。在View A和View B的外面包一个大的View（假设叫做headerView），然后将headerView赋值给fullTableView的tableHeaderView属性。</p>
+<p>这样做确实可以达到目的，但不是最优解。为什么？因为，这三个View是由不同的三个童鞋开发的，之后也会由他们分别维护。如果按照上面的方法，对原有View的侵入性太深，且任一View改动之后就可能会影响到总体的fullTableView，可维护性性不佳。</p>
+<p>那怎样做更优呢？</p>
+<p>让View A暴露两个属性：</p>
+<pre><code>@property (nonatomic, strong, readonly) UIScrollView *scrollView;
+@property (nonatomic, assign, readonly) CGFloat fullContentHeight;
+</code></pre><p>fullContentHeight等于scrollView的contentSize.height的值。</p>
+<p>同理让View C也暴露两个属性：</p>
+<pre><code>@property (nonatomic, strong, readonly) UIScrollView *scrollView;
+@property (nonatomic, assign, readonly) CGFloat fullContentHeight;
+</code></pre><p>同时，定义一个协议：</p>
+<pre><code>@protocol STBottomTableViewDataSource &lt;NSObject&gt;
+- (UIView *)bottomTableHeaderView;
+@end
+</code></pre><p>供View C中的TableView获取tableHeaderView。</p>
+<p>修改其初始话方法：</p>
+<pre><code>- (instancetype)initWithFrame:(CGRect)frame dataSource:(id&lt;STBottomTableViewDataSource&gt;)dataSource;
+</code></pre><p>至此，准备工作就做好了。接下来步入正题：</p>
+<p>在最外层创建一个大的ScrollView：</p>
+<pre><code>@property (nonatomic, strong) UIScrollView *containerScrollView;
+</code></pre><p>将View A（topView）和View C（bottomView）分别加到其上面：</p>
+<pre><code>[self.containerScrollView addSubview:self.topView];
+[self.containerScrollView addSubview:self.bottomView];
+</code></pre><p>然后设置其contentSize值：</p>
+<pre><code>self.containerScrollView.contentSize = CGSizeMake(self.containerScrollView.bounds.size.width, self.topView.fullContentHeight + self.bottomView.fullContentHeight);
+</code></pre><p>最后在其代理方法中做一些设置（分别更新两个View的top值和contentOffset.y值）：</p>
+<pre><code>- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (scrollView == self.containerScrollView) {
+        [self refreshHeaderAndFooterFrame];
+    }
+}
+
+- (void)refreshHeaderAndFooterFrame {
+    CGFloat containerOffsetY = self.containerScrollView.contentOffset.y;
+    CGFloat maxTopOffsetY = MAX(self.topView.fullContentHeight - self.topView.height, 0);
+    CGFloat realTopOffsetY = MIN(MAX(containerOffsetY, 0), maxTopOffsetY);
+    if (realTopOffsetY != self.topView.top) {
+        self.topView.top = realTopOffsetY;
+    }
+    if (realTopOffsetY != self.topView.scrollView.contentOffset.y) {
+        [self scrollView:self.topView.scrollView setContentOffset:CGPointMake(0, realTopOffsetY)];
+    }
+
+    CGFloat maxbottomY = MAX(self.topView.fullContentHeight, containerOffsetY);
+    CGFloat realBottomOffsetY = MAX(0, containerOffsetY - self.topView.fullContentHeight);
+    if (maxbottomY != self.bottomView.top) {
+        self.bottomView.top = maxbottomY;
+    }
+    if (realBottomOffsetY != self.bottomView.scrollView.contentOffset.y) {
+        [self scrollView:self.bottomView.scrollView setContentOffset:CGPointMake(0, realBottomOffsetY)];
+    }
+}
+
+- (void)scrollView:(UIScrollView *)scrollView setContentOffset:(CGPoint)offset {
+    scrollView.contentOffset = offset;
+}
+</code></pre><p>至此，大功告成，其实也很简单。当然实际情况更加复杂，比如说View A 和 View C的高度会动态变化，可以加个KVO嘛。</p>
+<p>更多的实现细节就不说了，项目完整版请猛戳<a href="https://github.com/kaisayoung/ScrollAndTableConnectDemo.git" target="_blank" rel="external">这里</a>。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近在做一个新需求：将原有的三个视图纵向拼接展示，超过屏幕高度时可滑动。&lt;/p&gt;
+&lt;p&gt;示意图如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://ocepn6hgq.bkt.clouddn.com/scroll-and-table-connect.png&quot; alt=&quot;&quot;&gt; &lt;/p&gt;
+&lt;p&gt;非常简单有木有，然而事情并没有想象的那么简单。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="iOS" scheme="http://yoursite.com/categories/iOS/"/>
+    
+    
+      <category term="UI" scheme="http://yoursite.com/tags/UI/"/>
+    
+  </entry>
   
   <entry>
     <title>ReactiveObjC中的多线程与绑定</title>
@@ -4399,7 +4498,7 @@ setupTextChangeHandling()
     <link href="http://yoursite.com/2016/12/20/%E5%95%86%E5%93%81%E8%AF%A6%E6%83%85%E9%A1%B5%E5%A4%9A%E4%B8%AA%E5%88%97%E8%A1%A8%E6%BB%91%E5%8A%A8%E6%95%88%E6%9E%9C%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88/"/>
     <id>http://yoursite.com/2016/12/20/商品详情页多个列表滑动效果实现方案/</id>
     <published>2016-12-20T08:53:42.000Z</published>
-    <updated>2017-02-22T02:26:31.000Z</updated>
+    <updated>2018-04-05T12:57:54.000Z</updated>
     
     <content type="html"><![CDATA[<p>近来项目功能重新拆分，主要负责商品详情模块，于是乎看了一下之前代码，真是一片混乱，遂决定应用MVVM+RAC重构下。</p>
 <p>首先看一下下面四张截图，了解下想要实现的效果。因为淘宝天猫等客户端已经对商品详情页大改版，找不到之前的截图了，用美丽说的页面举个例子。</p>

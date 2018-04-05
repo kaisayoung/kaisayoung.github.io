@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="下载," />
+  <meta name="keywords" content="UI," />
 
 
 
@@ -84,16 +84,31 @@
 
 
 
-<meta name="description" content="之前项目中有过下载视频的需求，于是满心欢喜的去github上搜索文件下载工具类，结果略失望，竟然没有一个相当满意的。虽然AFNetworking中单个文件下载功能已经相当完善，但是我需要一些比如全部暂停，全部开始之类的管理的功能，于是就试着自己动手造了个轮子。">
+<meta name="description" content="最近在做一个新需求：将原有的三个视图纵向拼接展示，超过屏幕高度时可滑动。
+示意图如下：
+ 
+非常简单有木有，然而事情并没有想象的那么简单。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="文件下载工具类">
-<meta property="og:url" content="http://yoursite.com/2016/08/25/文件下载工具类/index.html">
+<meta property="og:title" content="ScrollView和TableView无缝拼接滑动实现方案">
+<meta property="og:url" content="http://yoursite.com/2018/04/05/ScrollViewAndTableViewConnect/index.html">
 <meta property="og:site_name" content="一直在路上">
-<meta property="og:description" content="之前项目中有过下载视频的需求，于是满心欢喜的去github上搜索文件下载工具类，结果略失望，竟然没有一个相当满意的。虽然AFNetworking中单个文件下载功能已经相当完善，但是我需要一些比如全部暂停，全部开始之类的管理的功能，于是就试着自己动手造了个轮子。">
-<meta property="og:updated_time" content="2016-09-01T03:44:28.000Z">
+<meta property="og:description" content="最近在做一个新需求：将原有的三个视图纵向拼接展示，超过屏幕高度时可滑动。
+示意图如下：
+ 
+非常简单有木有，然而事情并没有想象的那么简单。">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/scroll-and-table-connect.png">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-1.PNG">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-2.PNG">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-5.PNG">
+<meta property="og:image" content="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-6.PNG">
+<meta property="og:updated_time" content="2018-04-05T14:42:01.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="文件下载工具类">
-<meta name="twitter:description" content="之前项目中有过下载视频的需求，于是满心欢喜的去github上搜索文件下载工具类，结果略失望，竟然没有一个相当满意的。虽然AFNetworking中单个文件下载功能已经相当完善，但是我需要一些比如全部暂停，全部开始之类的管理的功能，于是就试着自己动手造了个轮子。">
+<meta name="twitter:title" content="ScrollView和TableView无缝拼接滑动实现方案">
+<meta name="twitter:description" content="最近在做一个新需求：将原有的三个视图纵向拼接展示，超过屏幕高度时可滑动。
+示意图如下：
+ 
+非常简单有木有，然而事情并没有想象的那么简单。">
+<meta name="twitter:image" content="http://ocepn6hgq.bkt.clouddn.com/scroll-and-table-connect.png">
 
 
 
@@ -114,9 +129,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/08/25/文件下载工具类/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/04/05/ScrollViewAndTableViewConnect/"/>
 
-  <title> 文件下载工具类 | 一直在路上 </title>
+  <title> ScrollView和TableView无缝拼接滑动实现方案 | 一直在路上 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -256,7 +271,7 @@
             
             
               
-                文件下载工具类
+                ScrollView和TableView无缝拼接滑动实现方案
               
             
           </h1>
@@ -268,8 +283,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-25T17:28:43+08:00" content="2016-08-25">
-              2016-08-25
+            <time itemprop="dateCreated" datetime="2018-04-05T19:32:44+08:00" content="2018-04-05">
+              2018-04-05
             </time>
           </span>
 
@@ -298,8 +313,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/08/25/文件下载工具类/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/25/文件下载工具类/" itemprop="commentsCount"></span>
+                <a href="/2018/04/05/ScrollViewAndTableViewConnect/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2018/04/05/ScrollViewAndTableViewConnect/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -322,23 +337,80 @@
       
 
       
-        <p>之前项目中有过下载视频的需求，于是满心欢喜的去github上搜索文件下载工具类，结果略失望，竟然没有一个相当满意的。虽然AFNetworking中单个文件下载功能已经相当完善，但是我需要一些比如全部暂停，全部开始之类的管理的功能，于是就试着自己动手造了个轮子。<br><a id="more"></a><br>其实文件下载，从根本上说就是两种方式：NSURLConnection或NSURLSession。 </p>
-<p>首先一个文件加入到下载队列后可能会有如下5种状态：下载中，等待中，暂停中，下载完成，下载失败。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">typedef NS_ENUM(NSInteger, FileDownloadState)&#123;</div><div class="line">    FileDownloadStateWaiting = 0,</div><div class="line">    FileDownloadStateDownloading = 1,</div><div class="line">    FileDownloadStateSuspending = 2,</div><div class="line">    FileDownloadStateFail = 3,</div><div class="line">    FileDownloadStateFinish = 4,</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>然后我希望在初始化下载管理类后能只调用一个方法就开始去进行文件下载，然后就等待接收回调方法了，于是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (void)addDownloadWithFileId:(NSString *)fileId fileUrl:(NSString *)url directoryPath:(NSString *)directoryPath fileName:(NSString *)fileName;</div></pre></td></tr></table></figure>
-<p>接着，为了实现多个文件同时下载时的各种控制，我创建了如下诸多方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">//点击等待项（－》立即下载／暂停／do nothing）</div><div class="line">- (void)startDownloadWithFileId:(NSString *)fileId;</div><div class="line">//点击下载项 －》暂停</div><div class="line">- (void)suspendDownloadWithFileId:(NSString *)fileId;</div><div class="line">//点击暂停项（－》立刻下载／添加到下载队列）</div><div class="line">- (void)recoverDownloadWithFileId:(NSString *)fileId;</div><div class="line">//点击失败项 －》添加到下载队列</div><div class="line">- (void)restartDownloadWithFileId:(NSString *)fileId;</div><div class="line">//取消下载，且删除文件，只适用于未下载完成状态，下载完成的直接根据路径删除即可</div><div class="line">- (void)cancelDownloadWithFileId:(NSString *)fileId;</div><div class="line">//暂停全部：下载的，等待的</div><div class="line">- (void)suspendAllFilesDownload;</div><div class="line">//恢复全部：暂停的，失败的</div><div class="line">- (void)recoverAllFilesDownload;</div><div class="line">//取消全部：下载的，等待的，暂停的，失败的</div><div class="line">- (void)cancelAllFilesDownload;</div></pre></td></tr></table></figure>
-<p>为了知道各个文件的下载状态，有如下方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (FileDownloadState)getFileDownloadStateWithFileId:(NSString *)fileId;</div></pre></td></tr></table></figure>
-<p>最后，对于下载过程中以及完成后的各种状态需要监测</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">/*</div><div class="line"> 下载开始</div><div class="line"> */</div><div class="line">- (void)fileDownloadManagerStartDownload:(SCFileDownload *)download;</div><div class="line">/*</div><div class="line"> 得到响应，获得文件大小等</div><div class="line"> */</div><div class="line">- (void)fileDownloadManagerReceiveResponse:(SCFileDownload *)download FileSize:(uint64_t)totalLength;</div><div class="line">/*</div><div class="line"> 下载过程，更新进度</div><div class="line"> */</div><div class="line"> - (void)fileDownloadManagerUpdateProgress:(SCFileDownload *)download didReceiveData:(uint64_t)receiveLength downloadSpeed:(NSString *)downloadSpeed;</div><div class="line">/*</div><div class="line"> 下载完成，包括成功和失败</div><div class="line"> */</div><div class="line"> - (void)fileDownloadManagerFinishDownload:(SCFileDownload *)download success:(BOOL)downloadSuccess error:(NSError *)error;</div></pre></td></tr></table></figure>
-<p>至于文件如何从网络获取，核心代码无非是调用如下几个方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response&#123;</div><div class="line">&#125;</div><div class="line">- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data&#123;</div><div class="line">&#125;</div><div class="line">- (void)connectionDidFinishLoading:(NSURLConnection *)connection&#123;</div><div class="line">&#125;</div><div class="line">- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>或者是如下几个方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes&#123;</div><div class="line">&#125;</div><div class="line">- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite&#123;</div><div class="line">&#125;</div><div class="line">- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location&#123;</div><div class="line">&#125;</div><div class="line">- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>更或者直接用AFNetworking也可以。</p>
-<p>基于NSURLConnection实现完整版项目猛戳<a href="https://github.com/kaisayoung/FileDownloadTool.git" target="_blank" rel="external">这里</a>。<br>基于NSURLSession实现完整版项目猛戳<a href="https://github.com/kaisayoung/FileDownloadManager.git" target="_blank" rel="external">这里</a>。</p>
+        <p>最近在做一个新需求：将原有的三个视图纵向拼接展示，超过屏幕高度时可滑动。</p>
+<p>示意图如下：</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/scroll-and-table-connect.png" alt=""> </p>
+<p>非常简单有木有，然而事情并没有想象的那么简单。</p>
+<a id="more"></a>
+<p>首先看一下三个view都是什么，View A 内部包含一个UIScrollView，高度不固定；View B 就是普通的视图，高度不超过屏幕高；View C 内部包含一个UITableView，高度也不固定。</p>
+<p>上面的示意图略有点丑，我找一个好看点的例子。PS：我不是美团的，就是用一下图哈哈。</p>
+<p>图1:</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-1.PNG" alt=""> </p>
+<p>图2:</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-2.PNG" alt=""> </p>
+<p>图3:</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-5.PNG" alt=""> </p>
+<p>图4:</p>
+<p><img src="http://ocepn6hgq.bkt.clouddn.com/meituan-homepage_snapshot-6.PNG" alt=""> </p>
+<p>图1+图2和在一起可以理解成是上面的View A；图3中的一小条可以理解成是上面的View B；图4中的一些推荐可以理解成是上面的View C。</p>
+<p>所以能怎么做呢？最简单的方法就是用一个大的UITableView搞定（假设叫做fullTableView）。在View A和View B的外面包一个大的View（假设叫做headerView），然后将headerView赋值给fullTableView的tableHeaderView属性。</p>
+<p>这样做确实可以达到目的，但不是最优解。为什么？因为，这三个View是由不同的三个童鞋开发的，之后也会由他们分别维护。如果按照上面的方法，对原有View的侵入性太深，且任一View改动之后就可能会影响到总体的fullTableView，可维护性性不佳。</p>
+<p>那怎样做更优呢？</p>
+<p>让View A暴露两个属性：</p>
+<pre><code>@property (nonatomic, strong, readonly) UIScrollView *scrollView;
+@property (nonatomic, assign, readonly) CGFloat fullContentHeight;
+</code></pre><p>fullContentHeight等于scrollView的contentSize.height的值。</p>
+<p>同理让View C也暴露两个属性：</p>
+<pre><code>@property (nonatomic, strong, readonly) UIScrollView *scrollView;
+@property (nonatomic, assign, readonly) CGFloat fullContentHeight;
+</code></pre><p>同时，定义一个协议：</p>
+<pre><code>@protocol STBottomTableViewDataSource &lt;NSObject&gt;
+- (UIView *)bottomTableHeaderView;
+@end
+</code></pre><p>供View C中的TableView获取tableHeaderView。</p>
+<p>修改其初始话方法：</p>
+<pre><code>- (instancetype)initWithFrame:(CGRect)frame dataSource:(id&lt;STBottomTableViewDataSource&gt;)dataSource;
+</code></pre><p>至此，准备工作就做好了。接下来步入正题：</p>
+<p>在最外层创建一个大的ScrollView：</p>
+<pre><code>@property (nonatomic, strong) UIScrollView *containerScrollView;
+</code></pre><p>将View A（topView）和View C（bottomView）分别加到其上面：</p>
+<pre><code>[self.containerScrollView addSubview:self.topView];
+[self.containerScrollView addSubview:self.bottomView];
+</code></pre><p>然后设置其contentSize值：</p>
+<pre><code>self.containerScrollView.contentSize = CGSizeMake(self.containerScrollView.bounds.size.width, self.topView.fullContentHeight + self.bottomView.fullContentHeight);
+</code></pre><p>最后在其代理方法中做一些设置（分别更新两个View的top值和contentOffset.y值）：</p>
+<pre><code>- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (scrollView == self.containerScrollView) {
+        [self refreshHeaderAndFooterFrame];
+    }
+}
+
+- (void)refreshHeaderAndFooterFrame {
+    CGFloat containerOffsetY = self.containerScrollView.contentOffset.y;
+    CGFloat maxTopOffsetY = MAX(self.topView.fullContentHeight - self.topView.height, 0);
+    CGFloat realTopOffsetY = MIN(MAX(containerOffsetY, 0), maxTopOffsetY);
+    if (realTopOffsetY != self.topView.top) {
+        self.topView.top = realTopOffsetY;
+    }
+    if (realTopOffsetY != self.topView.scrollView.contentOffset.y) {
+        [self scrollView:self.topView.scrollView setContentOffset:CGPointMake(0, realTopOffsetY)];
+    }
+
+    CGFloat maxbottomY = MAX(self.topView.fullContentHeight, containerOffsetY);
+    CGFloat realBottomOffsetY = MAX(0, containerOffsetY - self.topView.fullContentHeight);
+    if (maxbottomY != self.bottomView.top) {
+        self.bottomView.top = maxbottomY;
+    }
+    if (realBottomOffsetY != self.bottomView.scrollView.contentOffset.y) {
+        [self scrollView:self.bottomView.scrollView setContentOffset:CGPointMake(0, realBottomOffsetY)];
+    }
+}
+
+- (void)scrollView:(UIScrollView *)scrollView setContentOffset:(CGPoint)offset {
+    scrollView.contentOffset = offset;
+}
+</code></pre><p>至此，大功告成，其实也很简单。当然实际情况更加复杂，比如说View A 和 View C的高度会动态变化，可以加个KVO嘛。</p>
+<p>更多的实现细节就不说了，项目完整版请猛戳<a href="https://github.com/kaisayoung/ScrollAndTableConnectDemo.git" target="_blank" rel="external">这里</a>。</p>
 
       
     </div>
@@ -361,7 +433,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/下载/" rel="tag">#下载</a>
+            <a href="/tags/UI/" rel="tag">#UI</a>
           
         </div>
       
@@ -370,17 +442,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/25/M3U8格式视频下载/" rel="next" title="M3U8格式视频下载">
-                <i class="fa fa-chevron-left"></i> M3U8格式视频下载
+              <a href="/2017/11/30/ReactiveObjC-from-zero-to-one-third-lesson/" rel="next" title="ReactiveObjC中的多线程与绑定">
+                <i class="fa fa-chevron-left"></i> ReactiveObjC中的多线程与绑定
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/09/02/MVVM-Tutorial-with-ReactiveCocoa-Part-1-2【译】/" rel="prev" title="MVVM & ReactiveCocoa入门教程－第一部分">
-                MVVM & ReactiveCocoa入门教程－第一部分 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -406,8 +474,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/08/25/文件下载工具类/"
-           data-title="文件下载工具类" data-url="http://yoursite.com/2016/08/25/文件下载工具类/">
+      <div class="ds-thread" data-thread-key="2018/04/05/ScrollViewAndTableViewConnect/"
+           data-title="ScrollView和TableView无缝拼接滑动实现方案" data-url="http://yoursite.com/2018/04/05/ScrollViewAndTableViewConnect/">
       </div>
     
   </div>
